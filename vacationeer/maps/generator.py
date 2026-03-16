@@ -110,16 +110,16 @@ class _Legend(MacroElement):
 {% macro html(this, kwargs) %}
 <div id="legend-box" style="
     position:fixed;bottom:28px;left:12px;z-index:1000;
-    background:rgba(255,255,255,.92);backdrop-filter:blur(4px);
-    border-radius:10px;padding:12px 16px;
-    box-shadow:0 2px 10px rgba(0,0,0,.18);font-family:'Segoe UI',Roboto,Arial,sans-serif;
-    font-size:12px;max-height:50vh;overflow-y:auto;">
-  <div style="font-weight:700;margin-bottom:6px;font-size:13px;color:#333;">Categories</div>
+    background:rgba(255,255,255,.95);backdrop-filter:blur(4px);
+    border-radius:12px;padding:16px 22px;
+    box-shadow:0 2px 12px rgba(0,0,0,.2);font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    font-size:14px;max-height:55vh;overflow-y:auto;min-width:180px;">
+  <div style="font-weight:700;margin-bottom:8px;font-size:15px;color:#222;">Categories</div>
   {% for item in this.items %}
-  <div style="display:flex;align-items:center;gap:6px;padding:2px 0;">
-    <span style="font-size:15px;">{{ item.icon }}</span>
-    <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:{{ item.hex }}"></span>
-    <span style="color:#444;">{{ item.label }}</span>
+  <div style="display:flex;align-items:center;gap:8px;padding:3px 0;">
+    <span style="font-size:17px;">{{ item.icon }}</span>
+    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:{{ item.hex }};flex-shrink:0;"></span>
+    <span style="color:#333;font-size:14px;">{{ item.label }}</span>
   </div>
   {% endfor %}
 </div>
@@ -151,20 +151,48 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         fg = folium.FeatureGroup(name=cat.value.replace("_", " ").title())
         groups[cat] = fg
 
+    # Separate feature group for text labels (toggleable)
+    labels_group = folium.FeatureGroup(name="\U0001F3F7 Labels", show=True)
+
     for attraction in trip.attractions:
         color, hex_color, icon, _ = CATEGORY_STYLE.get(
             attraction.category, ("gray", "#7F8C8D", "info-sign", "\u2139")
         )
-        category_label = attraction.category.value.replace("_", " ").title()
-        tooltip_text = f"{category_label} \u2022 {attraction.name}"
 
-        marker = folium.Marker(
+        popup_html = _popup_html(attraction)
+
+        # Use CircleMarker for smaller, cleaner pins
+        circle = folium.CircleMarker(
             location=[attraction.location.lat, attraction.location.lng],
-            popup=folium.Popup(_popup_html(attraction), max_width=280),
-            tooltip=tooltip_text,
-            icon=folium.Icon(color=color, icon=icon, prefix="glyphicon"),
+            radius=8,
+            color=hex_color,
+            weight=2,
+            fill=True,
+            fill_color=hex_color,
+            fill_opacity=0.75,
+            tooltip=folium.Tooltip(popup_html, sticky=True),
         )
-        marker.add_to(groups[attraction.category])
+        circle.add_to(groups[attraction.category])
+
+        # Text label via DivIcon, offset to the right of the pin
+        label_html = (
+            f'<div style="'
+            f'font-family:\'Segoe UI\',Roboto,Arial,sans-serif;'
+            f'font-size:10px;font-weight:600;color:#222;'
+            f'text-shadow:0 0 3px #fff, 0 0 3px #fff, 1px 1px 2px #fff, -1px -1px 2px #fff;'
+            f'max-width:100px;word-wrap:break-word;line-height:1.2;'
+            f'pointer-events:none;white-space:normal;'
+            f'">{attraction.name}</div>'
+        )
+        label_marker = folium.Marker(
+            location=[attraction.location.lat, attraction.location.lng],
+            icon=folium.DivIcon(
+                html=label_html,
+                icon_size=(100, 30),
+                icon_anchor=(-10, 10),
+            ),
+        )
+        label_marker.add_to(labels_group)
 
     # Only add groups that have markers
     used_categories: list[Category] = []
@@ -172,6 +200,9 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         if any(True for _ in fg._children.values()):
             fg.add_to(m)
             used_categories.append(cat)
+
+    # Add labels group
+    labels_group.add_to(m)
 
     folium.LayerControl(collapsed=False).add_to(m)
 
