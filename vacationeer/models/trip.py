@@ -41,6 +41,8 @@ class Attraction(BaseModel):
     tags: list[str] = Field(default_factory=list)
     tips: Optional[str] = None
     url: Optional[str] = None
+    expected_score: Optional[float] = None
+    user_score: Optional[float] = None
 
 
 class Activity(BaseModel):
@@ -61,6 +63,13 @@ class Day(BaseModel):
     notes: Optional[str] = None
 
 
+class Preferences(BaseModel):
+    interests: list[str] = Field(default_factory=list)
+    avoid: list[str] = Field(default_factory=list)
+    pace: str = "moderate"
+    budget_per_day_eur: Optional[float] = None
+
+
 class Trip(BaseModel):
     id: str = Field(default_factory=_id)
     name: str
@@ -69,5 +78,6 @@ class Trip(BaseModel):
     end_date: date
     travelers: int = 2
     budget_eur: Optional[float] = None
+    preferences: Optional[Preferences] = None
     attractions: list[Attraction] = Field(default_factory=list)
     days: list[Day] = Field(default_factory=list)

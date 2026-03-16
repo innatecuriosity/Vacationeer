@@ -6,6 +6,12 @@
   "end_date": "2026-03-28",
   "travelers": 2,
   "budget_eur": 2000,
+  "preferences": {
+    "interests": ["history", "nature", "food", "science"],
+    "avoid": ["crowded", "expensive"],
+    "pace": "moderate",
+    "budget_per_day_eur": 250.0
+  },
   "attractions": [
     {
       "id": "oceanografic",
@@ -17,7 +23,9 @@
       "duration_minutes": 330,
       "tags": ["must-do", "full-day", "included-in-combo"],
       "tips": "Start at Arctic end (belugas), arrive 20 min early for dolphin show",
-      "url": "https://www.oceanografic.org/en/"
+      "url": "https://www.oceanografic.org/en/",
+      "expected_score": 8.5,
+      "user_score": null
     },
     {
       "id": "bioparc",
@@ -29,7 +37,9 @@
       "duration_minutes": 210,
       "tags": ["must-do", "half-day", "included-in-combo"],
       "tips": "Start with savanna. Don't miss underwater hippo window",
-      "url": "https://bioparcvalencia.es/en/"
+      "url": "https://bioparcvalencia.es/en/",
+      "expected_score": 8.0,
+      "user_score": null
     },
     {
       "id": "science-museum",
@@ -40,7 +50,9 @@
       "price_eur": 8.0,
       "duration_minutes": 150,
       "tags": ["included-in-combo"],
-      "tips": "Go weekday morning to avoid school groups"
+      "tips": "Go weekday morning to avoid school groups",
+      "expected_score": 9.0,
+      "user_score": null
     },
     {
       "id": "cathedral",
@@ -51,7 +63,9 @@
       "price_eur": 10.0,
       "duration_minutes": 75,
       "tags": ["free-during-mass"],
-      "tips": "Free during mass hours"
+      "tips": "Free during mass hours",
+      "expected_score": 8.5,
+      "user_score": null
     },
     {
       "id": "la-lonja",
@@ -61,7 +75,9 @@
       "category": "landmark",
       "price_eur": 2.0,
       "duration_minutes": 45,
-      "tags": ["unesco", "free-sunday"]
+      "tags": ["unesco", "free-sunday"],
+      "expected_score": 9.0,
+      "user_score": null
     },
     {
       "id": "mercado-central",
@@ -72,7 +88,9 @@
       "price_eur": 0,
       "duration_minutes": 60,
       "tags": ["free-entry", "morning"],
-      "tips": "Go early 8-10am. Mon-Sat 7:30-15:00, closed Sun"
+      "tips": "Go early 8-10am. Mon-Sat 7:30-15:00, closed Sun",
+      "expected_score": 9.5,
+      "user_score": null
     },
     {
       "id": "turia-gardens",
@@ -82,7 +100,9 @@
       "category": "nature",
       "price_eur": 0,
       "duration_minutes": 120,
-      "tags": ["free", "cycling"]
+      "tags": ["free", "cycling"],
+      "expected_score": 8.0,
+      "user_score": null
     },
     {
       "id": "almoina",
@@ -92,7 +112,9 @@
       "category": "museum",
       "price_eur": 2.0,
       "duration_minutes": 50,
-      "tags": ["underrated", "free-sunday"]
+      "tags": ["underrated", "free-sunday"],
+      "expected_score": 9.0,
+      "user_score": null
     },
     {
       "id": "torres-serranos",
@@ -102,7 +124,9 @@
       "category": "landmark",
       "price_eur": 2.0,
       "duration_minutes": 30,
-      "tags": ["free-sunday"]
+      "tags": ["free-sunday"],
+      "expected_score": 7.5,
+      "user_score": null
     }
   ],
   "days": []
