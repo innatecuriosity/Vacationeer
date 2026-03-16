@@ -1,0 +1,109 @@
+{
+  "id": "val2026",
+  "name": "Valencia Spring 2026",
+  "destination": "Valencia",
+  "start_date": "2026-03-21",
+  "end_date": "2026-03-28",
+  "travelers": 2,
+  "budget_eur": 2000,
+  "attractions": [
+    {
+      "id": "oceanografic",
+      "name": "Oceanografic",
+      "description": "Europe's largest aquarium — 45,000+ animals, 500+ species, dolphin shows",
+      "location": { "lat": 39.4529, "lng": -0.3477, "address": "City of Arts and Sciences" },
+      "category": "landmark",
+      "price_eur": 41.80,
+      "duration_minutes": 330,
+      "tags": ["must-do", "full-day", "included-in-combo"],
+      "tips": "Start at Arctic end (belugas), arrive 20 min early for dolphin show",
+      "url": "https://www.oceanografic.org/en/"
+    },
+    {
+      "id": "bioparc",
+      "name": "Bioparc",
+      "description": "Immersive African zoo — no visible cages, underwater hippo viewing",
+      "location": { "lat": 39.4788, "lng": -0.4074, "address": "Av. Pío Baroja, 3" },
+      "category": "nature",
+      "price_eur": 29.50,
+      "duration_minutes": 210,
+      "tags": ["must-do", "half-day", "included-in-combo"],
+      "tips": "Start with savanna. Don't miss underwater hippo window",
+      "url": "https://bioparcvalencia.es/en/"
+    },
+    {
+      "id": "science-museum",
+      "name": "Museu de les Ciencies",
+      "description": "3 floors of interactive science — Leonardo da Vinci exhibition, space, genetics",
+      "location": { "lat": 39.4557, "lng": -0.3521, "address": "City of Arts and Sciences" },
+      "category": "museum",
+      "price_eur": 8.0,
+      "duration_minutes": 150,
+      "tags": ["included-in-combo"],
+      "tips": "Go weekday morning to avoid school groups"
+    },
+    {
+      "id": "cathedral",
+      "name": "Valencia Cathedral + Miguelete Tower",
+      "description": "Gothic/Baroque/Renaissance mix, claims to house the Holy Grail. 207 steps for panoramic views",
+      "location": { "lat": 39.4753, "lng": -0.3753, "address": "Plaça de l'Almoina, s/n" },
+      "category": "landmark",
+      "price_eur": 10.0,
+      "duration_minutes": 75,
+      "tags": ["free-during-mass"],
+      "tips": "Free during mass hours"
+    },
+    {
+      "id": "la-lonja",
+      "name": "La Lonja de la Seda",
+      "description": "15th-century Gothic silk exchange — UNESCO World Heritage, stunning twisted columns",
+      "location": { "lat": 39.4742, "lng": -0.3789, "address": "Carrer de la Llotja, 2" },
+      "category": "landmark",
+      "price_eur": 2.0,
+      "duration_minutes": 45,
+      "tags": ["unesco", "free-sunday"]
+    },
+    {
+      "id": "mercado-central",
+      "name": "Mercado Central",
+      "description": "One of Europe's largest Art Nouveau food markets — 300+ stalls",
+      "location": { "lat": 39.4735, "lng": -0.3793, "address": "Plaça de la Ciutat de Bruges" },
+      "category": "food",
+      "price_eur": 0,
+      "duration_minutes": 60,
+      "tags": ["free-entry", "morning"],
+      "tips": "Go early 8-10am. Mon-Sat 7:30-15:00, closed Sun"
+    },
+    {
+      "id": "turia-gardens",
+      "name": "Turia Gardens",
+      "description": "Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside",
+      "location": { "lat": 39.4780, "lng": -0.3700, "address": "Jardín del Turia" },
+      "category": "nature",
+      "price_eur": 0,
+      "duration_minutes": 120,
+      "tags": ["free", "cycling"]
+    },
+    {
+      "id": "almoina",
+      "name": "L'Almoina Archaeological Centre",
+      "description": "2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic",
+      "location": { "lat": 39.4756, "lng": -0.3748, "address": "Plaça de l'Almoina, s/n" },
+      "category": "museum",
+      "price_eur": 2.0,
+      "duration_minutes": 50,
+      "tags": ["underrated", "free-sunday"]
+    },
+    {
+      "id": "torres-serranos",
+      "name": "Torres de Serranos",
+      "description": "14th-century city gate with great old town views",
+      "location": { "lat": 39.4792, "lng": -0.3755, "address": "Plaça dels Furs, s/n" },
+      "category": "landmark",
+      "price_eur": 2.0,
+      "duration_minutes": 30,
+      "tags": ["free-sunday"]
+    }
+  ],
+  "days": []
+}

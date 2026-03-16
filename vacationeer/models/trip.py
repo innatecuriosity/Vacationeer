@@ -1,0 +1,73 @@
+from __future__ import annotations
+
+from datetime import date, time
+from enum import Enum
+from typing import Optional
+from uuid import uuid4
+
+from pydantic import BaseModel, Field
+
+
+def _id() -> str:
+    return uuid4().hex[:8]
+
+
+class Category(str, Enum):
+    LANDMARK = "landmark"
+    MUSEUM = "museum"
+    NATURE = "nature"
+    FOOD = "food"
+    ENTERTAINMENT = "entertainment"
+    TRANSPORT = "transport"
+    ACCOMMODATION = "accommodation"
+    SHOPPING = "shopping"
+    DAY_TRIP = "day_trip"
+
+
+class Location(BaseModel):
+    lat: float
+    lng: float
+    address: Optional[str] = None
+
+
+class Attraction(BaseModel):
+    id: str = Field(default_factory=_id)
+    name: str
+    description: Optional[str] = None
+    location: Location
+    category: Category
+    price_eur: Optional[float] = None
+    duration_minutes: Optional[int] = None
+    tags: list[str] = Field(default_factory=list)
+    tips: Optional[str] = None
+    url: Optional[str] = None
+
+
+class Activity(BaseModel):
+    id: str = Field(default_factory=_id)
+    attraction_id: Optional[str] = None
+    name: str
+    start_time: Optional[time] = None
+    duration_minutes: Optional[int] = None
+    price_eur: Optional[float] = None
+    status: str = "planned"  # planned, confirmed, done, skipped
+    notes: Optional[str] = None
+
+
+class Day(BaseModel):
+    date: date
+    label: Optional[str] = None
+    activities: list[Activity] = Field(default_factory=list)
+    notes: Optional[str] = None
+
+
+class Trip(BaseModel):
+    id: str = Field(default_factory=_id)
+    name: str
+    destination: str
+    start_date: date
+    end_date: date
+    travelers: int = 2
+    budget_eur: Optional[float] = None
+    attractions: list[Attraction] = Field(default_factory=list)
+    days: list[Day] = Field(default_factory=list)
