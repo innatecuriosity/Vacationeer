@@ -47,6 +47,31 @@ def info(trip_path: Path):
         click.echo(f"  {cat_name}: {count}")
 
 
+@cli.command()
+@click.argument("trip_path", type=click.Path(exists=True, path_type=Path))
+@click.option("-p", "--port", default=8080, help="Port to serve on")
+def serve(trip_path: Path, port: int):
+    """Generate map and serve it via local HTTP server."""
+    import http.server
+    import threading
+    import webbrowser
+
+    trip = load_trip(trip_path)
+    output_dir = PROJECT_ROOT / "output"
+    output_file = output_dir / f"{trip.destination.lower().replace(' ', '-')}-map.html"
+    generate_map(trip, output_file)
+
+    class Handler(http.server.SimpleHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, directory=str(output_dir), **kwargs)
+
+    url = f"http://localhost:{port}/{output_file.name}"
+    click.echo(f"Serving at {url} (Ctrl+C to stop)")
+    threading.Timer(0.5, lambda: webbrowser.open(url)).start()
+    with http.server.HTTPServer(("", port), Handler) as httpd:
+        httpd.serve_forever()
+
+
 def _count_by_category(trip):
     from collections import Counter
     counts = Counter(a.category.value for a in trip.attractions)

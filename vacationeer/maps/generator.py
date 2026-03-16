@@ -51,7 +51,7 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     m = folium.Map(
         location=[avg_lat, avg_lng],
         zoom_start=13,
-        tiles="OpenStreetMap",
+        tiles="CartoDB Positron",
     )
 
     # Create a feature group per category for layer toggling
