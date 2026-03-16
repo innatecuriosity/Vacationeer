@@ -6,6 +6,10 @@ import click
 
 from vacationeer.maps.generator import generate_map
 from vacationeer.storage.json_store import load_trip, save_trip
+from vacationeer.views.app_shell import generate_app
+from vacationeer.views.overview import render_overview
+from vacationeer.views.timeline import render_timeline
+from vacationeer.views.chat import render_chat
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -49,23 +53,60 @@ def info(trip_path: Path):
 
 @cli.command()
 @click.argument("trip_path", type=click.Path(exists=True, path_type=Path))
+def build(trip_path: Path):
+    """Generate the full app: map + app shell with all tabs."""
+    trip = load_trip(trip_path)
+    output_dir = PROJECT_ROOT / "output"
+    dest_slug = trip.destination.lower().replace(" ", "-")
+
+    # 1. Generate map HTML
+    map_filename = f"{dest_slug}-map.html"
+    generate_map(trip, output_dir / map_filename)
+    click.echo(f"Map generated: {map_filename}")
+
+    # 2. Render tab contents
+    tab_contents = {
+        "overview-content": render_overview(trip),
+        "timeline-content": render_timeline(trip),
+        "chat-content": render_chat(trip),
+    }
+
+    # 3. Generate app shell
+    app_file = output_dir / f"{dest_slug}-app.html"
+    generate_app(trip, map_filename, app_file, tab_contents=tab_contents)
+    click.echo(f"App generated: {app_file}")
+
+
+@cli.command()
+@click.argument("trip_path", type=click.Path(exists=True, path_type=Path))
 @click.option("-p", "--port", default=8080, help="Port to serve on")
 def serve(trip_path: Path, port: int):
-    """Generate map and serve it via local HTTP server."""
+    """Build and serve the full app via local HTTP server."""
     import http.server
     import threading
     import webbrowser
 
     trip = load_trip(trip_path)
     output_dir = PROJECT_ROOT / "output"
-    output_file = output_dir / f"{trip.destination.lower().replace(' ', '-')}-map.html"
-    generate_map(trip, output_file)
+    dest_slug = trip.destination.lower().replace(" ", "-")
+
+    # Build everything
+    map_filename = f"{dest_slug}-map.html"
+    generate_map(trip, output_dir / map_filename)
+
+    tab_contents = {
+        "overview-content": render_overview(trip),
+        "timeline-content": render_timeline(trip),
+        "chat-content": render_chat(trip),
+    }
+    app_filename = f"{dest_slug}-app.html"
+    generate_app(trip, map_filename, output_dir / app_filename, tab_contents=tab_contents)
 
     class Handler(http.server.SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, directory=str(output_dir), **kwargs)
 
-    url = f"http://localhost:{port}/{output_file.name}"
+    url = f"http://localhost:{port}/{app_filename}"
     click.echo(f"Serving at {url} (Ctrl+C to stop)")
     threading.Timer(0.5, lambda: webbrowser.open(url)).start()
     with http.server.HTTPServer(("", port), Handler) as httpd:
