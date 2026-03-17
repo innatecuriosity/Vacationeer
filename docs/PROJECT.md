@@ -17,7 +17,7 @@ Vacationeer (like a musketeer).
 - **Server**: FastAPI + uvicorn for local preview (with API endpoints)
 
 ## Tech Stack (future considerations)
-- Android: Flet, Kivy, or PWA approach
+- Android: PWA (implemented), native wrapper via Capacitor if needed
 - Backend: FastAPI for real-time features (chat, sync)
 - AI: Claude API for chat-based editing and auto-planning
 
@@ -31,6 +31,7 @@ VacationeerPoc/
 │   ├── __main__.py          # CLI: all commands (build, plan, pipeline, sync)
 │   ├── theme.py             # Centralized colors, fonts, category metadata (single source of truth)
 │   ├── utils.py             # Shared utilities (slugify, etc.)
+│   ├── pwa.py               # PWA asset generation (manifest, service worker, icon)
 │   ├── models/
 │   │   ├── __init__.py      # Exports all models
 │   │   └── trip.py          # Pydantic models (see Core Entities below)
@@ -73,7 +74,9 @@ VacationeerPoc/
 │   └── valencia-2026/       # Source markdown research files
 ├── docs/
 │   ├── PROJECT.md           # This file
+│   ├── GITHUB_PAGES.md      # GitHub Pages deployment guide
 │   └── timeline-architecture.md
+├── export/                   # PWA export output (for GitHub Pages deployment)
 ├── .active-trip              # Currently selected trip slug
 └── output/                   # Generated HTML files
 ```
@@ -160,12 +163,13 @@ python -m vacationeer sync-to-md <trip.json>      # JSON → MD: update markers 
 python -m vacationeer sync-from-md <trip.json>    # MD → JSON: update JSON from marker values
 ```
 
-### Build & Serve
+### Build, Serve & Export
 ```bash
 python -m vacationeer map <trip.json>      # Generate map HTML only
 python -m vacationeer info <trip.json>     # Show trip summary
 python -m vacationeer build <trip.json>    # Generate full app (map + all tabs)
 python -m vacationeer serve <trip.json>    # Build + FastAPI server + open browser
+python -m vacationeer export <trip.json>   # Export as PWA folder for GitHub Pages
 ```
 
 ### Scheduling (planning module)
@@ -281,11 +285,16 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [ ] Opening hours / seasonal availability
 - [ ] Price currency conversion
 
-### Planned — Mobile / Offline
-- [ ] PWA wrapper or Flet/Kivy build for Android
+### Implemented — Mobile / Offline
+- [x] **PWA export** — `export` CLI command produces self-contained folder with manifest, service worker, SVG icon
+- [x] **Offline editing** — all mutations fall back to localStorage when server is unavailable
+- [x] **Export/Import** — download/upload trip JSON from the app UI for syncing between devices
+- [x] **GitHub Pages deployment** — see `docs/GITHUB_PAGES.md` for setup instructions
+- [x] **Installable on Android** — add to home screen from Chrome, runs as standalone app
+
+### Planned — Mobile / Offline (future)
 - [ ] Offline map tile caching
-- [ ] Export trip as self-contained package for phone
-- [ ] Cloud sync for multi-device editing
+- [ ] Automatic sync between devices
 
 ---
 
@@ -387,6 +396,17 @@ The chat assistant lives in the sidebar (always visible alongside map/overview/t
 
 ### Sync module
 The `sync/` module enables bidirectional sync between MD research files and `trip.json`. It uses `@vacationeer` marker blocks (HTML comments with key-value data) injected below attraction headings in MD files. The sync engine compares marker values against JSON fields and can apply updates in either direction.
+
+### PWA & offline editing
+The app works in two modes:
+- **Server mode** (`vacationeer serve`): all mutations go through FastAPI endpoints, data persisted to `trip.json` on disk
+- **Offline mode** (exported PWA or when server is unreachable): mutations fall back to `localStorage`, data persists in the browser
+
+The offline layer (`offlineFetch()` in `app_shell.py`) wraps every Alpine store method: try server first, on network error apply the mutation locally and save to `localStorage['vacationeer_trip_<id>']`. On page load, localStorage state is merged with embedded `__TRIP_DATA__`.
+
+The `export` command (`pwa.py`) generates a PWA folder with manifest.json, service worker (cache-first for CDN assets), SVG icon, and index redirect. Deploy to GitHub Pages for HTTPS + installability on Android. See `docs/GITHUB_PAGES.md`.
+
+AI features (chat, day planning, new trip pipeline) require the server and are gracefully disabled offline.
 
 ### Theme & shared utilities
 - `theme.py` is the **single source of truth** for all colors, fonts, and category metadata (color, folium_color, icon, emoji, label). Views and maps import from here — never hardcode category colors.
