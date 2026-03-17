@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import statistics
 from pathlib import Path
 
 import folium
@@ -134,9 +135,20 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     if not trip.attractions:
         raise ValueError("Trip has no attractions to map")
 
-    # Center on average of all attraction coordinates
-    avg_lat = sum(a.location.lat for a in trip.attractions) / len(trip.attractions)
-    avg_lng = sum(a.location.lng for a in trip.attractions) / len(trip.attractions)
+    # Filter out coordinate outliers (e.g. 0,0) before computing center
+    valid = [a for a in trip.attractions if not (abs(a.location.lat) < 0.01 and abs(a.location.lng) < 0.01)]
+    if not valid:
+        valid = trip.attractions  # fallback to all if everything is "invalid"
+
+    # Use median-based filtering: exclude points > 2 degrees from median
+    med_lat = statistics.median(a.location.lat for a in valid)
+    med_lng = statistics.median(a.location.lng for a in valid)
+    nearby = [a for a in valid if abs(a.location.lat - med_lat) < 2 and abs(a.location.lng - med_lng) < 2]
+    if not nearby:
+        nearby = valid
+
+    avg_lat = sum(a.location.lat for a in nearby) / len(nearby)
+    avg_lng = sum(a.location.lng for a in nearby) / len(nearby)
 
     m = folium.Map(
         location=[avg_lat, avg_lng],
@@ -150,8 +162,6 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         fg = folium.FeatureGroup(name=category_label(cat))
         groups[cat] = fg
 
-    # Separate feature group for text labels (toggleable)
-    labels_group = folium.FeatureGroup(name="\U0001F3F7 Labels", show=True)
 
     for attraction in trip.attractions:
         info = get_category_info(attraction.category)
@@ -171,6 +181,28 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                 tooltip=folium.Tooltip(tooltip_html, sticky=False),
                 popup=folium.Popup(popup_html, max_width=320),
             )
+        elif attraction.category == Category.LANDMARK:
+            marker = folium.Marker(
+                location=[attraction.location.lat, attraction.location.lng],
+                icon=folium.DivIcon(
+                    html='<div style="font-size:22px;text-align:center;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">\U0001f3db</div>',
+                    icon_size=(28, 28),
+                    icon_anchor=(14, 14),
+                ),
+                tooltip=folium.Tooltip(tooltip_html, sticky=False),
+                popup=folium.Popup(popup_html, max_width=320),
+            )
+        elif attraction.category == Category.INFRASTRUCTURE:
+            marker = folium.Marker(
+                location=[attraction.location.lat, attraction.location.lng],
+                icon=folium.DivIcon(
+                    html='<div style="font-size:22px;text-align:center;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">\u2708</div>',
+                    icon_size=(28, 28),
+                    icon_anchor=(14, 14),
+                ),
+                tooltip=folium.Tooltip(tooltip_html, sticky=False),
+                popup=folium.Popup(popup_html, max_width=320),
+            )
         else:
             marker = folium.CircleMarker(
                 location=[attraction.location.lat, attraction.location.lng],
@@ -185,25 +217,6 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
             )
         marker.add_to(groups[attraction.category])
 
-        # Text label via DivIcon, offset to the right of the pin
-        label_html = (
-            f'<div style="'
-            f'font-family:\'{FONT_STACK_MAP}\';'
-            f'font-size:10px;font-weight:600;color:#222;'
-            f'text-shadow:0 0 3px #fff, 0 0 3px #fff, 1px 1px 2px #fff, -1px -1px 2px #fff;'
-            f'max-width:100px;word-wrap:break-word;line-height:1.2;'
-            f'pointer-events:none;white-space:normal;'
-            f'">{attraction.name}</div>'
-        )
-        label_marker = folium.Marker(
-            location=[attraction.location.lat, attraction.location.lng],
-            icon=folium.DivIcon(
-                html=label_html,
-                icon_size=(100, 30),
-                icon_anchor=(-10, 10),
-            ),
-        )
-        label_marker.add_to(labels_group)
 
     # Only add groups that have markers
     used_categories: list[Category] = []
@@ -212,8 +225,6 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
             fg.add_to(m)
             used_categories.append(cat)
 
-    # Add labels group
-    labels_group.add_to(m)
 
     folium.LayerControl(collapsed=False).add_to(m)
 

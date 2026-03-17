@@ -111,6 +111,11 @@ CATEGORY_META: dict[Category, CategoryInfo] = {
         icon="globe", emoji="\U0001F30D",
         html_icon="&#x1f697;", label="Day Trips",
     ),
+    Category.INFRASTRUCTURE: CategoryInfo(
+        color="#34495E", folium_color="darkblue",
+        icon="tower", emoji="\u2708",
+        html_icon="&#x2708;", label="Infrastructure",
+    ),
 }
 
 _DEFAULT_INFO = CategoryInfo(

@@ -120,7 +120,7 @@ Top-level container: destination, dates, travelers, budget, preferences, `attrac
 User's interests, things to avoid, pace (relaxed/moderate/packed), daily budget.
 
 ### Categories
-landmark, museum, nature, food, entertainment, transport, accommodation, shopping, day_trip
+landmark, museum, nature, food, entertainment, transport, accommodation, shopping, day_trip, infrastructure
 
 ### TravelMode
 train, bus, car, walk, boat, metro
@@ -189,9 +189,9 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [x] **Planning module** — `planning/scheduler.py` with pure functions: init_days, schedule, schedule_day_trip, unschedule, get_unscheduled, swap_days, move_activity
 - [x] **Map** — Interactive Folium map with:
   - CartoDB Voyager tiles (works offline/local)
-  - Circle markers color-coded by category, house emoji for accommodation
+  - Emoji icons for landmark (🏛), accommodation (🏠), infrastructure (✈); circle markers for others
+  - Outlier-filtered centering (ignores 0,0 and far-flung points via median filter)
   - Hover tooltips (name + category) + click-to-lock popups (rich card with links)
-  - Toggleable text labels showing attraction names
   - Category legend
   - Layer control for filtering by category
   - Auto-refresh after mutations (cache-busting iframe reload)
@@ -204,7 +204,7 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - New Trip modal with form + real-time progress tracking (Alpine.js)
   - 3-mode location picker (Address / GPS / Pick on Map with Leaflet mini-map) in all location modals
 - [x] **Overview tab** — Attractions grouped by category:
-  - Colored left border per category, separated cards with breathing room
+  - Colored left border per category, visually separated cards with stronger shadows
   - Expandable cards (click to reveal full details)
   - Score bars (green 8+, yellow 6-8, red <6)
   - Tags as pills, tips box, URL buttons
@@ -313,6 +313,7 @@ transport:     #7F8C8D
 accommodation: #922B21
 shopping:      #2E86C1
 day_trip:      #1E8449
+infrastructure:#34495E
 ```
 
 ---

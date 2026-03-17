@@ -22,6 +22,7 @@ class Category(str, Enum):
     ACCOMMODATION = "accommodation"
     SHOPPING = "shopping"
     DAY_TRIP = "day_trip"
+    INFRASTRUCTURE = "infrastructure"
 
 
 class TravelMode(str, Enum):
