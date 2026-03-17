@@ -29,6 +29,8 @@ Vacationeer (like a musketeer).
 VacationeerPoc/
 ├── vacationeer/
 │   ├── __main__.py          # CLI: all commands (build, plan, pipeline, sync)
+│   ├── theme.py             # Centralized colors, fonts, category metadata (single source of truth)
+│   ├── utils.py             # Shared utilities (slugify, etc.)
 │   ├── models/
 │   │   ├── __init__.py      # Exports all models
 │   │   └── trip.py          # Pydantic models (see Core Entities below)
@@ -53,10 +55,16 @@ VacationeerPoc/
 │   │   └── generator.py     # Folium map generation
 │   └── views/
 │       ├── __init__.py
+│       ├── helpers.py       # Shared view utilities (esc, format_price, format_time, etc.)
 │       ├── app_shell.py     # Main HTML shell with sidebar
 │       ├── overview.py      # Attractions overview tab
 │       ├── timeline.py      # Daily timeline tab
 │       └── chat.py          # (legacy) Chat bubble renderer, unused — chat is now in sidebar
+├── tests/                    # Automated tests (pytest)
+│   ├── test_theme.py        # Theme constants and category metadata
+│   ├── test_helpers.py      # View helper functions
+│   ├── test_utils.py        # Utility functions (slugify)
+│   └── test_models.py       # Pydantic model behavior (dest_slug, defaults)
 ├── trips/
 │   └── valencia-2026/
 │       ├── trip-config.json  # Pipeline questionnaire output
@@ -373,10 +381,21 @@ The chat assistant lives in the sidebar (always visible alongside map/overview/t
 ### Sync module
 The `sync/` module enables bidirectional sync between MD research files and `trip.json`. It uses `@vacationeer` marker blocks (HTML comments with key-value data) injected below attraction headings in MD files. The sync engine compares marker values against JSON fields and can apply updates in either direction.
 
+### Theme & shared utilities
+- `theme.py` is the **single source of truth** for all colors, fonts, and category metadata (color, folium_color, icon, emoji, label). Views and maps import from here — never hardcode category colors.
+- `views/helpers.py` has shared view functions: `esc()` (HTML escaping), `format_price()`, `format_time()`, `format_duration()`, `category_label()`.
+- `utils.py` has general utilities like `slugify()`.
+- `Trip.dest_slug` property returns a URL-friendly slug derived from the destination name (used for output filenames).
+
+### Tests
+Tests live in `tests/` and use pytest. Run with `python -m pytest tests/ -v`. Currently covers theme constants, view helpers, utility functions, and model behavior.
+
 ### For agents working on this project
 - Read this file first for context
 - Read `docs/timeline-architecture.md` for timeline-specific plans
 - Models are in `vacationeer/models/trip.py` — always check current schema
+- **Theme/colors**: `vacationeer/theme.py` — never hardcode colors, import from here
+- **View helpers**: `vacationeer/views/helpers.py` — use `esc()`, `format_price()`, etc.
 - Storage abstraction: `storage/base.py` (Protocol) + `storage/json_store.py` (implementation)
 - Planning logic: `planning/scheduler.py` — pure functions, no side effects
 - Pipeline: `pipeline/` — AI provider cascade, questionnaire, research, conversion
@@ -384,5 +403,6 @@ The `sync/` module enables bidirectional sync between MD research files and `tri
 - Views generate HTML strings — all CSS/JS is inline (no external deps except Alpine.js + Leaflet CDN)
 - Chat is in the sidebar (not a tab) — `sidebarChat()` Alpine component, `POST /api/chat` backend
 - Map uses Folium — tiles must work without Referer header (no OSM tiles)
-- Color theme: navy #1a2332 + white, category colors listed above
+- Color theme: navy #1a2332 + white, category colors in `theme.py`
 - Test with: `python -m vacationeer build trips/valencia-2026/trip.json`
+- Run tests: `python -m pytest tests/ -v`

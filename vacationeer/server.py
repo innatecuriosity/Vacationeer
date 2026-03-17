@@ -3,7 +3,6 @@ from __future__ import annotations
 import json as _json
 import logging
 import os
-import re
 from datetime import date, time, timedelta
 from pathlib import Path
 from typing import Optional
@@ -26,6 +25,7 @@ from vacationeer.models.trip import (
     Trip,
 )
 from vacationeer.storage.json_store import load_trip, save_trip
+from vacationeer.utils import slugify
 from vacationeer.views.app_shell import generate_app
 from vacationeer.views.overview import render_overview
 from vacationeer.views.timeline import render_timeline
@@ -34,51 +34,32 @@ log = logging.getLogger("vacationeer")
 
 
 # ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _slugify(name: str) -> str:
-    """Convert a name to a URL-friendly slug id."""
-    slug = name.lower().strip()
-    slug = re.sub(r"[^\w\s-]", "", slug)
-    slug = re.sub(r"[\s_]+", "-", slug)
-    slug = re.sub(r"-+", "-", slug).strip("-")
-    return slug
-
-
-# ---------------------------------------------------------------------------
 # Rebuild helpers
 # ---------------------------------------------------------------------------
+
+def _render_tabs(trip: Trip) -> dict[str, str]:
+    return {
+        "overview-content": render_overview(trip),
+        "timeline-content": render_timeline(trip),
+    }
+
 
 def _rebuild_all(trip: Trip, trip_path: Path, output_dir: Path) -> None:
     """Save trip JSON, regenerate map and app HTML."""
     save_trip(trip, trip_path)
-    dest_slug = trip.destination.lower().replace(" ", "-")
-    map_filename = f"{dest_slug}-map.html"
+    map_filename = f"{trip.dest_slug}-map.html"
 
     if trip.attractions:
         generate_map(trip, output_dir / map_filename)
 
-    tab_contents = {
-        "overview-content": render_overview(trip),
-        "timeline-content": render_timeline(trip),
-
-    }
-    generate_app(trip, map_filename, output_dir / f"{dest_slug}-app.html", tab_contents=tab_contents)
+    generate_app(trip, map_filename, output_dir / f"{trip.dest_slug}-app.html", tab_contents=_render_tabs(trip))
 
 
 def _rebuild_app_only(trip: Trip, trip_path: Path, output_dir: Path) -> None:
     """Save trip JSON and regenerate app HTML (no map rebuild)."""
     save_trip(trip, trip_path)
-    dest_slug = trip.destination.lower().replace(" ", "-")
-    map_filename = f"{dest_slug}-map.html"
-
-    tab_contents = {
-        "overview-content": render_overview(trip),
-        "timeline-content": render_timeline(trip),
-
-    }
-    generate_app(trip, map_filename, output_dir / f"{dest_slug}-app.html", tab_contents=tab_contents)
+    map_filename = f"{trip.dest_slug}-map.html"
+    generate_app(trip, map_filename, output_dir / f"{trip.dest_slug}-app.html", tab_contents=_render_tabs(trip))
 
 
 # ---------------------------------------------------------------------------
@@ -474,7 +455,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         except ValueError:
             category = Category.LANDMARK
 
-        slug_id = _slugify(body.name)
+        slug_id = slugify(body.name)
         existing_ids = {a.id for a in trip.attractions}
         if slug_id in existing_ids:
             raise HTTPException(status_code=422, detail=f"Attraction with id '{slug_id}' already exists")
@@ -631,7 +612,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
 
         location = Location(lat=float(lat), lng=float(lng), address=address)
 
-        slug_id = _slugify(body.name)
+        slug_id = slugify(body.name)
         existing_ids = {dt.id for dt in trip.day_trips}
         if slug_id in existing_ids:
             raise HTTPException(status_code=422, detail=f"Day trip with id '{slug_id}' already exists")

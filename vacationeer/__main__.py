@@ -6,6 +6,7 @@ from pathlib import Path
 import click
 
 from vacationeer.maps.generator import generate_map
+from vacationeer.models.trip import Trip
 from vacationeer.planning import scheduler
 from vacationeer.storage.json_store import JsonTripStore, load_trip, save_trip
 from vacationeer.views.app_shell import generate_app
@@ -21,6 +22,19 @@ def cli():
     pass
 
 
+def _build_full_app(trip: Trip, output_dir: Path) -> str:
+    """Generate map + app HTML, return app filename."""
+    map_filename = f"{trip.dest_slug}-map.html"
+    generate_map(trip, output_dir / map_filename)
+    tab_contents = {
+        "overview-content": render_overview(trip),
+        "timeline-content": render_timeline(trip),
+    }
+    app_filename = f"{trip.dest_slug}-app.html"
+    generate_app(trip, map_filename, output_dir / app_filename, tab_contents=tab_contents)
+    return app_filename
+
+
 @cli.command()
 @click.argument("trip_path", type=click.Path(exists=True, path_type=Path))
 @click.option(
@@ -33,7 +47,7 @@ def map(trip_path: Path, output: Path | None):
     """Generate an interactive map from a trip JSON file."""
     trip = load_trip(trip_path)
     if output is None:
-        output = PROJECT_ROOT / "output" / f"{trip.destination.lower().replace(' ', '-')}-map.html"
+        output = PROJECT_ROOT / "output" / f"{trip.dest_slug}-map.html"
     result = generate_map(trip, output)
     click.echo(f"Map generated: {result}")
 
@@ -58,24 +72,9 @@ def build(trip_path: Path):
     """Generate the full app: map + app shell with all tabs."""
     trip = load_trip(trip_path)
     output_dir = PROJECT_ROOT / "output"
-    dest_slug = trip.destination.lower().replace(" ", "-")
-
-    # 1. Generate map HTML
-    map_filename = f"{dest_slug}-map.html"
-    generate_map(trip, output_dir / map_filename)
-    click.echo(f"Map generated: {map_filename}")
-
-    # 2. Render tab contents
-    tab_contents = {
-        "overview-content": render_overview(trip),
-        "timeline-content": render_timeline(trip),
-
-    }
-
-    # 3. Generate app shell
-    app_file = output_dir / f"{dest_slug}-app.html"
-    generate_app(trip, map_filename, app_file, tab_contents=tab_contents)
-    click.echo(f"App generated: {app_file}")
+    app_filename = _build_full_app(trip, output_dir)
+    click.echo(f"Map generated: {trip.dest_slug}-map.html")
+    click.echo(f"App generated: {output_dir / app_filename}")
 
 
 @cli.command()
@@ -101,16 +100,7 @@ def serve(trip_path: Path, port: int):
 
     # Initial build so static files exist before first request
     trip = load_trip(trip_path)
-    dest_slug = trip.destination.lower().replace(" ", "-")
-    map_filename = f"{dest_slug}-map.html"
-    generate_map(trip, output_dir / map_filename)
-    tab_contents = {
-        "overview-content": render_overview(trip),
-        "timeline-content": render_timeline(trip),
-
-    }
-    app_filename = f"{dest_slug}-app.html"
-    generate_app(trip, map_filename, output_dir / app_filename, tab_contents=tab_contents)
+    app_filename = _build_full_app(trip, output_dir)
 
     app = create_app(trip_path, output_dir)
 
@@ -251,34 +241,37 @@ def _get_active_trip() -> str | None:
     return None
 
 
-def _resolve_trip_path(trip_path: Path | None) -> Path:
-    """Resolve trip_path: use argument if given, else fall back to active trip."""
-    if trip_path:
-        return trip_path
+def _resolve_active_path(
+    given: Path | None,
+    subdirectory: str,
+    filename: str,
+) -> Path:
+    """Resolve a path from explicit arg or active trip fallback.
+
+    Args:
+        given: Explicit path from CLI argument (None if not provided).
+        subdirectory: Folder under PROJECT_ROOT (e.g. "trips").
+        filename: File to look for (e.g. "trip.json", "trip-config.json").
+    """
+    if given:
+        return given
     slug = _get_active_trip()
     if slug:
-        candidate = PROJECT_ROOT / "trips" / slug / "trip.json"
+        candidate = PROJECT_ROOT / subdirectory / slug / filename
         if candidate.exists():
             return candidate
     raise click.UsageError(
-        "No trip path given and no active trip set. "
-        "Use 'vacationeer use <slug>' or pass a trip path."
+        f"No path given and no active trip set. "
+        f"Use 'vacationeer use <slug>' or pass a path."
     )
+
+
+def _resolve_trip_path(trip_path: Path | None) -> Path:
+    return _resolve_active_path(trip_path, "trips", "trip.json")
 
 
 def _resolve_config_path(config_path: Path | None) -> Path:
-    """Resolve config_path: use argument if given, else fall back to active trip."""
-    if config_path:
-        return config_path
-    slug = _get_active_trip()
-    if slug:
-        candidate = PROJECT_ROOT / "trips" / slug / "trip-config.json"
-        if candidate.exists():
-            return candidate
-    raise click.UsageError(
-        "No config path given and no active trip set. "
-        "Use 'vacationeer use <slug>' or pass a config path."
-    )
+    return _resolve_active_path(config_path, "trips", "trip-config.json")
 
 
 @cli.command("trips")

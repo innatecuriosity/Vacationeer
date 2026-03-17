@@ -124,3 +124,7 @@ class Trip(BaseModel):
     attractions: list[Attraction] = Field(default_factory=list)
     day_trips: list[DayTrip] = Field(default_factory=list)
     days: list[Day] = Field(default_factory=list)
+
+    @property
+    def dest_slug(self) -> str:
+        return self.destination.lower().replace(" ", "-")

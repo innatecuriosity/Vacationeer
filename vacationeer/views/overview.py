@@ -1,62 +1,26 @@
 from __future__ import annotations
 
 from vacationeer.models.trip import Trip, Category
-
-
-_CATEGORY_COLORS = {
-    Category.LANDMARK: "#C0392B",
-    Category.MUSEUM: "#2980B9",
-    Category.NATURE: "#27AE60",
-    Category.FOOD: "#E67E22",
-    Category.ENTERTAINMENT: "#8E44AD",
-    Category.TRANSPORT: "#7F8C8D",
-    Category.ACCOMMODATION: "#922B21",
-    Category.SHOPPING: "#2E86C1",
-    Category.DAY_TRIP: "#1E8449",
-}
-
-_CATEGORY_LABELS = {
-    Category.LANDMARK: "Landmarks",
-    Category.MUSEUM: "Museums",
-    Category.NATURE: "Nature",
-    Category.FOOD: "Food",
-    Category.ENTERTAINMENT: "Entertainment",
-    Category.TRANSPORT: "Transport",
-    Category.ACCOMMODATION: "Accommodation",
-    Category.SHOPPING: "Shopping",
-    Category.DAY_TRIP: "Day Trips",
-}
-
-_CATEGORY_ICONS = {
-    Category.LANDMARK: "&#x1f3db;",
-    Category.MUSEUM: "&#x1f3db;",
-    Category.NATURE: "&#x1f333;",
-    Category.FOOD: "&#x1f374;",
-    Category.ENTERTAINMENT: "&#x1f3ad;",
-    Category.TRANSPORT: "&#x1f68c;",
-    Category.ACCOMMODATION: "&#x1f3e8;",
-    Category.SHOPPING: "&#x1f6cd;",
-    Category.DAY_TRIP: "&#x1f697;",
-}
+from vacationeer.theme import CATEGORY_META, SCORE_GREEN, SCORE_YELLOW, SCORE_RED
 
 
 def _build_category_color_js() -> str:
     pairs = ", ".join(
-        f"'{cat.value}': '{color}'" for cat, color in _CATEGORY_COLORS.items()
+        f"'{cat.value}': '{info.color}'" for cat, info in CATEGORY_META.items()
     )
     return "{" + pairs + "}"
 
 
 def _build_category_label_js() -> str:
     pairs = ", ".join(
-        f"'{cat.value}': '{label}'" for cat, label in _CATEGORY_LABELS.items()
+        f"'{cat.value}': '{info.label}'" for cat, info in CATEGORY_META.items()
     )
     return "{" + pairs + "}"
 
 
 def _build_category_icon_js() -> str:
     pairs = ", ".join(
-        f"'{cat.value}': '{icon}'" for cat, icon in _CATEGORY_ICONS.items()
+        f"'{cat.value}': '{info.html_icon}'" for cat, info in CATEGORY_META.items()
     )
     return "{" + pairs + "}"
 
@@ -88,7 +52,7 @@ def render_overview(trip: Trip) -> str:
        catColor(c) {{ return this.catColors[c] || '#888'; }},
        catLabel(c) {{ return this.catLabels[c] || c; }},
        catIcon(c) {{ return this.catIcons[c] || ''; }},
-       scoreColor(s) {{ return s >= 8 ? '#27AE60' : s >= 6 ? '#F1C40F' : '#E74C3C'; }},
+       scoreColor(s) {{ return s >= 8 ? '{SCORE_GREEN}' : s >= 6 ? '{SCORE_YELLOW}' : '{SCORE_RED}'; }},
        scorePct(s) {{ return Math.min((s / 10) * 100, 100); }},
        fmtPrice(p) {{
          if (p == null || p === 0) return 'Free';

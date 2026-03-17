@@ -7,33 +7,20 @@ from branca.element import MacroElement
 from jinja2 import Template
 
 from vacationeer.models.trip import Attraction, Category, Trip
-
-# Category → (marker color, hex color, icon, unicode icon for legend)
-CATEGORY_STYLE: dict[Category, tuple[str, str, str, str]] = {
-    Category.LANDMARK:      ("red",       "#C0392B", "university",    "\U0001F3DB"),
-    Category.MUSEUM:        ("blue",      "#2980B9", "info-sign",     "\U0001F3DB"),
-    Category.NATURE:        ("green",     "#27AE60", "tree-deciduous","\U0001F333"),
-    Category.FOOD:          ("orange",    "#E67E22", "cutlery",       "\U0001F37D"),
-    Category.ENTERTAINMENT: ("purple",    "#8E44AD", "star",          "\U0001F3AD"),
-    Category.TRANSPORT:     ("gray",      "#7F8C8D", "road",          "\U0001F68C"),
-    Category.ACCOMMODATION: ("darkred",   "#922B21", "home",          "\U0001F3E8"),
-    Category.SHOPPING:      ("cadetblue", "#2E86C1", "shopping-cart", "\U0001F6CD"),
-    Category.DAY_TRIP:      ("darkgreen", "#1E8449", "globe",         "\U0001F30D"),
-}
+from vacationeer.theme import FONT_STACK_MAP, get_category_info
+from vacationeer.views.helpers import category_label
 
 
 def _popup_html(a: Attraction) -> str:
     """Build a styled popup card for an attraction."""
-    color, hex_color, _, _ = CATEGORY_STYLE.get(
-        a.category, ("gray", "#7F8C8D", "info-sign", "\u2139")
-    )
-    category_label = a.category.value.replace("_", " ").title()
+    info = get_category_info(a.category)
+    hex_color = info.color
 
     # --- header ---
     html = f"""
-<div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:260px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.15);">
+<div style="font-family:{FONT_STACK_MAP};width:260px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.15);">
   <div style="background:{hex_color};color:#fff;padding:10px 14px;">
-    <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">{category_label}</div>
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">{category_label(a.category)}</div>
     <div style="font-size:15px;font-weight:700;margin-top:2px;">{a.name}</div>
   </div>
   <div style="padding:10px 14px;background:#fff;color:#333;font-size:12px;line-height:1.5;">
@@ -104,14 +91,12 @@ def _popup_html(a: Attraction) -> str:
 
 def _tooltip_html(a: Attraction) -> str:
     """Build a short hover tooltip for an attraction."""
-    _, hex_color, _, _ = CATEGORY_STYLE.get(
-        a.category, ("gray", "#7F8C8D", "info-sign", "\u2139")
-    )
-    category_label = a.category.value.replace("_", " ").title()
+    info = get_category_info(a.category)
+    hex_color = info.color
     return (
-        f'<div style="font-family:\'Segoe UI\',Roboto,Arial,sans-serif;font-size:11px;line-height:1.4;">'
+        f'<div style="font-family:\'{FONT_STACK_MAP}\';font-size:11px;line-height:1.4;">'
         f'<b>{a.name}</b><br>'
-        f'<span style="color:{hex_color};font-weight:600;">{category_label}</span>'
+        f'<span style="color:{hex_color};font-weight:600;">{category_label(a.category)}</span>'
         f'</div>'
     )
 
@@ -162,16 +147,15 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     # Create a feature group per category for layer toggling
     groups: dict[Category, folium.FeatureGroup] = {}
     for cat in Category:
-        fg = folium.FeatureGroup(name=cat.value.replace("_", " ").title())
+        fg = folium.FeatureGroup(name=category_label(cat))
         groups[cat] = fg
 
     # Separate feature group for text labels (toggleable)
     labels_group = folium.FeatureGroup(name="\U0001F3F7 Labels", show=True)
 
     for attraction in trip.attractions:
-        color, hex_color, icon, _ = CATEGORY_STYLE.get(
-            attraction.category, ("gray", "#7F8C8D", "info-sign", "\u2139")
-        )
+        info = get_category_info(attraction.category)
+        hex_color = info.color
 
         popup_html = _popup_html(attraction)
         tooltip_html = _tooltip_html(attraction)
@@ -204,7 +188,7 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         # Text label via DivIcon, offset to the right of the pin
         label_html = (
             f'<div style="'
-            f'font-family:\'Segoe UI\',Roboto,Arial,sans-serif;'
+            f'font-family:\'{FONT_STACK_MAP}\';'
             f'font-size:10px;font-weight:600;color:#222;'
             f'text-shadow:0 0 3px #fff, 0 0 3px #fff, 1px 1px 2px #fff, -1px -1px 2px #fff;'
             f'max-width:100px;word-wrap:break-word;line-height:1.2;'
@@ -236,13 +220,11 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     # Add legend for used categories
     legend_items = []
     for cat in used_categories:
-        _, hex_color, _, unicode_icon = CATEGORY_STYLE.get(
-            cat, ("gray", "#7F8C8D", "info-sign", "\u2139")
-        )
+        info = get_category_info(cat)
         legend_items.append({
-            "icon": unicode_icon,
-            "hex": hex_color,
-            "label": cat.value.replace("_", " ").title(),
+            "icon": info.emoji,
+            "hex": info.color,
+            "label": info.label,
         })
     _Legend(items=legend_items).add_to(m)
 

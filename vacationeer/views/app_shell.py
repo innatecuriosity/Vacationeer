@@ -5,6 +5,8 @@ from datetime import date, time
 from pathlib import Path
 
 from vacationeer.models.trip import Category, Trip
+from vacationeer.theme import CATEGORY_META, PRIMARY
+from vacationeer.views.helpers import esc
 
 
 def _location_picker_xdata() -> str:
@@ -126,8 +128,8 @@ def generate_app(
     )
 
     category_options = "\n".join(
-        f'                        <option value="{c.value}">{c.value.replace("_", " ").title()}</option>'
-        for c in Category
+        f'                        <option value="{c.value}">{info.label}</option>'
+        for c, info in CATEGORY_META.items()
     )
 
     pace_options = "\n".join(
@@ -140,7 +142,7 @@ def generate_app(
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{_esc(trip.name)} - Vacationeer</title>
+<title>{esc(trip.name)} - Vacationeer</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -763,7 +765,7 @@ function tripPicker() {{
     return {{
         open: false,
         trips: [],
-        currentName: '{_esc(trip.destination)}',
+        currentName: '{esc(trip.destination)}',
         toggle() {{
             if (!this.open) this.loadTrips();
             this.open = !this.open;
@@ -774,7 +776,7 @@ function tripPicker() {{
                 if (resp.ok) this.trips = await resp.json();
             }} catch(e) {{
                 /* static mode, no server */
-                this.trips = [{{slug: '{_esc(trip.id)}', name: '{_esc(trip.destination)}', active: true, has_trip: true}}];
+                this.trips = [{{slug: '{esc(trip.id)}', name: '{esc(trip.destination)}', active: true, has_trip: true}}];
             }}
         }},
         switchTrip(t) {{
@@ -923,7 +925,7 @@ function newTripForm() {{
 function sidebarChat() {{
     return {{
         messages: [
-            {{ role: 'assistant', content: "Hi! I'm your travel assistant for {_esc(trip.destination)}. Ask me to suggest plans, add attractions, or help organize your trip!" }}
+            {{ role: 'assistant', content: "Hi! I'm your travel assistant for {esc(trip.destination)}. Ask me to suggest plans, add attractions, or help organize your trip!" }}
         ],
         input: '',
         loading: false,
@@ -1159,7 +1161,7 @@ document.addEventListener('alpine:init', function() {{
             <div class="brand">Vacationeer</div>
             <div class="trip-picker" x-data="tripPicker()">
                 <button class="trip-picker-btn" @click="toggle()" @click.outside="open = false">
-                    <span class="tp-label" x-text="currentName">{_esc(trip.destination)}</span>
+                    <span class="tp-label" x-text="currentName">{esc(trip.destination)}</span>
                     <span class="tp-chevron" :class="{{ 'open': open }}">&#9660;</span>
                 </button>
                 <div class="trip-picker-dropdown" x-show="open" x-cloak x-transition.opacity>
@@ -1204,11 +1206,11 @@ document.addEventListener('alpine:init', function() {{
     <div class="main">
         <header class="header">
             <div class="header-title-row" onclick="window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'edit-trip'}}))">
-                <h1>{_esc(trip.name)}</h1>
+                <h1>{esc(trip.name)}</h1>
                 <span class="edit-icon">\u270f\ufe0f</span>
             </div>
             <div class="meta" style="cursor:pointer" onclick="window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'edit-trip'}}))">
-                <span>\U0001f4cd {_esc(trip.destination)}</span>
+                <span>\U0001f4cd {esc(trip.destination)}</span>
                 <span>\U0001f4c6 {start} &ndash; {end} ({num_days} days)</span>
                 <span>\U0001f465 {trip.travelers} travelers</span>
                 {_budget_span(trip)}
@@ -1216,7 +1218,7 @@ document.addEventListener('alpine:init', function() {{
         </header>
         <div class="content">
             <div id="tab-map" class="tab-panel active">
-                <iframe src="{_esc(map_filename)}"></iframe>
+                <iframe src="{esc(map_filename)}"></iframe>
             </div>
             <div id="tab-overview" class="tab-panel">
                 <div id="overview-content">{overview_inner if overview_inner else '<div class="tab-placeholder">Overview will appear here.</div>'}</div>
@@ -1895,17 +1897,6 @@ document.addEventListener('alpine:init', function() {{
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(html, encoding="utf-8")
     return output_path
-
-
-def _esc(text: str) -> str:
-    """Minimal HTML escaping."""
-    return (
-        str(text)
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;")
-    )
 
 
 def _budget_span(trip: Trip) -> str:
