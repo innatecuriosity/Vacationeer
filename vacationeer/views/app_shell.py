@@ -145,6 +145,7 @@ def generate_app(
 <title>{esc(trip.name)} - Vacationeer</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
 *, *::before, *::after {{
@@ -699,7 +700,7 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
 .loc-tabs {{ display: flex; gap: 0; margin-bottom: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #d1d5db; }}
 .loc-tab {{ flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: 600; cursor: pointer; background: #f5f6f8; border: none; color: #5f6b7a; }}
 .loc-tab.active {{ background: #1a2332; color: #fff; }}
-.loc-map-container {{ height: 200px; border-radius: 6px; border: 1px solid #d1d5db; overflow: hidden; margin-bottom: 8px; }}
+.loc-map-container {{ width: 100%; height: 250px; border-radius: 8px; border: 2px solid #d1d5db; margin-bottom: 8px; }}
 
 /* ---- responsive ---- */
 @media (max-width: 768px) {{
@@ -1146,6 +1147,15 @@ document.addEventListener('alpine:init', function() {{
             else {{ toast('error', 'Failed to schedule'); }}
         }},
 
+        async reorderActivities(dayDate, activityIds) {{
+            const resp = await fetch('/api/days/' + dayDate + '/activities/reorder', {{
+                method: 'PUT',
+                headers: {{'Content-Type': 'application/json'}},
+                body: JSON.stringify({{activity_ids: activityIds}})
+            }});
+            if (!resp.ok) {{ toast('error', 'Failed to reorder activities'); }}
+        }},
+
         async reload() {{
             const resp = await fetch('/api/trip');
             if (resp.ok) {{ Object.assign(this, await resp.json()); }}
@@ -1233,7 +1243,7 @@ document.addEventListener('alpine:init', function() {{
 
 <!-- Floating add button -->
 <div class="fab-container" x-data="{{ open: false }}">
-    <button class="fab" @click="open = !open" :class="open && 'fab-active'" title="Add...">+</button>
+    <button class="fab" @click="if (window.__activeTab === 'tab-timeline') {{ window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-day'}})); }} else {{ open = !open; }}" :class="open && 'fab-active'" title="Add...">+</button>
     <div class="fab-menu" x-show="open" @click.outside="open = false" x-transition>
         <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-attraction'}}))">
             <span>\U0001f3db</span> Attraction
@@ -1879,10 +1889,12 @@ document.addEventListener('alpine:init', function() {{
 (function() {{
     var buttons = document.querySelectorAll('.nav-btn');
     var panels = document.querySelectorAll('.tab-panel');
+    window.__activeTab = 'tab-map';
 
     buttons.forEach(function(btn) {{
         btn.addEventListener('click', function() {{
             var target = btn.getAttribute('data-tab');
+            window.__activeTab = target;
             buttons.forEach(function(b) {{ b.classList.remove('active'); }});
             panels.forEach(function(p) {{ p.classList.remove('active'); }});
             btn.classList.add('active');

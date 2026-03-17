@@ -179,7 +179,7 @@ def render_overview(trip: Trip) -> str:
 
   <!-- ===== Attraction cards ===== -->
   <template x-for="attraction in filtered()" :key="attraction.id">
-    <div style="background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.07);margin-bottom:10px;overflow:hidden;"
+    <div style="background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.07);margin-bottom:14px;overflow:hidden;"
          :style="'border-left:4px solid ' + catColor(attraction.category)">
 
       <!-- ===== Collapsed card header ===== -->
@@ -311,11 +311,10 @@ def render_overview(trip: Trip) -> str:
             &#x1f517; Visit website</a>
         </div>
 
-        <!-- Image placeholder -->
-        <div style="margin:10px 0;height:200px;background:#eef0f2;border-radius:8px;
-                    display:flex;flex-direction:column;align-items:center;justify-content:center;color:#aaa;">
-          <span style="font-size:36px;">&#x1f4f7;</span>
-          <span style="font-size:13px;margin-top:6px;">Image coming soon</span>
+        <!-- Image (only if available) -->
+        <div x-show="attraction.image_url" style="margin:10px 0;">
+          <img :src="attraction.image_url" :alt="attraction.name"
+               style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;" />
         </div>
 
         <!-- Action buttons -->

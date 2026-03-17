@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json as _json
 import logging
-import os
 from datetime import date, time, timedelta
 from pathlib import Path
 from typing import Optional
@@ -174,6 +173,15 @@ Day trips: {day_trips_summary}
 You can suggest plans, answer questions about the destination, and help organize the itinerary.
 Keep responses concise and practical. Use the traveler's context to personalize suggestions.
 If the user asks to add an attraction or make a change, describe what you'd recommend — they can use the app UI to make the actual changes."""
+
+
+def _format_chat_messages(messages: list) -> str:
+    """Format multi-turn chat messages into a single prompt for stateless providers."""
+    parts = []
+    for m in messages:
+        label = "User" if m.role == "user" else "Assistant"
+        parts.append(f"{label}: {m.content}")
+    return "\n\n".join(parts)
 
 
 def _parse_time(value: Optional[str]) -> Optional[time]:
@@ -748,6 +756,19 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
 
         raise HTTPException(status_code=404, detail=f"Activity '{activity_id}' not found on day '{day_date}'")
 
+    @app.put("/api/days/{day_date}/activities/reorder")
+    async def reorder_activities(day_date: str, request: Request, background_tasks: BackgroundTasks):
+        idx, day = _find_day(day_date)
+        trip = _trip()
+        raw = await request.json()
+        activity_ids = raw.get("activity_ids", [])
+
+        id_order = {aid: i for i, aid in enumerate(activity_ids)}
+        day.activities.sort(key=lambda a: id_order.get(a.id, 999))
+        trip.days[idx] = day
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        return {"ok": True, "order": activity_ids}
+
     # ------------------------------------------------------------------
     # Schedule endpoint
     # ------------------------------------------------------------------
@@ -832,6 +853,8 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
 
     @app.post("/api/chat")
     async def chat(request: Request):
+        from vacationeer.pipeline.ai_provider import get_provider
+
         trip = _trip()
         raw = await request.json()
         log.info("POST /api/chat")
@@ -841,38 +864,35 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         except Exception as exc:
             raise HTTPException(status_code=422, detail=str(exc))
 
-        # Check for Anthropic API key
-        api_key = os.environ.get("ANTHROPIC_API_KEY")
-        if not api_key:
-            raise HTTPException(
-                status_code=503,
-                detail="Chat requires ANTHROPIC_API_KEY environment variable to be set."
-            )
-
         try:
-            import anthropic
-        except ImportError:
-            raise HTTPException(
-                status_code=503,
-                detail="Chat requires the 'anthropic' package. Run: pip install anthropic"
-            )
+            provider = get_provider()
+        except RuntimeError as exc:
+            raise HTTPException(status_code=503, detail=str(exc))
 
         system_prompt = _build_chat_system_prompt(trip)
-        api_messages = [{"role": m.role, "content": m.content} for m in body.messages]
 
         try:
-            client = anthropic.Anthropic()
-            response = client.messages.create(
-                model="claude-sonnet-4-20250514",
-                max_tokens=1024,
-                system=system_prompt,
-                messages=api_messages,
-            )
-            content = response.content[0].text
-            log.info("Chat response: %s chars", len(content))
-            return {"role": "assistant", "content": content}
+            if provider.name == "api":
+                # Native multi-turn via Anthropic SDK
+                import anthropic
+                client = anthropic.Anthropic()
+                api_messages = [{"role": m.role, "content": m.content} for m in body.messages]
+                response = client.messages.create(
+                    model="claude-sonnet-4-20250514",
+                    max_tokens=1024,
+                    system=system_prompt,
+                    messages=api_messages,
+                )
+                content = response.content[0].text
+            else:
+                # Stateless provider (e.g. Claude Code CLI)
+                prompt = _format_chat_messages(body.messages)
+                content = provider.complete(prompt, system=system_prompt)
+
+            log.info("Chat response via %s: %s chars", provider.name, len(content.strip()))
+            return {"role": "assistant", "content": content.strip()}
         except Exception as exc:
-            log.error("Chat API error: %s", exc)
+            log.error("Chat error (%s): %s", provider.name, exc)
             raise HTTPException(status_code=500, detail=f"AI error: {exc}")
 
     # ------------------------------------------------------------------
