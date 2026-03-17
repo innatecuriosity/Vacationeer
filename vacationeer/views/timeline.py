@@ -111,8 +111,13 @@ def render_timeline(trip: Trip) -> str:
     border: 1px solid {BORDER};
     border-radius: 4px;
     cursor: pointer;
-    font-size: 12px;
-    padding: 2px 6px;
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     color: {TEXT_MUTED};
 }}
 .day-col-actions button:hover {{
@@ -157,6 +162,8 @@ def render_timeline(trip: Trip) -> str:
     font-size: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     transition: box-shadow 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
 }}
 .pool-card:hover {{
     box-shadow: 0 2px 6px rgba(0,0,0,0.12);
@@ -168,6 +175,14 @@ def render_timeline(trip: Trip) -> str:
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}}
+.pool-card .card-desc, .act-card .card-desc {{
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
 }}
 .pool-card .card-meta {{
     font-size: 11px;
@@ -186,17 +201,11 @@ def render_timeline(trip: Trip) -> str:
     gap: 8px;
     font-size: 12px;
     transition: box-shadow 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
 }}
 .act-card:hover {{
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}}
-.act-card .drag-handle {{
-    cursor: grab;
-    color: #bbb;
-    font-size: 14px;
-    flex-shrink: 0;
-    line-height: 1;
-    margin-top: 2px;
 }}
 .act-card .card-time {{
     font-size: 11px;
@@ -213,18 +222,40 @@ def render_timeline(trip: Trip) -> str:
     font-size: 11px;
     color: {TEXT_MUTED};
 }}
-.act-card .act-remove {{
+.card-buttons {{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     margin-left: auto;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #ccc;
-    font-size: 16px;
     flex-shrink: 0;
-    padding: 0 2px;
 }}
-.act-card .act-remove:hover {{
+.card-btn {{
+    background: none;
+    border: 1px solid {BORDER};
+    border-radius: 4px;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}}
+.card-btn:hover {{
+    background: {BG_LIGHT};
+    color: {PRIMARY};
+}}
+.card-btn.btn-remove:hover {{
+    background: #fef2f2;
     color: #e74c3c;
+    border-color: #e74c3c;
+}}
+/* Pool card expand */
+.pool-card .card-btn {{
+    margin-left: auto;
+    flex-shrink: 0;
 }}
 /* Inline edit */
 .day-edit-input {{
@@ -250,6 +281,138 @@ def render_timeline(trip: Trip) -> str:
 /* SortableJS ghost */
 .sortable-ghost {{
     opacity: 0.4;
+}}
+/* Detail modal */
+.detail-backdrop {{
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}}
+.detail-modal {{
+    background: white;
+    border-radius: 16px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}}
+.detail-header {{
+    padding: 16px 20px;
+    border-radius: 16px 16px 0 0;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}}
+.detail-header h3 {{
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+}}
+.detail-close {{
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    flex-shrink: 0;
+}}
+.detail-close:hover {{ color: white; }}
+.detail-body {{
+    padding: 16px 20px;
+}}
+.detail-desc {{
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 14px;
+    line-height: 1.5;
+}}
+.detail-row {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid {BORDER_LIGHT};
+    font-size: 13px;
+}}
+.detail-row:last-child {{ border-bottom: none; }}
+.detail-label {{
+    font-weight: 600;
+    color: #555;
+    min-width: 80px;
+}}
+.detail-value {{
+    flex: 1;
+    color: {PRIMARY};
+}}
+.detail-tags {{
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}}
+.detail-tag {{
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: {BG_LIGHT};
+    font-size: 12px;
+    color: #555;
+}}
+.detail-link {{
+    color: #2980B9;
+    text-decoration: none;
+    word-break: break-all;
+}}
+.detail-link:hover {{
+    text-decoration: underline;
+}}
+.detail-stars {{
+    display: inline-flex;
+    gap: 2px;
+    cursor: pointer;
+}}
+.detail-star {{
+    font-size: 20px;
+    color: #ddd;
+    transition: color 0.1s;
+}}
+.detail-star.filled {{ color: #F1C40F; }}
+.detail-star:hover {{ color: #F39C12; }}
+.detail-actions {{
+    display: flex;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid {BORDER_LIGHT};
+}}
+.detail-actions button {{
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid {BORDER};
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+}}
+.detail-actions button:hover {{
+    background: {BG_LIGHT};
+}}
+.detail-actions .btn-danger {{
+    color: #e74c3c;
+    border-color: #e74c3c;
+}}
+.detail-actions .btn-danger:hover {{
+    background: #fef2f2;
 }}
 /* Mobile */
 @media (max-width: 768px) {{
@@ -288,6 +451,7 @@ def render_timeline(trip: Trip) -> str:
              :style="'border-left-color:' + catColor(attr.category)">
           <div style="flex:1;min-width:0;">
             <div class="card-name" x-text="attr.name"></div>
+            <div class="card-desc" x-show="attr.description" x-text="attr.description"></div>
             <div class="card-meta">
               <span x-show="attr.duration_minutes" x-text="fmtDuration(attr.duration_minutes)"></span>
               <span x-show="attr.price_eur != null" x-text="fmtPrice(attr.price_eur)"></span>
@@ -295,6 +459,7 @@ def render_timeline(trip: Trip) -> str:
                     x-text="'\\u2605' + (attr.expected_score||0).toFixed(1)"></span>
             </div>
           </div>
+          <button class="card-btn" @click.stop="openDetail(attr)" title="Details">&#x25BC;</button>
         </div>
       </template>
       <!-- Day trips -->
@@ -303,8 +468,10 @@ def render_timeline(trip: Trip) -> str:
              style="border-left-color:#1E8449;">
           <div style="flex:1;min-width:0;">
             <div class="card-name" x-text="dt.name"></div>
+            <div class="card-desc" x-show="dt.description" x-text="dt.description"></div>
             <div class="card-meta" style="color:#1E8449;">Day Trip</div>
           </div>
+          <button class="card-btn" @click.stop="openDayTripDetail(dt)" title="Details">&#x25BC;</button>
         </div>
       </template>
       <div x-show="!unscheduled.length && !unscheduledDayTrips.length"
@@ -377,19 +544,23 @@ def render_timeline(trip: Trip) -> str:
                    :data-activity-id="act.id"
                    :data-attraction-id="act.attraction_id || ''"
                    :style="'border-left-color:' + catColor(act.category) + ';min-height:' + Math.max(Math.round((act.duration_minutes || 30) * 0.5), 28) + 'px'">
-                <span class="drag-handle">&#x2630;</span>
                 <div style="flex:1;min-width:0;">
                   <div style="display:flex;align-items:center;gap:6px;">
                     <span class="card-time" x-show="act.start_time" x-text="act.start_time || ''"></span>
                     <span class="card-name" x-text="act.name"></span>
                   </div>
+                  <div class="card-desc" x-show="actDescription(act)" x-text="actDescription(act)"></div>
                   <div class="card-meta">
                     <span x-show="act.duration_minutes" x-text="fmtDuration(act.duration_minutes)"></span>
                     <span x-show="act.notes" x-text="act.notes" style="color:#888;font-style:italic;"></span>
                   </div>
                 </div>
-                <button class="act-remove" @click="unscheduleItem(day.date, act.id)"
-                        title="Remove">&times;</button>
+                <div class="card-buttons">
+                  <button class="card-btn btn-remove" @click.stop="unscheduleItem(day.date, act.id)"
+                          title="Remove">&times;</button>
+                  <button class="card-btn" @click.stop="openActivityDetail(act, day)"
+                          title="Details">&#x25BC;</button>
+                </div>
               </div>
             </template>
             <div class="day-col-empty" x-show="!day.activities || !day.activities.length">
@@ -407,14 +578,140 @@ def render_timeline(trip: Trip) -> str:
       </template>
     </div>
   </main>
+
+  <!-- Detail Modal -->
+  <template x-if="detail">
+    <div class="detail-backdrop" @mousedown.self="detail = null" @keydown.escape.window="detail = null">
+      <div class="detail-modal" @click.stop>
+        <div class="detail-header" :style="'background:' + catColor(detail.category || 'landmark')">
+          <div>
+            <h3 x-text="detail.name"></h3>
+            <div x-show="detail._catLabel" style="font-size:12px;opacity:0.85;margin-top:2px" x-text="detail._catLabel"></div>
+          </div>
+          <button class="detail-close" @click="detail = null">&times;</button>
+        </div>
+        <div class="detail-body">
+          <!-- Description -->
+          <div class="detail-desc" x-show="detail.description" x-text="detail.description"></div>
+          <!-- Tips -->
+          <div class="detail-desc" x-show="detail.tips" style="background:#fffbe6;padding:10px 12px;border-radius:8px;border-left:3px solid #F1C40F;">
+            <span style="font-weight:600;">Tip:</span> <span x-text="detail.tips"></span>
+          </div>
+
+          <!-- Score -->
+          <div class="detail-row">
+            <span class="detail-label">Your rating</span>
+            <div class="detail-stars">
+              <template x-for="s in [1,2,3,4,5,6,7,8,9,10]" :key="s">
+                <span class="detail-star"
+                      :class="s <= (detail.user_score || 0) ? 'filled' : ''"
+                      @click="setDetailScore(s)"
+                      x-text="'\\u2605'"></span>
+              </template>
+            </div>
+          </div>
+          <div class="detail-row" x-show="detail.expected_score">
+            <span class="detail-label">AI score</span>
+            <span class="detail-value" x-text="detail.expected_score ? detail.expected_score.toFixed(1) + '/10' : ''"></span>
+          </div>
+
+          <!-- Duration & Price -->
+          <div class="detail-row" x-show="detail.duration_minutes">
+            <span class="detail-label">Duration</span>
+            <span class="detail-value" x-text="fmtDuration(detail.duration_minutes)"></span>
+          </div>
+          <div class="detail-row" x-show="detail.price_eur != null">
+            <span class="detail-label">Price</span>
+            <span class="detail-value" x-text="fmtPrice(detail.price_eur)"></span>
+          </div>
+
+          <!-- Location -->
+          <div class="detail-row" x-show="detail.location && detail.location.address">
+            <span class="detail-label">Address</span>
+            <span class="detail-value" x-text="detail.location ? detail.location.address : ''"></span>
+          </div>
+          <div class="detail-row" x-show="detail.location && detail.location.lat">
+            <span class="detail-label">Coords</span>
+            <span class="detail-value">
+              <span x-text="detail.location ? detail.location.lat.toFixed(5) + ', ' + detail.location.lng.toFixed(5) : ''"></span>
+              <a :href="'https://www.google.com/maps?q=' + (detail.location ? detail.location.lat + ',' + detail.location.lng : '')"
+                 target="_blank" class="detail-link" style="margin-left:8px;font-size:12px">Open in Maps</a>
+            </span>
+          </div>
+
+          <!-- URL -->
+          <div class="detail-row" x-show="detail.url">
+            <span class="detail-label">Link</span>
+            <a :href="detail.url" target="_blank" class="detail-link detail-value" x-text="detail.url"></a>
+          </div>
+
+          <!-- Tags -->
+          <div class="detail-row" x-show="detail.tags && detail.tags.length">
+            <span class="detail-label">Tags</span>
+            <div class="detail-tags">
+              <template x-for="tag in (detail.tags || [])" :key="tag">
+                <span class="detail-tag" x-text="tag"></span>
+              </template>
+            </div>
+          </div>
+
+          <!-- Activity-specific: scheduled day & time -->
+          <template x-if="detail._dayDate">
+            <div class="detail-row">
+              <span class="detail-label">Scheduled</span>
+              <span class="detail-value" x-text="formatDate(detail._dayDate) + (detail._startTime ? ' at ' + detail._startTime : '')"></span>
+            </div>
+          </template>
+
+          <!-- Day Trip sub-attractions -->
+          <template x-if="detail._subAttractions && detail._subAttractions.length">
+            <div style="margin-top:12px;">
+              <div style="font-weight:600;font-size:13px;color:{PRIMARY};margin-bottom:6px;">Included Attractions</div>
+              <template x-for="sub in detail._subAttractions" :key="sub.id || sub.name">
+                <div style="padding:6px 0;border-bottom:1px solid {BORDER_LIGHT};font-size:13px;">
+                  <span style="font-weight:600" x-text="sub.name"></span>
+                  <span x-show="sub.description" style="color:#888;margin-left:6px" x-text="sub.description"></span>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <!-- Notes (activity-level) -->
+          <div class="detail-row" x-show="detail.notes">
+            <span class="detail-label">Notes</span>
+            <span class="detail-value" style="font-style:italic;color:#888" x-text="detail.notes"></span>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          <button @click="detail = null">Close</button>
+          <template x-if="detail._dayDate && detail._activityId">
+            <button class="btn-danger" @click="unscheduleItem(detail._dayDate, detail._activityId); detail = null;">Unschedule</button>
+          </template>
+          <template x-if="detail.id && !detail._activityId">
+            <button style="margin-left:auto;color:#e74c3c;border-color:#e74c3c;"
+                    @click="if(confirm('Delete this attraction?')) {{ deleteItem(detail); detail = null; }}">Delete</button>
+          </template>
+        </div>
+      </div>
+    </div>
+  </template>
 </div>
 
 <script>
 function kanbanTimeline() {{
     return {{
         _sortables: [],
+        _dragging: false,
         editing: null,
+        detail: null,
         catColors: {{{cat_colors_js}}},
+        catLabels: {{
+            'landmark': 'Landmark', 'museum': 'Museum', 'nature': 'Nature',
+            'food': 'Food & Drink', 'entertainment': 'Entertainment',
+            'transport': 'Transport', 'accommodation': 'Accommodation',
+            'shopping': 'Shopping', 'day_trip': 'Day Trip', 'infrastructure': 'Infrastructure'
+        }},
 
         catColor: function(c) {{ return this.catColors[c] || '#999'; }},
 
@@ -480,9 +777,10 @@ function kanbanTimeline() {{
 
         formatDate: function(d) {{
             if (!d) return '';
-            var parts = d.split('-');
+            var dt = new Date(d + 'T00:00:00');
+            var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
             var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            return months[parseInt(parts[1])-1] + ' ' + parseInt(parts[2]);
+            return days[dt.getDay()] + ', ' + months[dt.getMonth()] + ' ' + dt.getDate();
         }},
 
         dayStats: function(day) {{
@@ -547,11 +845,17 @@ function kanbanTimeline() {{
                     group: 'kanban',
                     sort: false,
                     draggable: '.pool-card',
+                    filter: '.card-btn',
+                    preventOnFilter: false,
                     ghostClass: 'sortable-ghost',
+                    onStart: function() {{ self._dragging = true; }},
+                    onEnd: function() {{ setTimeout(function() {{ self._dragging = false; }}, 50); }},
                     onAdd: function(evt) {{
                         // Activity dragged back from a day column
                         var actId = evt.item.dataset.activityId;
                         var fromDate = evt.from.dataset.dayList;
+                        // Remove the physically-moved DOM element — Alpine re-render handles it
+                        evt.item.parentNode.removeChild(evt.item);
                         if (actId && fromDate) {{
                             self.unscheduleItem(fromDate, actId);
                         }}
@@ -565,14 +869,18 @@ function kanbanTimeline() {{
                 self._sortables.push(Sortable.create(el, {{
                     group: 'kanban',
                     animation: 150,
-                    handle: '.drag-handle',
                     draggable: '.act-card,[data-attraction-id]',
+                    filter: '.card-btn',
+                    preventOnFilter: false,
                     ghostClass: 'sortable-ghost',
+                    onStart: function() {{ self._dragging = true; }},
                     onAdd: function(evt) {{
                         var targetDate = el.dataset.dayList;
                         var attractionId = evt.item.dataset.attractionId;
                         var activityId = evt.item.dataset.activityId;
                         var fromDate = evt.from.dataset.dayList;
+                        // Remove the physically-moved DOM element — Alpine re-render handles it
+                        evt.item.parentNode.removeChild(evt.item);
 
                         if (activityId && fromDate) {{
                             // Move from another day
@@ -583,6 +891,7 @@ function kanbanTimeline() {{
                         }}
                     }},
                     onEnd: function(evt) {{
+                        setTimeout(function() {{ self._dragging = false; }}, 50);
                         // Reorder within same day
                         if (evt.from === evt.to) {{
                             self.reorderDay(el.dataset.dayList, el);
@@ -641,6 +950,96 @@ function kanbanTimeline() {{
             this.$store.trip.swapDays(date1, date2).then(function() {{
                 self.$nextTick(function() {{ self.initAllSortables(); }});
             }});
+        }},
+
+        /* Description lookup for activity cards */
+        actDescription: function(act) {{
+            if (act.attraction_id) {{
+                var attr = (this.attractions || []).find(function(a) {{ return a.id === act.attraction_id; }});
+                return attr ? attr.description : '';
+            }}
+            if (act.day_trip_id) {{
+                var dt = (this.dayTrips || []).find(function(d) {{ return d.id === act.day_trip_id; }});
+                return dt ? dt.description : '';
+            }}
+            return '';
+        }},
+
+        /* Detail modal openers */
+        openDetail: function(attr) {{
+            if (this._dragging) return;
+            this.detail = Object.assign({{}}, attr, {{
+                _catLabel: this.catLabels[attr.category] || attr.category,
+                _dayDate: null,
+                _activityId: null,
+                _startTime: null,
+                _subAttractions: null
+            }});
+        }},
+
+        openDayTripDetail: function(dt) {{
+            if (this._dragging) return;
+            this.detail = Object.assign({{}}, dt, {{
+                category: 'day_trip',
+                _catLabel: 'Day Trip',
+                _dayDate: null,
+                _activityId: null,
+                _startTime: null,
+                _subAttractions: dt.sub_attractions || []
+            }});
+        }},
+
+        openActivityDetail: function(act, day) {{
+            if (this._dragging) return;
+            // Look up the full attraction/day-trip data
+            var source = null;
+            var subAttractions = null;
+            if (act.attraction_id) {{
+                source = (this.attractions || []).find(function(a) {{ return a.id === act.attraction_id; }});
+            }} else if (act.day_trip_id) {{
+                var dt = (this.dayTrips || []).find(function(d) {{ return d.id === act.day_trip_id; }});
+                if (dt) {{
+                    source = dt;
+                    subAttractions = dt.sub_attractions || [];
+                }}
+            }}
+            var merged = Object.assign({{}}, source || {{}}, {{
+                name: act.name,
+                category: act.category || (source ? source.category : 'landmark'),
+                duration_minutes: act.duration_minutes || (source ? source.duration_minutes : null),
+                price_eur: act.price_eur != null ? act.price_eur : (source ? source.price_eur : null),
+                notes: act.notes,
+                _catLabel: this.catLabels[act.category || (source ? source.category : '')] || '',
+                _dayDate: day.date,
+                _activityId: act.id,
+                _startTime: act.start_time || null,
+                _subAttractions: subAttractions
+            }});
+            this.detail = merged;
+        }},
+
+        setDetailScore: function(score) {{
+            if (!this.detail) return;
+            var self = this;
+            var id = this.detail.id;
+            this.detail.user_score = score;
+            // Determine if attraction or day trip
+            var isAttr = (this.attractions || []).some(function(a) {{ return a.id === id; }});
+            if (isAttr) {{
+                this.$store.trip.setScore(id, score);
+            }} else {{
+                this.$store.trip.setDayTripScore(id, score);
+            }}
+        }},
+
+        deleteItem: function(item) {{
+            if (!item || !item.id) return;
+            var isAttr = (this.attractions || []).some(function(a) {{ return a.id === item.id; }});
+            if (isAttr) {{
+                this.$store.trip.deleteAttraction(item.id);
+            }} else {{
+                this.$store.trip.deleteDayTrip(item.id);
+            }}
         }}
     }};
 }}

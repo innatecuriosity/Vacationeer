@@ -221,11 +221,16 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Left sidebar: unscheduled attractions pool (with day trips section)
   - Horizontal scrolling day columns — all days visible at once
   - SortableJS drag-and-drop: pool → day (schedule), day → pool (unschedule), day → day (move), within day (reorder)
-  - Day column headers: Day N, date, editable label; swap buttons (← →) to reorder days
+  - Day column headers: Day N, weekday + date (Mon, Jul 6), editable label; swap buttons (← →) to reorder days
   - Inline editing: click day label or notes to edit in-place (PATCH /api/days/{date})
-  - Activity cards: time, name, duration, notes; proportional min-height based on duration
+  - Activity cards: time, name, description, duration, notes; proportional min-height based on duration
+  - Pool cards show description/english name below attraction name
+  - Click-to-expand detail modal: full attraction info (description, tips, 10-star rating, duration, price, address, Google Maps link, URL, tags, scheduled day/time, day-trip sub-attractions); actions: unschedule, delete
+  - Card buttons: ▼ expand + × remove, 28×28px touch targets for mobile
+  - Whole card is draggable (no handle restriction), `user-select: none` prevents text selection; buttons excluded via SortableJS `filter`
   - Footer stats per day: total hours, cost, item count
   - Alpine.js `kanbanTimeline()` component reads from `$store.trip`, syncs via API after each drag
+  - SortableJS freeze fix: dragged DOM elements removed before Alpine re-render to prevent conflicts
   - Responsive: pool stacks on top, columns stack vertically on mobile
 - [x] **Sidebar chat** — Always-visible AI assistant panel in sidebar:
   - Dark-themed message bubbles with **markdown rendering** (via marked.js)
@@ -285,6 +290,7 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [x] Drag-and-drop reordering of activities within a day (SortableJS)
 - [x] Drag attractions from unscheduled pool into days
 - [x] Inline editing in map popups (duration, price, star rating)
+- [x] Click-to-expand detail modal on timeline cards (full info, links, rating, actions)
 - [ ] Click-to-edit time/duration/notes in timeline
 
 ### Planned — Chat / AI
