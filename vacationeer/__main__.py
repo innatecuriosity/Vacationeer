@@ -111,6 +111,50 @@ def serve(trip_path: Path, port: int):
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
 
 
+@cli.command("export")
+@click.argument("trip_path", type=click.Path(exists=True, path_type=Path))
+@click.option(
+    "-o", "--output",
+    type=click.Path(path_type=Path),
+    default=None,
+    help="Output directory. Defaults to export/<dest-slug>/",
+)
+def export_trip(trip_path: Path, output: Path | None):
+    """Export trip as a self-contained PWA folder for GitHub Pages."""
+    from vacationeer.pwa import (
+        generate_icon_svg,
+        generate_index_redirect,
+        generate_manifest,
+        generate_service_worker,
+    )
+
+    trip = load_trip(trip_path)
+    output_dir = output or PROJECT_ROOT / "export" / trip.dest_slug
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Build app + map HTML into the export dir
+    app_filename = _build_full_app(trip, output_dir)
+    click.echo(f"  App: {app_filename}")
+    click.echo(f"  Map: {trip.dest_slug}-map.html")
+
+    # PWA assets
+    (output_dir / "manifest.json").write_text(
+        generate_manifest(trip.destination, trip.dest_slug), encoding="utf-8"
+    )
+    (output_dir / "sw.js").write_text(
+        generate_service_worker(trip.dest_slug), encoding="utf-8"
+    )
+    (output_dir / "icon.svg").write_text(
+        generate_icon_svg(trip.destination[0]), encoding="utf-8"
+    )
+    (output_dir / "index.html").write_text(
+        generate_index_redirect(trip.dest_slug), encoding="utf-8"
+    )
+    click.echo(f"  manifest.json, sw.js, icon.svg, index.html")
+    click.echo(f"\nExported to: {output_dir}")
+    click.echo(f"Deploy to GitHub Pages or open index.html in a browser.")
+
+
 def _parse_date(value: str) -> date:
     return date.fromisoformat(value)
 

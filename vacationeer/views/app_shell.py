@@ -147,6 +147,11 @@ def generate_app(
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{esc(trip.name)} - Vacationeer</title>
+<meta name="theme-color" content="#1a2332">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
@@ -2253,6 +2258,11 @@ document.addEventListener('alpine:init', function() {{
         }});
     }});
 }})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {{
+    navigator.serviceWorker.register('./sw.js').catch(function() {{}});
+}}
 </script>
 </body>
 </html>"""
