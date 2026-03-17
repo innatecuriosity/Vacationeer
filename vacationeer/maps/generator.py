@@ -54,17 +54,12 @@ def _popup_html(a: Attraction) -> str:
             f'margin-top:8px;">Website \u2197</a>'
         )
 
-    # Star rating HTML (10 stars, clickable)
+    # Star rating HTML (display-only, no script tags allowed in folium popups)
     user_score = a.user_score or 0
     stars_html = ""
     for s in range(1, 11):
         filled = "#f39c12" if s <= user_score else "#ddd"
-        stars_html += (
-            f'<span onclick="setScore_{uid}({s})" '
-            f'style="cursor:pointer;font-size:16px;color:{filled};"'
-            f' id="star_{uid}_{s}"'
-            f'>&#x2605;</span>'
-        )
+        stars_html += f'<span style="font-size:14px;color:{filled};">&#x2605;</span>'
 
     desc_html = ""
     if a.description:
@@ -98,34 +93,12 @@ def _popup_html(a: Attraction) -> str:
       </div>
     </div>
 
-    <!-- User rating (clickable stars) -->
-    <div style="margin-bottom:8px;">
+    <!-- User rating (display only) -->
+    <div x-show="true" style="margin-bottom:8px;">
       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>
       <div style="display:flex;align-items:center;gap:1px;">
         {stars_html}
-        <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;" id="score_label_{uid}">{f'{user_score:.0f}/10' if user_score else ''}</span>
-      </div>
-    </div>
-
-    <!-- Editable fields -->
-    <div id="edit_section_{uid}" style="display:none;border-top:1px solid #f0f0f0;padding-top:8px;margin-top:4px;">
-      <div style="display:flex;gap:8px;margin-bottom:6px;">
-        <div style="flex:1;">
-          <label style="font-size:10px;color:#999;display:block;">Duration (min)</label>
-          <input type="number" id="edit_dur_{uid}" value="{a.duration_minutes or ''}" min="0" step="5"
-                 style="width:100%;padding:4px 6px;border:1px solid #ddd;border-radius:4px;font-size:12px;box-sizing:border-box;">
-        </div>
-        <div style="flex:1;">
-          <label style="font-size:10px;color:#999;display:block;">Price (&euro;)</label>
-          <input type="number" id="edit_price_{uid}" value="{a.price_eur if a.price_eur is not None else ''}" min="0" step="0.5"
-                 style="width:100%;padding:4px 6px;border:1px solid #ddd;border-radius:4px;font-size:12px;box-sizing:border-box;">
-        </div>
-      </div>
-      <div style="display:flex;gap:6px;">
-        <button onclick="saveEdit_{uid}()"
-                style="flex:1;padding:5px 10px;background:#27AE60;color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;">Save</button>
-        <button onclick="toggleEdit_{uid}()"
-                style="flex:1;padding:5px 10px;background:#eee;color:#666;border:none;border-radius:5px;font-size:11px;cursor:pointer;">Cancel</button>
+        <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">{f'{user_score:.0f}/10' if user_score else '—'}</span>
       </div>
     </div>
 
@@ -134,59 +107,10 @@ def _popup_html(a: Attraction) -> str:
 
     <!-- Action row -->
     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
-      <button onclick="toggleEdit_{uid}()"
-              style="padding:4px 10px;background:#f5f6f8;color:#1a2332;border:1px solid #ddd;border-radius:5px;font-size:11px;cursor:pointer;">&#x270f; Edit</button>
       {url_html}
     </div>
   </div>
 </div>
-
-<script>
-function setScore_{uid}(s) {{
-  for (var i = 1; i <= 10; i++) {{
-    var el = document.getElementById('star_{uid}_' + i);
-    if (el) el.style.color = i <= s ? '#f39c12' : '#ddd';
-  }}
-  var lbl = document.getElementById('score_label_{uid}');
-  if (lbl) lbl.textContent = s + '/10';
-  fetch('/api/attractions/{uid}/score', {{
-    method: 'POST',
-    headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify({{score: s}})
-  }}).then(function() {{
-    if (window.parent) window.parent.postMessage({{type: 'attraction-updated', id: '{uid}'}}, '*');
-  }});
-}}
-function toggleEdit_{uid}() {{
-  var el = document.getElementById('edit_section_{uid}');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}}
-function saveEdit_{uid}() {{
-  var dur = document.getElementById('edit_dur_{uid}').value;
-  var price = document.getElementById('edit_price_{uid}').value;
-  var body = {{}};
-  body.duration_minutes = dur !== '' ? parseInt(dur) : null;
-  body.price_eur = price !== '' ? parseFloat(price) : null;
-  fetch('/api/attractions/{uid}', {{
-    method: 'PATCH',
-    headers: {{'Content-Type': 'application/json'}},
-    body: JSON.stringify(body)
-  }}).then(function() {{
-    // Update display inline
-    var dEl = document.getElementById('dur_display_{uid}');
-    if (dEl) {{
-      if (dur) {{
-        var h = Math.floor(dur / 60), m = dur % 60;
-        dEl.textContent = h ? h + 'h' + (m ? String(m).padStart(2,'0') : '') : dur + ' min';
-      }} else dEl.textContent = '\\u2014';
-    }}
-    var pEl = document.getElementById('price_display_{uid}');
-    if (pEl) pEl.textContent = price === '' ? '\\u2014' : (parseFloat(price) === 0 ? 'Free' : '\\u20ac' + Math.round(price));
-    toggleEdit_{uid}();
-    if (window.parent) window.parent.postMessage({{type: 'attraction-updated', id: '{uid}'}}, '*');
-  }});
-}}
-</script>
 """
     return html
 
@@ -269,22 +193,21 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         tiles="CartoDB Voyager",
     )
 
-    # MarkerCluster groups nearby markers when zoomed out
-    cluster = MarkerCluster(
-        options={
-            "maxClusterRadius": 40,
-            "spiderfyOnMaxZoom": True,
-            "disableClusteringAtZoom": 15,
-            "showCoverageOnHover": False,
-        },
-    )
+    # One MarkerCluster per category — each has a name for the layer control
+    cluster_opts = {
+        "maxClusterRadius": 40,
+        "spiderfyOnMaxZoom": True,
+        "disableClusteringAtZoom": 15,
+        "showCoverageOnHover": False,
+    }
 
-    # Create a feature group per category — ALL categories, even if empty
-    groups: dict[Category, folium.FeatureGroup] = {}
+    groups: dict[Category, MarkerCluster] = {}
     for cat in Category:
         info = get_category_info(cat)
-        fg = folium.FeatureGroup(name=f"{info.html_icon} {info.label}")
-        groups[cat] = fg
+        groups[cat] = MarkerCluster(
+            name=f"{info.html_icon} {info.label}",
+            options=cluster_opts,
+        )
 
     for attraction in trip.attractions:
         info = get_category_info(attraction.category)
@@ -292,7 +215,6 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         popup_html = _popup_html(attraction)
         tooltip_html = _tooltip_html(attraction)
 
-        # Combined emoji + label in a single DivIcon (label sits below emoji)
         marker = folium.Marker(
             location=[attraction.location.lat, attraction.location.lng],
             icon=folium.DivIcon(
@@ -305,16 +227,9 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         )
         marker.add_to(groups[attraction.category])
 
-    # Add ALL groups to the cluster (even empty ones go directly to map for layer control)
-    for cat, fg in groups.items():
-        if any(True for _ in fg._children.values()):
-            # Groups with markers go through the cluster
-            fg.add_to(cluster)
-        else:
-            # Empty groups go directly to map so they appear in layer control
-            fg.add_to(m)
-
-    cluster.add_to(m)
+    # Add ALL clusters to map (even empty ones show in layer control)
+    for cat, cluster in groups.items():
+        cluster.add_to(m)
 
     # Unified layer control (top-right)
     folium.LayerControl(collapsed=False, position='topright').add_to(m)

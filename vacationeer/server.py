@@ -133,6 +133,20 @@ class ScheduleBody(BaseModel):
     start_time: Optional[str] = None  # "HH:MM" string
 
 
+class SwapDaysBody(BaseModel):
+    date1: str
+    date2: str
+
+
+class MoveActivityBody(BaseModel):
+    activity_id: str
+    target_date: str
+
+
+class AIPlanBody(BaseModel):
+    prompt: str
+
+
 class ChatMessage(BaseModel):
     role: str  # "user" or "assistant"
     content: str
@@ -549,6 +563,112 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         trip.days.sort(key=lambda d: d.date)
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         return day
+
+    # --- Static day routes BEFORE parameterized {day_date} ---
+
+    @app.post("/api/days/swap")
+    def swap_days(body: SwapDaysBody, background_tasks: BackgroundTasks):
+        from vacationeer.planning.scheduler import swap_days as _swap_days
+        trip = _trip()
+        d1 = date.fromisoformat(body.date1)
+        d2 = date.fromisoformat(body.date2)
+        trip = _swap_days(trip, d1, d2)
+        background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
+        return {"ok": True}
+
+    @app.post("/api/activities/move")
+    def move_activity(body: MoveActivityBody, background_tasks: BackgroundTasks):
+        from vacationeer.planning.scheduler import move_activity as _move_activity
+        trip = _trip()
+        target = date.fromisoformat(body.target_date)
+        trip = _move_activity(trip, body.activity_id, target)
+        background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
+        return {"ok": True}
+
+    @app.post("/api/days/{day_date}/ai-plan")
+    def ai_plan_day(day_date: str, body: AIPlanBody, background_tasks: BackgroundTasks):
+        from vacationeer.models.trip import Activity, Category as Cat
+        from vacationeer.pipeline.ai_provider import get_provider
+        trip = _trip()
+        idx, day = _find_day(day_date)
+
+        # Build list of unscheduled attractions
+        scheduled_ids = set()
+        for d in trip.days:
+            for act in d.activities:
+                if act.attraction_id:
+                    scheduled_ids.add(act.attraction_id)
+        unscheduled = [a for a in trip.attractions if a.id not in scheduled_ids]
+
+        if not unscheduled:
+            raise HTTPException(400, "No unscheduled attractions available")
+
+        attr_list = "\n".join(
+            f"- {a.id}: {a.name} ({a.duration_minutes or '?'}min, {a.category.value}, "
+            f"{'Free' if a.price_eur == 0 else ('€' + str(a.price_eur)) if a.price_eur else '?'}"
+            f"{', score ' + str(a.expected_score) if a.expected_score else ''})"
+            for a in unscheduled
+        )
+        prompt = (
+            f"Plan activities for {day_date} ({day.label or 'no label'}). "
+            f"User request: \"{body.prompt}\"\n\n"
+            f"Available unscheduled attractions:\n{attr_list}\n\n"
+            f"Return ONLY a JSON array, no other text:\n"
+            f'[{{"attraction_id": "...", "start_time": "HH:MM", "notes": "..."}}, ...]\n'
+            f"Pick attractions that fit the user's description. Order by start_time. "
+            f"For custom activities (not in the list), use: "
+            f'{{"name": "...", "start_time": "HH:MM", "duration_minutes": N, "category": "food|entertainment|...", "notes": "..."}}'
+        )
+
+        try:
+            provider = get_provider()
+            response = provider.complete(prompt, system="You are a travel planner. Return only valid JSON.")
+            # Extract JSON array from response
+            import json as _json
+            text = response.strip()
+            start = text.find("[")
+            end = text.rfind("]") + 1
+            if start < 0 or end <= start:
+                raise ValueError("No JSON array found in AI response")
+            items = _json.loads(text[start:end])
+        except Exception as e:
+            raise HTTPException(503, f"AI planning failed: {e}")
+
+        # Create activities from AI response
+        attr_map = {a.id: a for a in trip.attractions}
+        for item in items:
+            aid = item.get("attraction_id")
+            if aid and aid in attr_map:
+                a = attr_map[aid]
+                act = Activity(
+                    attraction_id=aid,
+                    name=a.name,
+                    start_time=item.get("start_time"),
+                    duration_minutes=a.duration_minutes,
+                    price_eur=a.price_eur,
+                    category=a.category,
+                    notes=item.get("notes"),
+                )
+            else:
+                cat_str = item.get("category", "entertainment")
+                try:
+                    cat = Cat(cat_str)
+                except ValueError:
+                    cat = Cat.ENTERTAINMENT
+                act = Activity(
+                    name=item.get("name", "Activity"),
+                    start_time=item.get("start_time"),
+                    duration_minutes=item.get("duration_minutes", 60),
+                    category=cat,
+                    notes=item.get("notes"),
+                )
+            day.activities.append(act)
+
+        trip.days[idx] = day
+        background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
+        return day
+
+    # --- Parameterized day routes ---
 
     @app.get("/api/days/{day_date}")
     def get_day(day_date: str):

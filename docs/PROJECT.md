@@ -217,13 +217,16 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Score bars (green 8+, yellow 6-8, red <6)
   - Tags as pills, tips box, URL buttons
   - Search and filter by category, sort by name/category/score/price
-- [x] **Timeline tab** — Split-panel drag-and-drop scheduler:
-  - Day tab bar for switching between days
-  - Left panel: day's scheduled activities (sortable, reorderable)
-  - Right panel: unscheduled attractions pool
-  - SortableJS drag-and-drop: pool → day (schedule), day → pool (unschedule), within day (reorder)
-  - Alpine.js component reads from `$store.trip`, syncs via API after each drag
-  - Responsive: stacks vertically on mobile
+- [x] **Timeline tab** — Kanban-style board with drag-and-drop:
+  - Left sidebar: unscheduled attractions pool (with day trips section)
+  - Horizontal scrolling day columns — all days visible at once
+  - SortableJS drag-and-drop: pool → day (schedule), day → pool (unschedule), day → day (move), within day (reorder)
+  - Day column headers: Day N, date, editable label; swap buttons (← →) to reorder days
+  - Inline editing: click day label or notes to edit in-place (PATCH /api/days/{date})
+  - Activity cards: time, name, duration, notes; proportional min-height based on duration
+  - Footer stats per day: total hours, cost, item count
+  - Alpine.js `kanbanTimeline()` component reads from `$store.trip`, syncs via API after each drag
+  - Responsive: pool stacks on top, columns stack vertically on mobile
 - [x] **Sidebar chat** — Always-visible AI assistant panel in sidebar:
   - Dark-themed message bubbles (assistant / user / error states)
   - Connected via `POST /api/chat` using AI provider cascade (Claude Code CLI → Anthropic API)
@@ -252,10 +255,14 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 
 ### Planned — Timeline (see docs/timeline-architecture.md)
 - [x] Backlog sidebar (unscheduled attractions pool with drag-and-drop)
-- [ ] Proportional time-axis (1 min = 1.5px, variable-height blocks)
+- [x] Kanban board with all days visible as columns
+- [x] Day swap/reorder via ← → buttons (POST /api/days/swap)
+- [x] Move activities between days via drag-and-drop (POST /api/activities/move)
+- [x] Inline editing of day label and notes
+- [x] Day stats in footers (hours, cost, item count)
+- [x] Duration-proportional card heights
+- [ ] AI day planning: auto-fill day from description (POST /api/days/{date}/ai-plan, endpoint ready)
 - [ ] Transit segments between activities (walking time via haversine)
-- [ ] Free time gap visualization
-- [ ] Day stats in headers (cost, walking distance, activity count)
 - [ ] CLI: `auto-plan` (geographic clustering + nearest-neighbor TSP)
 - [ ] Map sync via postMessage (highlight day's attractions + route polyline)
 
