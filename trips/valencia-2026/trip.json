@@ -5,10 +5,18 @@
   "start_date": "2026-03-21",
   "end_date": "2026-03-28",
   "travelers": 2,
-  "budget_eur": 2000,
+  "budget_eur": 2000.0,
   "preferences": {
-    "interests": ["history", "nature", "food", "science"],
-    "avoid": ["crowded", "expensive"],
+    "interests": [
+      "history",
+      "nature",
+      "food",
+      "science"
+    ],
+    "avoid": [
+      "crowded",
+      "expensive"
+    ],
     "pace": "moderate",
     "budget_per_day_eur": 250.0
   },
@@ -17,11 +25,19 @@
       "id": "oceanografic",
       "name": "Oceanografic",
       "description": "Europe's largest aquarium — 45,000+ animals, 500+ species, dolphin shows",
-      "location": { "lat": 39.4529, "lng": -0.3477, "address": "City of Arts and Sciences" },
+      "location": {
+        "lat": 39.4529,
+        "lng": -0.3477,
+        "address": "City of Arts and Sciences"
+      },
       "category": "landmark",
-      "price_eur": 41.80,
+      "price_eur": 41.8,
       "duration_minutes": 330,
-      "tags": ["must-do", "full-day", "included-in-combo"],
+      "tags": [
+        "must-do",
+        "full-day",
+        "included-in-combo"
+      ],
       "tips": "Start at Arctic end (belugas), arrive 20 min early for dolphin show",
       "url": "https://www.oceanografic.org/en/",
       "expected_score": 8.5,
@@ -31,11 +47,19 @@
       "id": "bioparc",
       "name": "Bioparc",
       "description": "Immersive African zoo — no visible cages, underwater hippo viewing",
-      "location": { "lat": 39.4788, "lng": -0.4074, "address": "Av. Pío Baroja, 3" },
+      "location": {
+        "lat": 39.4788,
+        "lng": -0.4074,
+        "address": "Av. Pío Baroja, 3"
+      },
       "category": "nature",
-      "price_eur": 29.50,
+      "price_eur": 29.5,
       "duration_minutes": 210,
-      "tags": ["must-do", "half-day", "included-in-combo"],
+      "tags": [
+        "must-do",
+        "half-day",
+        "included-in-combo"
+      ],
       "tips": "Start with savanna. Don't miss underwater hippo window",
       "url": "https://bioparcvalencia.es/en/",
       "expected_score": 8.0,
@@ -45,12 +69,19 @@
       "id": "science-museum",
       "name": "Museu de les Ciencies",
       "description": "3 floors of interactive science — Leonardo da Vinci exhibition, space, genetics",
-      "location": { "lat": 39.4557, "lng": -0.3521, "address": "City of Arts and Sciences" },
+      "location": {
+        "lat": 39.4557,
+        "lng": -0.3521,
+        "address": "City of Arts and Sciences"
+      },
       "category": "museum",
       "price_eur": 8.0,
       "duration_minutes": 150,
-      "tags": ["included-in-combo"],
+      "tags": [
+        "included-in-combo"
+      ],
       "tips": "Go weekday morning to avoid school groups",
+      "url": null,
       "expected_score": 9.0,
       "user_score": null
     },
@@ -58,12 +89,19 @@
       "id": "cathedral",
       "name": "Valencia Cathedral + Miguelete Tower",
       "description": "Gothic/Baroque/Renaissance mix, claims to house the Holy Grail. 207 steps for panoramic views",
-      "location": { "lat": 39.4753, "lng": -0.3753, "address": "Plaça de l'Almoina, s/n" },
+      "location": {
+        "lat": 39.4753,
+        "lng": -0.3753,
+        "address": "Plaça de l'Almoina, s/n"
+      },
       "category": "landmark",
       "price_eur": 10.0,
       "duration_minutes": 75,
-      "tags": ["free-during-mass"],
+      "tags": [
+        "free-during-mass"
+      ],
       "tips": "Free during mass hours",
+      "url": null,
       "expected_score": 8.5,
       "user_score": null
     },
@@ -71,11 +109,20 @@
       "id": "la-lonja",
       "name": "La Lonja de la Seda",
       "description": "15th-century Gothic silk exchange — UNESCO World Heritage, stunning twisted columns",
-      "location": { "lat": 39.4742, "lng": -0.3789, "address": "Carrer de la Llotja, 2" },
+      "location": {
+        "lat": 39.4742,
+        "lng": -0.3789,
+        "address": "Carrer de la Llotja, 2"
+      },
       "category": "landmark",
       "price_eur": 2.0,
       "duration_minutes": 45,
-      "tags": ["unesco", "free-sunday"],
+      "tags": [
+        "unesco",
+        "free-sunday"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 9.0,
       "user_score": null
     },
@@ -83,12 +130,20 @@
       "id": "mercado-central",
       "name": "Mercado Central",
       "description": "One of Europe's largest Art Nouveau food markets — 300+ stalls",
-      "location": { "lat": 39.4735, "lng": -0.3793, "address": "Plaça de la Ciutat de Bruges" },
+      "location": {
+        "lat": 39.4735,
+        "lng": -0.3793,
+        "address": "Plaça de la Ciutat de Bruges"
+      },
       "category": "food",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 60,
-      "tags": ["free-entry", "morning"],
+      "tags": [
+        "free-entry",
+        "morning"
+      ],
       "tips": "Go early 8-10am. Mon-Sat 7:30-15:00, closed Sun",
+      "url": null,
       "expected_score": 9.5,
       "user_score": null
     },
@@ -96,11 +151,20 @@
       "id": "turia-gardens",
       "name": "Turia Gardens",
       "description": "Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside",
-      "location": { "lat": 39.4780, "lng": -0.3700, "address": "Jardín del Turia" },
+      "location": {
+        "lat": 39.478,
+        "lng": -0.37,
+        "address": "Jardín del Turia"
+      },
       "category": "nature",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 120,
-      "tags": ["free", "cycling"],
+      "tags": [
+        "free",
+        "cycling"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 8.0,
       "user_score": null
     },
@@ -108,11 +172,20 @@
       "id": "almoina",
       "name": "L'Almoina Archaeological Centre",
       "description": "2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic",
-      "location": { "lat": 39.4756, "lng": -0.3748, "address": "Plaça de l'Almoina, s/n" },
+      "location": {
+        "lat": 39.4756,
+        "lng": -0.3748,
+        "address": "Plaça de l'Almoina, s/n"
+      },
       "category": "museum",
       "price_eur": 2.0,
       "duration_minutes": 50,
-      "tags": ["underrated", "free-sunday"],
+      "tags": [
+        "underrated",
+        "free-sunday"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 9.0,
       "user_score": null
     },
@@ -120,11 +193,19 @@
       "id": "torres-serranos",
       "name": "Torres de Serranos",
       "description": "14th-century city gate with great old town views",
-      "location": { "lat": 39.4792, "lng": -0.3755, "address": "Plaça dels Furs, s/n" },
+      "location": {
+        "lat": 39.4792,
+        "lng": -0.3755,
+        "address": "Plaça dels Furs, s/n"
+      },
       "category": "landmark",
       "price_eur": 2.0,
       "duration_minutes": 30,
-      "tags": ["free-sunday"],
+      "tags": [
+        "free-sunday"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 7.5,
       "user_score": null
     },
@@ -132,11 +213,17 @@
       "id": "hemisferic",
       "name": "L'Hemisferic",
       "description": "Europe's largest IMAX screen and planetarium inside a giant eye-shaped building",
-      "location": { "lat": 39.4540, "lng": -0.3503, "address": "City of Arts and Sciences" },
+      "location": {
+        "lat": 39.454,
+        "lng": -0.3503,
+        "address": "City of Arts and Sciences"
+      },
       "category": "entertainment",
       "price_eur": 8.0,
       "duration_minutes": 60,
-      "tags": ["included-in-combo"],
+      "tags": [
+        "included-in-combo"
+      ],
       "tips": "Pick a planetarium show over IMAX — better for adults. Check schedule at cac.es",
       "url": "https://www.cac.es/en/hemisferic/",
       "expected_score": 7.0,
@@ -146,12 +233,19 @@
       "id": "liber-toy-soldiers",
       "name": "L'Iber Museum of Toy Soldiers",
       "description": "World's largest collection of historical miniatures — 100,000+ figures in obsessively detailed dioramas",
-      "location": { "lat": 39.4748, "lng": -0.3769, "address": "Carrer dels Cavallers, 20" },
+      "location": {
+        "lat": 39.4748,
+        "lng": -0.3769,
+        "address": "Carrer dels Cavallers, 20"
+      },
       "category": "museum",
       "price_eur": 8.0,
       "duration_minutes": 90,
-      "tags": ["hidden-gem"],
+      "tags": [
+        "hidden-gem"
+      ],
       "tips": "Adults enjoy it more than kids. Tue-Sat 11-14 & 16-19, Sun 11-14",
+      "url": null,
       "expected_score": 7.5,
       "user_score": null
     },
@@ -159,12 +253,19 @@
       "id": "museum-of-illusions",
       "name": "Museum of Illusions",
       "description": "60+ optical illusion exhibits — holograms, impossible rooms, gravity-defying perspectives",
-      "location": { "lat": 39.4710, "lng": -0.3770, "address": "Carrer dels Cavallers, 6" },
+      "location": {
+        "lat": 39.471,
+        "lng": -0.377,
+        "address": "Carrer dels Cavallers, 6"
+      },
       "category": "entertainment",
       "price_eur": 13.0,
       "duration_minutes": 60,
-      "tags": ["photogenic"],
+      "tags": [
+        "photogenic"
+      ],
       "tips": "Fun lighthearted break from history. Daily 10-21",
+      "url": null,
       "expected_score": 5.5,
       "user_score": null
     },
@@ -172,12 +273,21 @@
       "id": "prehistoric-caves",
       "name": "Prehistoric Caves Exhibition",
       "description": "Immersive recreation of French prehistoric cave galleries with projections and reconstructions — ending March 31",
-      "location": { "lat": 39.4717, "lng": -0.3837, "address": "Museu de Prehistoria, C/ de la Corona, 36" },
+      "location": {
+        "lat": 39.4717,
+        "lng": -0.3837,
+        "address": "Museu de Prehistoria, C/ de la Corona, 36"
+      },
       "category": "museum",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 60,
-      "tags": ["free", "temporary", "ending-soon"],
+      "tags": [
+        "free",
+        "temporary",
+        "ending-soon"
+      ],
       "tips": "Check availability — exhibition ends March 31, 2026",
+      "url": null,
       "expected_score": 7.5,
       "user_score": null
     },
@@ -185,12 +295,20 @@
       "id": "museo-del-arroz",
       "name": "Museo del Arroz",
       "description": "Rice cultivation and its role in Valencian cuisine — housed in a historic rice mill near the port",
-      "location": { "lat": 39.4620, "lng": -0.3310, "address": "C/ del Rosari, 3" },
+      "location": {
+        "lat": 39.462,
+        "lng": -0.331,
+        "address": "C/ del Rosari, 3"
+      },
       "category": "museum",
       "price_eur": 2.0,
       "duration_minutes": 40,
-      "tags": ["free-sunday", "quirky"],
+      "tags": [
+        "free-sunday",
+        "quirky"
+      ],
       "tips": "Pair with paella lunch nearby. Free on Sundays",
+      "url": null,
       "expected_score": 6.5,
       "user_score": null
     },
@@ -198,12 +316,19 @@
       "id": "museo-fallero",
       "name": "Museo Fallero",
       "description": "Every pardoned Fallas ninot since 1934 — nearly a century of Valencian artistry and satire",
-      "location": { "lat": 39.4560, "lng": -0.3540, "address": "Pl. de Monteolivete, 4" },
+      "location": {
+        "lat": 39.456,
+        "lng": -0.354,
+        "address": "Pl. de Monteolivete, 4"
+      },
       "category": "museum",
       "price_eur": 2.0,
       "duration_minutes": 60,
-      "tags": ["free-sunday"],
+      "tags": [
+        "free-sunday"
+      ],
       "tips": "Better post-festival when it's quiet. Pair with City of Arts and Sciences nearby",
+      "url": null,
       "expected_score": 7.0,
       "user_score": null
     },
@@ -211,11 +336,19 @@
       "id": "torres-de-quart",
       "name": "Torres de Quart",
       "description": "Western medieval gate with visible Napoleonic cannonball damage — less crowded than Serranos",
-      "location": { "lat": 39.4741, "lng": -0.3832, "address": "C/ de Quart, s/n" },
+      "location": {
+        "lat": 39.4741,
+        "lng": -0.3832,
+        "address": "C/ de Quart, s/n"
+      },
       "category": "landmark",
       "price_eur": 2.0,
       "duration_minutes": 30,
-      "tags": ["free-sunday"],
+      "tags": [
+        "free-sunday"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 7.0,
       "user_score": null
     },
@@ -223,12 +356,21 @@
       "id": "city-of-arts-exterior",
       "name": "City of Arts and Sciences (Exterior)",
       "description": "Calatrava's futuristic complex — free to walk around, spectacular at sunset reflected in water pools",
-      "location": { "lat": 39.4545, "lng": -0.3505, "address": "Av. del Professor Lopez Pinero, 7" },
+      "location": {
+        "lat": 39.4545,
+        "lng": -0.3505,
+        "address": "Av. del Professor Lopez Pinero, 7"
+      },
       "category": "landmark",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 60,
-      "tags": ["free", "sunset", "photogenic"],
+      "tags": [
+        "free",
+        "sunset",
+        "photogenic"
+      ],
       "tips": "Best at sunset when the buildings reflect in the water pools",
+      "url": null,
       "expected_score": 8.5,
       "user_score": null
     },
@@ -236,11 +378,19 @@
       "id": "plaza-de-la-virgen",
       "name": "Plaza de la Virgen",
       "description": "Historic heart of old town — Roman forum site, Turia fountain, surrounded by Cathedral and Basilica",
-      "location": { "lat": 39.4756, "lng": -0.3758, "address": "Plaça de la Mare de Deu" },
+      "location": {
+        "lat": 39.4756,
+        "lng": -0.3758,
+        "address": "Plaça de la Mare de Deu"
+      },
       "category": "landmark",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 30,
-      "tags": ["free"],
+      "tags": [
+        "free"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 7.5,
       "user_score": null
     },
@@ -248,11 +398,19 @@
       "id": "plaza-del-ayuntamiento",
       "name": "Plaza del Ayuntamiento",
       "description": "Valencia's grand central square — ornate City Hall, fountains, flower stalls",
-      "location": { "lat": 39.4697, "lng": -0.3764, "address": "Plaça de l'Ajuntament" },
+      "location": {
+        "lat": 39.4697,
+        "lng": -0.3764,
+        "address": "Plaça de l'Ajuntament"
+      },
       "category": "landmark",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 20,
-      "tags": ["free"],
+      "tags": [
+        "free"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 7.0,
       "user_score": null
     },
@@ -260,12 +418,20 @@
       "id": "museo-bellas-artes",
       "name": "Museo de Bellas Artes",
       "description": "Spain's second-best art gallery — El Greco, Goya, Velazquez. Always free",
-      "location": { "lat": 39.4793, "lng": -0.3695, "address": "C/ de Sant Pius V, 9" },
+      "location": {
+        "lat": 39.4793,
+        "lng": -0.3695,
+        "address": "C/ de Sant Pius V, 9"
+      },
       "category": "museum",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 75,
-      "tags": ["free", "art"],
+      "tags": [
+        "free",
+        "art"
+      ],
       "tips": "Worth a walk-through for the building and garden setting even if galleries aren't your thing",
+      "url": null,
       "expected_score": 7.5,
       "user_score": null
     },
@@ -273,11 +439,20 @@
       "id": "centre-del-carme",
       "name": "Centre del Carme (CCCC)",
       "description": "Contemporary art in a 13th-century convent — go for the beautiful medieval cloisters",
-      "location": { "lat": 39.4785, "lng": -0.3791, "address": "C/ del Museu, 2" },
+      "location": {
+        "lat": 39.4785,
+        "lng": -0.3791,
+        "address": "C/ del Museu, 2"
+      },
       "category": "museum",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 60,
-      "tags": ["free", "art"],
+      "tags": [
+        "free",
+        "art"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 7.0,
       "user_score": null
     },
@@ -285,11 +460,17 @@
       "id": "jardin-botanico",
       "name": "Jardin Botanico",
       "description": "16th-century botanical garden with tropical species, cacti, and greenhouses — peaceful retreat",
-      "location": { "lat": 39.4732, "lng": -0.3856, "address": "C/ de Quart, 80" },
+      "location": {
+        "lat": 39.4732,
+        "lng": -0.3856,
+        "address": "C/ de Quart, 80"
+      },
       "category": "nature",
       "price_eur": 4.0,
       "duration_minutes": 60,
       "tags": [],
+      "tips": null,
+      "url": null,
       "expected_score": 7.0,
       "user_score": null
     },
@@ -297,11 +478,19 @@
       "id": "viveros-gardens",
       "name": "Viveros Gardens",
       "description": "Large park with fountains next to Bellas Artes museum — free and relaxing",
-      "location": { "lat": 39.4810, "lng": -0.3680, "address": "C/ de Sant Pius V, s/n" },
+      "location": {
+        "lat": 39.481,
+        "lng": -0.368,
+        "address": "C/ de Sant Pius V, s/n"
+      },
       "category": "nature",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 45,
-      "tags": ["free"],
+      "tags": [
+        "free"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 6.5,
       "user_score": null
     },
@@ -309,12 +498,19 @@
       "id": "mercado-colon",
       "name": "Mercado Colon",
       "description": "Restored Modernist building turned upscale food court — try horchata and fartons",
-      "location": { "lat": 39.4672, "lng": -0.3712, "address": "C/ de Jorge Juan, 19" },
+      "location": {
+        "lat": 39.4672,
+        "lng": -0.3712,
+        "address": "C/ de Jorge Juan, 19"
+      },
       "category": "food",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 45,
-      "tags": ["free-entry"],
+      "tags": [
+        "free-entry"
+      ],
       "tips": "Must try horchata and fartons here",
+      "url": null,
       "expected_score": 7.5,
       "user_score": null
     },
@@ -322,11 +518,20 @@
       "id": "mercado-de-ruzafa",
       "name": "Mercado de Ruzafa",
       "description": "Local market in trendy Ruzafa — less touristy, explore street art and tapas bars nearby",
-      "location": { "lat": 39.4618, "lng": -0.3720, "address": "C/ del Literat Azorin, 17" },
+      "location": {
+        "lat": 39.4618,
+        "lng": -0.372,
+        "address": "C/ del Literat Azorin, 17"
+      },
       "category": "food",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 40,
-      "tags": ["free-entry", "local"],
+      "tags": [
+        "free-entry",
+        "local"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 7.0,
       "user_score": null
     },
@@ -334,12 +539,19 @@
       "id": "el-hachazo",
       "name": "El Hachazo (Axe Throwing)",
       "description": "Throw axes at targets — no experience needed, instructor-guided, includes a drink",
-      "location": { "lat": 39.4665, "lng": -0.3780, "address": "C/ de Cuba, 38" },
+      "location": {
+        "lat": 39.4665,
+        "lng": -0.378,
+        "address": "C/ de Cuba, 38"
+      },
       "category": "entertainment",
       "price_eur": 19.0,
       "duration_minutes": 60,
-      "tags": ["date-activity"],
+      "tags": [
+        "date-activity"
+      ],
       "tips": "Book ahead — popular on evenings and weekends",
+      "url": null,
       "expected_score": 7.0,
       "user_score": null
     },
@@ -347,12 +559,17 @@
       "id": "virtual-zone-vr",
       "name": "Virtual Zone VR",
       "description": "Europe's largest VR arena — free-roam multiplayer games, not a booth experience",
-      "location": { "lat": 39.4615, "lng": -0.3715, "address": "Ruzafa, Valencia" },
+      "location": {
+        "lat": 39.4615,
+        "lng": -0.3715,
+        "address": "Ruzafa, Valencia"
+      },
       "category": "entertainment",
       "price_eur": 25.0,
       "duration_minutes": 60,
       "tags": [],
       "tips": "Combine with Ruzafa tapas and street art",
+      "url": null,
       "expected_score": 6.0,
       "user_score": null
     },
@@ -360,11 +577,20 @@
       "id": "gulliver-park",
       "name": "Gulliver Park",
       "description": "Giant Gulliver sculpture with slides and climbing — fun even for adults, inside Turia Gardens",
-      "location": { "lat": 39.4620, "lng": -0.3590, "address": "Jardín del Turia, tramo XII" },
+      "location": {
+        "lat": 39.462,
+        "lng": -0.359,
+        "address": "Jardín del Turia, tramo XII"
+      },
       "category": "entertainment",
-      "price_eur": 0,
+      "price_eur": 0.0,
       "duration_minutes": 30,
-      "tags": ["free", "playful"],
+      "tags": [
+        "free",
+        "playful"
+      ],
+      "tips": null,
+      "url": null,
       "expected_score": 6.5,
       "user_score": null
     },
@@ -372,55 +598,387 @@
       "id": "cines-babel",
       "name": "Cines Babel",
       "description": "Independent cinema showing films in original language — vintage charm, curated programme",
-      "location": { "lat": 39.4680, "lng": -0.3710, "address": "C/ de Vicente Sancho Tello, 10" },
+      "location": {
+        "lat": 39.468,
+        "lng": -0.371,
+        "address": "C/ de Vicente Sancho Tello, 10"
+      },
       "category": "entertainment",
       "price_eur": 8.0,
       "duration_minutes": 120,
-      "tags": ["hidden-gem", "rainy-day"],
+      "tags": [
+        "hidden-gem",
+        "rainy-day"
+      ],
       "tips": "Check programme at cinesbabel.com. Perfect for a rainy evening",
       "url": "https://www.cinesbabel.com/",
       "expected_score": 6.0,
       "user_score": null
-    },
+    }
+  ],
+  "day_trips": [
     {
       "id": "sagunto-day-trip",
-      "name": "Sagunto",
+      "name": "Sagunto Day Trip",
+      "destination": "Sagunto",
       "description": "Roman theatre, hilltop castle with panoramic views, Jewish quarter — 30 min by train from Valencia",
-      "location": { "lat": 39.6800, "lng": -0.2650, "address": "Sagunto, Valencia province" },
-      "category": "day_trip",
-      "price_eur": 12.0,
-      "duration_minutes": 360,
-      "tags": ["history", "roman-ruins", "free-attractions"],
-      "tips": "Best value day trip — castle and theatre are free. Closed Mondays. Train from Estacio del Nord",
+      "location": {
+        "lat": 39.68,
+        "lng": -0.265,
+        "address": "Sagunto, Valencia province"
+      },
+      "sub_attractions": [
+        {
+          "id": "sagunto-roman-theatre",
+          "name": "Roman Theatre (Teatro Romano)",
+          "description": "1st-century AD theatre carved into hillside, seats 4,000. Spain's first National Monument (1896)",
+          "location": {
+            "lat": 39.681,
+            "lng": -0.264,
+            "address": "Calle del Castillo, Sagunto"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 40,
+          "tags": [
+            "free",
+            "roman-ruins"
+          ],
+          "tips": null,
+          "url": null,
+          "expected_score": null,
+          "user_score": null
+        },
+        {
+          "id": "sagunto-castle",
+          "name": "Sagunto Castle",
+          "description": "Nearly 1 km hilltop fortress spanning 2,000+ years — Iberian, Roman, Moorish, and medieval layers",
+          "location": {
+            "lat": 39.682,
+            "lng": -0.263,
+            "address": "Castillo de Sagunto"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 90,
+          "tags": [
+            "free",
+            "panoramic-views"
+          ],
+          "tips": null,
+          "url": null,
+          "expected_score": null,
+          "user_score": null
+        },
+        {
+          "id": "sagunto-jewish-quarter",
+          "name": "Jewish Quarter (Juderia)",
+          "description": "Medieval Jewish quarter with narrow streets, one of the few maintained under Moorish rule",
+          "location": {
+            "lat": 39.6795,
+            "lng": -0.2655,
+            "address": "Barrio Judio, Sagunto"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 30,
+          "tags": [
+            "free",
+            "history"
+          ],
+          "tips": null,
+          "url": null,
+          "expected_score": null,
+          "user_score": null
+        }
+      ],
+      "outbound": {
+        "mode": "train",
+        "origin": "Valencia Estacio del Nord",
+        "destination": "Sagunt station",
+        "departure_time": null,
+        "arrival_time": null,
+        "duration_minutes": 30,
+        "price_eur": 3.7,
+        "booking_reference": null,
+        "notes": "Renfe Cercanias C-5/C-6, every 20-30 min"
+      },
+      "return_trip": {
+        "mode": "train",
+        "origin": "Sagunt station",
+        "destination": "Valencia Estacio del Nord",
+        "departure_time": null,
+        "arrival_time": null,
+        "duration_minutes": 30,
+        "price_eur": 3.7,
+        "booking_reference": null,
+        "notes": "Last train ~22:00"
+      },
+      "total_price_eur": 7.4,
+      "total_duration_minutes": 360,
+      "tags": [
+        "history",
+        "roman-ruins",
+        "free-attractions"
+      ],
+      "tips": "Best value day trip — castle and theatre are free. Closed Mondays",
       "expected_score": 8.0,
       "user_score": null
     },
     {
-      "id": "albufera-el-palmar",
-      "name": "Albufera + El Palmar",
+      "id": "albufera-day-trip",
+      "name": "Albufera + El Palmar Day Trip",
+      "destination": "Albufera / El Palmar",
       "description": "Freshwater lagoon nature park and birthplace of paella — sunset boat rides through rice paddies",
-      "location": { "lat": 39.3330, "lng": -0.3530, "address": "Parc Natural de l'Albufera" },
-      "category": "day_trip",
-      "price_eur": 20.0,
-      "duration_minutes": 300,
-      "tags": ["nature", "paella", "sunset", "birdwatching"],
-      "tips": "Bus 25 from Valencia (50 min). Eat authentic paella in El Palmar. Sunset boat ride is the highlight",
+      "location": {
+        "lat": 39.333,
+        "lng": -0.353,
+        "address": "Parc Natural de l'Albufera"
+      },
+      "sub_attractions": [
+        {
+          "id": "albufera-boat-ride",
+          "name": "Albufera Sunset Boat Ride",
+          "description": "Traditional wooden boat ride through the lagoon and rice paddies at sunset",
+          "location": {
+            "lat": 39.334,
+            "lng": -0.352,
+            "address": "Embarcadero Albufera"
+          },
+          "category": "nature",
+          "price_eur": 5.0,
+          "duration_minutes": 45,
+          "tags": [
+            "sunset",
+            "highlight"
+          ],
+          "tips": null,
+          "url": null,
+          "expected_score": null,
+          "user_score": null
+        },
+        {
+          "id": "albufera-paella-lunch",
+          "name": "Authentic Paella Lunch in El Palmar",
+          "description": "Eat paella at its birthplace — El Palmar restaurants serve the real deal",
+          "location": {
+            "lat": 39.315,
+            "lng": -0.342,
+            "address": "El Palmar village"
+          },
+          "category": "food",
+          "price_eur": 15.0,
+          "duration_minutes": 90,
+          "tags": [
+            "paella",
+            "must-do"
+          ],
+          "tips": null,
+          "url": null,
+          "expected_score": null,
+          "user_score": null
+        },
+        {
+          "id": "albufera-nature-walk",
+          "name": "Albufera Nature Park Walk",
+          "description": "Walking trails through wetlands — birdwatching, rice fields, lagoon views",
+          "location": {
+            "lat": 39.337,
+            "lng": -0.355,
+            "address": "Parc Natural de l'Albufera"
+          },
+          "category": "nature",
+          "price_eur": 0.0,
+          "duration_minutes": 60,
+          "tags": [
+            "free",
+            "birdwatching"
+          ],
+          "tips": null,
+          "url": null,
+          "expected_score": null,
+          "user_score": null
+        }
+      ],
+      "outbound": {
+        "mode": "bus",
+        "origin": "Valencia (Plaza del Ayuntamiento)",
+        "destination": "El Palmar / Albufera",
+        "departure_time": null,
+        "arrival_time": null,
+        "duration_minutes": 50,
+        "price_eur": 1.5,
+        "booking_reference": null,
+        "notes": "Bus line 25, runs regularly"
+      },
+      "return_trip": {
+        "mode": "bus",
+        "origin": "El Palmar / Albufera",
+        "destination": "Valencia (Plaza del Ayuntamiento)",
+        "departure_time": null,
+        "arrival_time": null,
+        "duration_minutes": 50,
+        "price_eur": 1.5,
+        "booking_reference": null,
+        "notes": "Check last bus time — can be early"
+      },
+      "total_price_eur": 23.0,
+      "total_duration_minutes": 300,
+      "tags": [
+        "nature",
+        "paella",
+        "sunset",
+        "birdwatching"
+      ],
+      "tips": "Eat authentic paella in El Palmar. Sunset boat ride is the highlight",
       "expected_score": 8.5,
       "user_score": null
     },
     {
       "id": "xativa-day-trip",
-      "name": "Xativa",
+      "name": "Xativa Day Trip",
+      "destination": "Xativa",
       "description": "Impressive hilltop castle, Borgia family history, medieval old town — 50 min by train",
-      "location": { "lat": 38.9900, "lng": -0.5185, "address": "Xativa, Valencia province" },
-      "category": "day_trip",
-      "price_eur": 35.0,
-      "duration_minutes": 420,
-      "tags": ["history", "castle", "borgia"],
-      "tips": "Train from Estacio del Nord. Closed Mondays. The castle views are among the best in the region",
+      "location": {
+        "lat": 38.99,
+        "lng": -0.5185,
+        "address": "Xativa, Valencia province"
+      },
+      "sub_attractions": [
+        {
+          "id": "xativa-castle",
+          "name": "Xativa Castle",
+          "description": "Double-walled hilltop fortress with spectacular views — one of the best castles in the Valencia region",
+          "location": {
+            "lat": 38.992,
+            "lng": -0.52,
+            "address": "Castillo de Xativa"
+          },
+          "category": "landmark",
+          "price_eur": 6.0,
+          "duration_minutes": 120,
+          "tags": [
+            "panoramic-views",
+            "highlight"
+          ],
+          "tips": null,
+          "url": null,
+          "expected_score": null,
+          "user_score": null
+        },
+        {
+          "id": "xativa-old-town",
+          "name": "Xativa Old Town & Borgia Sites",
+          "description": "Medieval streets, Borgia family connections, Collegiate Basilica, Almodi museum",
+          "location": {
+            "lat": 38.99,
+            "lng": -0.518,
+            "address": "Centro Historico, Xativa"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 90,
+          "tags": [
+            "borgia",
+            "history",
+            "free"
+          ],
+          "tips": null,
+          "url": null,
+          "expected_score": null,
+          "user_score": null
+        }
+      ],
+      "outbound": {
+        "mode": "train",
+        "origin": "Valencia Estacio del Nord",
+        "destination": "Xativa station",
+        "departure_time": null,
+        "arrival_time": null,
+        "duration_minutes": 55,
+        "price_eur": 6.5,
+        "booking_reference": null,
+        "notes": "Renfe regional train, roughly hourly"
+      },
+      "return_trip": {
+        "mode": "train",
+        "origin": "Xativa station",
+        "destination": "Valencia Estacio del Nord",
+        "departure_time": null,
+        "arrival_time": null,
+        "duration_minutes": 55,
+        "price_eur": 6.5,
+        "booking_reference": null,
+        "notes": "Last train ~21:30"
+      },
+      "total_price_eur": 19.0,
+      "total_duration_minutes": 420,
+      "tags": [
+        "history",
+        "castle",
+        "borgia"
+      ],
+      "tips": "Closed Mondays. The castle views are among the best in the region",
       "expected_score": 8.0,
       "user_score": null
     }
   ],
-  "days": []
+  "days": [
+    {
+      "date": "2026-03-21",
+      "label": null,
+      "start_time": null,
+      "activities": [],
+      "notes": null
+    },
+    {
+      "date": "2026-03-22",
+      "label": null,
+      "start_time": null,
+      "activities": [],
+      "notes": null
+    },
+    {
+      "date": "2026-03-23",
+      "label": null,
+      "start_time": null,
+      "activities": [],
+      "notes": null
+    },
+    {
+      "date": "2026-03-24",
+      "label": null,
+      "start_time": null,
+      "activities": [],
+      "notes": null
+    },
+    {
+      "date": "2026-03-25",
+      "label": null,
+      "start_time": null,
+      "activities": [],
+      "notes": null
+    },
+    {
+      "date": "2026-03-26",
+      "label": null,
+      "start_time": null,
+      "activities": [],
+      "notes": null
+    },
+    {
+      "date": "2026-03-27",
+      "label": null,
+      "start_time": null,
+      "activities": [],
+      "notes": null
+    },
+    {
+      "date": "2026-03-28",
+      "label": null,
+      "start_time": null,
+      "activities": [],
+      "notes": null
+    }
+  ]
 }

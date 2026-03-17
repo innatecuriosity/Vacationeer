@@ -1,7 +1,14 @@
 # Timeline Feature Architecture Plan
 
 ## Current State
-Static HTML generator. Trip has `attractions` (backlog) and `days` (each with `activities`). Activity model already has `attraction_id`, `start_time`, `duration_minutes`, `status`. Valencia trip has 32 attractions, zero days planned.
+Static HTML generator with scheduling CLI. Trip has `attractions` (backlog), `day_trips` (composite entities with sub-attractions and travel segments), and `days` (each with `activities`). Activity model has `attraction_id`, `day_trip_id`, `start_time`, `duration_minutes`, `status`, `category` (denormalized), `travel_from_prev_minutes`. Valencia trip has 29 attractions + 3 day trips (Sagunto, Albufera, Xativa), each with sub-attractions and outbound/return TravelSegments.
+
+### Already implemented
+- Model additions (Activity: `category`, `travel_from_prev_minutes`, `day_trip_id`; Day: `start_time`)
+- `DayTrip` model with `sub_attractions`, `outbound`/`return_trip` TravelSegments
+- `TripStore` Protocol + `JsonTripStore` (storage abstraction)
+- `planning/scheduler.py`: `init_days`, `schedule`, `schedule_day_trip`, `unschedule`, `get_unscheduled`, `swap_days`, `move_activity`
+- CLI commands: `init-days`, `schedule`, `schedule-day-trip`, `unschedule`, `backlog`, `swap-days`, `move-activity`
 
 ---
 
@@ -15,14 +22,20 @@ Static HTML generator. Trip has `attractions` (backlog) and `days` (each with `a
 ### Day structure: ordered list with optional times
 Not rigid morning/afternoon/evening blocks — real travel days are fluid. If times are set, render a time axis; if not, render a simple sequence.
 
-### Model additions (backward-compatible)
+### Model additions (implemented)
 ```python
-# Activity — add:
-    category: Optional[Category] = None        # Denormalized for display
-    travel_from_prev_minutes: Optional[int] = None  # Transit from previous
+# Activity — added:
+    category: Optional[Category] = None             # Denormalized for display
+    travel_from_prev_minutes: Optional[int] = None   # Transit from previous
+    day_trip_id: Optional[str] = None                # Links back to DayTrip source
 
-# Day — add:
+# Day — added:
     start_time: Optional[time] = None   # Day start for layout
+
+# New models:
+    TravelSegment  # mode, origin, destination, times, price, booking_reference
+    DayTrip        # destination, sub_attractions, outbound/return_trip TravelSegments
+    TravelMode     # train, bus, car, walk, boat, metro
 ```
 
 ### Travel time
@@ -74,20 +87,19 @@ Just activities with `category = FOOD` and no `attraction_id`. Keeps model unifo
 
 ## 3. Day Management
 
-### Unscheduled attractions (backlog)
-Sidebar panel listing attractions not assigned to any day:
-```python
-def _get_unscheduled(trip):
-    scheduled_ids = {act.attraction_id for day in trip.days for act in day.activities if act.attraction_id}
-    return [a for a in trip.attractions if a.id not in scheduled_ids]
-```
+### Unscheduled attractions (backlog) — implemented
+`planning/scheduler.py:get_unscheduled(trip)` returns `(list[Attraction], list[DayTrip])` — both regular attractions and day trips not assigned to any day. Also available via `vacationeer backlog <trip.json>`.
 
-### CLI commands
+### CLI commands — implemented
 - `vacationeer init-days <trip.json>` — create empty Day for each date in range
 - `vacationeer schedule <trip.json> <attraction_id> <date> [--time HH:MM]`
+- `vacationeer schedule-day-trip <trip.json> <day_trip_id> <date> [--depart HH:MM]`
 - `vacationeer unschedule <trip.json> <activity_id>`
+- `vacationeer backlog <trip.json>` — show unscheduled attractions and day trips
 - `vacationeer swap-days <trip.json> <date1> <date2>`
 - `vacationeer move-activity <trip.json> <activity_id> <target_date>`
+
+### CLI commands — planned
 - `vacationeer auto-plan <trip.json>` — geographic clustering + ordering
 
 ### Auto-plan algorithm
@@ -120,10 +132,10 @@ Sum prices, compute walking distance (haversine between consecutive), compare ag
 
 ## 5. Implementation Sequence
 
-1. Extract shared helpers (`views/colors.py`, `views/helpers.py`)
-2. Add model fields to Activity and Day
-3. `init-days` CLI command
-4. `schedule` CLI command
+1. ~~Extract shared helpers (`views/colors.py`, `views/helpers.py`)~~
+2. ~~Add model fields to Activity and Day~~ — done: category, travel_from_prev_minutes, day_trip_id, start_time
+3. ~~`init-days` CLI command~~ — done
+4. ~~`schedule` CLI command~~ — done (+ schedule-day-trip, unschedule, backlog, swap-days, move-activity)
 5. Rewrite `render_timeline` with proportional time-axis
 6. Backlog rendering in timeline
 7. Day stats (cost, distance) in headers

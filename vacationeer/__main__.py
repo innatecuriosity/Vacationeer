@@ -87,10 +87,13 @@ def serve(trip_path: Path, port: int):
 
     Requires: pip install fastapi uvicorn
     """
+    import logging
     import threading
     import webbrowser
 
     import uvicorn
+
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 
     from vacationeer.server import create_app
 
