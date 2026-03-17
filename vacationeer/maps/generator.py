@@ -14,79 +14,179 @@ from vacationeer.views.helpers import category_label
 
 
 def _popup_html(a: Attraction) -> str:
-    """Build a styled popup card for an attraction."""
+    """Build a styled popup card for an attraction with inline editing."""
     info = get_category_info(a.category)
     hex_color = info.color
+    uid = a.id  # unique id for this popup's form elements
 
-    # --- header ---
-    html = f"""
-<div style="font-family:{FONT_STACK_MAP};width:260px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.15);">
-  <div style="background:{hex_color};color:#fff;padding:10px 14px;">
-    <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">{category_label(a.category)}</div>
-    <div style="font-size:15px;font-weight:700;margin-top:2px;">{a.name}</div>
-  </div>
-  <div style="padding:10px 14px;background:#fff;color:#333;font-size:12px;line-height:1.5;">
-"""
+    h, m = divmod(a.duration_minutes or 0, 60)
+    dur = f"{h}h{m:02d}" if h else f"{m} min" if a.duration_minutes else ""
+    price_text = "Free" if a.price_eur == 0 else f"\u20AC{a.price_eur:.0f}" if a.price_eur else ""
+    score_text = f"{a.expected_score:.1f}" if a.expected_score is not None else ""
 
-    # --- description ---
-    if a.description:
-        html += f'<div style="color:#555;margin-bottom:8px;">{a.description}</div>'
-
-    # --- price + duration row ---
-    badges = []
-    if a.price_eur is not None:
-        if a.price_eur == 0:
-            badge_text = "FREE"
-            badge_bg = "#27AE60"
-        else:
-            badge_text = f"\u20AC{a.price_eur:.0f}"
-            badge_bg = hex_color
-        badges.append(
-            f'<span style="display:inline-block;background:{badge_bg};color:#fff;'
-            f'padding:2px 9px;border-radius:12px;font-size:11px;font-weight:600;">'
-            f'{badge_text}</span>'
-        )
-    if a.duration_minutes:
-        h, m = divmod(a.duration_minutes, 60)
-        dur = f"{h}h{m:02d}" if h else f"{m} min"
-        badges.append(
-            f'<span style="display:inline-block;color:#555;font-size:11px;">'
-            f'\U0001F552 {dur}</span>'
-        )
-    if badges:
-        html += f'<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;">{"".join(badges)}</div>'
-
-    # --- tags ---
+    # Tags
+    tag_pills = ""
     if a.tags:
-        tag_pills = "".join(
+        tag_pills = '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;">' + "".join(
             f'<span style="display:inline-block;background:{hex_color}18;color:{hex_color};'
-            f'padding:1px 7px;border-radius:8px;font-size:10px;margin:2px 3px 2px 0;'
+            f'padding:1px 7px;border-radius:8px;font-size:10px;'
             f'border:1px solid {hex_color}40;">{t}</span>'
             for t in a.tags
-        )
-        html += f'<div style="margin-bottom:8px;">{tag_pills}</div>'
+        ) + '</div>'
 
-    # --- tips ---
+    # Tips
+    tips_html = ""
     if a.tips:
-        html += (
+        tips_html = (
             f'<div style="background:#FFF9E6;border-left:3px solid #F1C40F;'
-            f'padding:6px 10px;border-radius:0 6px 6px 0;margin-bottom:8px;'
+            f'padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;'
             f'font-size:11px;color:#7D6608;">'
             f'\U0001F4A1 <b>Tip:</b> {a.tips}</div>'
         )
 
-    # --- url button ---
+    # URL
+    url_html = ""
     if a.url:
-        html += (
+        url_html = (
             f'<a href="{a.url}" target="_blank" style="display:inline-block;'
             f'background:{hex_color};color:#fff;text-decoration:none;'
-            f'padding:5px 14px;border-radius:6px;font-size:11px;font-weight:600;'
-            f'letter-spacing:.3px;">Visit website \u2197</a>'
+            f'padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;'
+            f'margin-top:8px;">Website \u2197</a>'
         )
 
-    html += """
+    # Star rating HTML (10 stars, clickable)
+    user_score = a.user_score or 0
+    stars_html = ""
+    for s in range(1, 11):
+        filled = "#f39c12" if s <= user_score else "#ddd"
+        stars_html += (
+            f'<span onclick="setScore_{uid}({s})" '
+            f'style="cursor:pointer;font-size:16px;color:{filled};"'
+            f' id="star_{uid}_{s}"'
+            f'>&#x2605;</span>'
+        )
+
+    desc_html = ""
+    if a.description:
+        desc_html = f'<div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">{a.description}</div>'
+
+    html = f"""
+<div style="font-family:{FONT_STACK_MAP};width:300px;" id="popup_{uid}">
+  <!-- Header -->
+  <div style="background:{hex_color};color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">{category_label(a.category)}</div>
+    <div style="font-size:16px;font-weight:700;margin-top:2px;">{a.name}</div>
+  </div>
+
+  <!-- Body -->
+  <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">
+    {desc_html}
+
+    <!-- Meta row: duration, price, score -->
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:4px;" title="Duration">
+        <span style="font-size:13px;">\U0001F552</span>
+        <span style="font-weight:600;color:#333;" id="dur_display_{uid}">{dur or '—'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;" title="Price">
+        <span style="font-size:13px;">\U0001F4B0</span>
+        <span style="font-weight:600;color:#333;" id="price_display_{uid}">{price_text or '—'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;" title="Expected score">
+        <span style="font-size:13px;">&#x2605;</span>
+        <span style="font-weight:600;color:#333;">{score_text or '—'}</span>
+      </div>
+    </div>
+
+    <!-- User rating (clickable stars) -->
+    <div style="margin-bottom:8px;">
+      <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>
+      <div style="display:flex;align-items:center;gap:1px;">
+        {stars_html}
+        <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;" id="score_label_{uid}">{f'{user_score:.0f}/10' if user_score else ''}</span>
+      </div>
+    </div>
+
+    <!-- Editable fields -->
+    <div id="edit_section_{uid}" style="display:none;border-top:1px solid #f0f0f0;padding-top:8px;margin-top:4px;">
+      <div style="display:flex;gap:8px;margin-bottom:6px;">
+        <div style="flex:1;">
+          <label style="font-size:10px;color:#999;display:block;">Duration (min)</label>
+          <input type="number" id="edit_dur_{uid}" value="{a.duration_minutes or ''}" min="0" step="5"
+                 style="width:100%;padding:4px 6px;border:1px solid #ddd;border-radius:4px;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:10px;color:#999;display:block;">Price (&euro;)</label>
+          <input type="number" id="edit_price_{uid}" value="{a.price_eur if a.price_eur is not None else ''}" min="0" step="0.5"
+                 style="width:100%;padding:4px 6px;border:1px solid #ddd;border-radius:4px;font-size:12px;box-sizing:border-box;">
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="saveEdit_{uid}()"
+                style="flex:1;padding:5px 10px;background:#27AE60;color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;">Save</button>
+        <button onclick="toggleEdit_{uid}()"
+                style="flex:1;padding:5px 10px;background:#eee;color:#666;border:none;border-radius:5px;font-size:11px;cursor:pointer;">Cancel</button>
+      </div>
+    </div>
+
+    {tag_pills}
+    {tips_html}
+
+    <!-- Action row -->
+    <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
+      <button onclick="toggleEdit_{uid}()"
+              style="padding:4px 10px;background:#f5f6f8;color:#1a2332;border:1px solid #ddd;border-radius:5px;font-size:11px;cursor:pointer;">&#x270f; Edit</button>
+      {url_html}
+    </div>
   </div>
 </div>
+
+<script>
+function setScore_{uid}(s) {{
+  for (var i = 1; i <= 10; i++) {{
+    var el = document.getElementById('star_{uid}_' + i);
+    if (el) el.style.color = i <= s ? '#f39c12' : '#ddd';
+  }}
+  var lbl = document.getElementById('score_label_{uid}');
+  if (lbl) lbl.textContent = s + '/10';
+  fetch('/api/attractions/{uid}/score', {{
+    method: 'POST',
+    headers: {{'Content-Type': 'application/json'}},
+    body: JSON.stringify({{score: s}})
+  }}).then(function() {{
+    if (window.parent) window.parent.postMessage({{type: 'attraction-updated', id: '{uid}'}}, '*');
+  }});
+}}
+function toggleEdit_{uid}() {{
+  var el = document.getElementById('edit_section_{uid}');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}}
+function saveEdit_{uid}() {{
+  var dur = document.getElementById('edit_dur_{uid}').value;
+  var price = document.getElementById('edit_price_{uid}').value;
+  var body = {{}};
+  body.duration_minutes = dur !== '' ? parseInt(dur) : null;
+  body.price_eur = price !== '' ? parseFloat(price) : null;
+  fetch('/api/attractions/{uid}', {{
+    method: 'PATCH',
+    headers: {{'Content-Type': 'application/json'}},
+    body: JSON.stringify(body)
+  }}).then(function() {{
+    // Update display inline
+    var dEl = document.getElementById('dur_display_{uid}');
+    if (dEl) {{
+      if (dur) {{
+        var h = Math.floor(dur / 60), m = dur % 60;
+        dEl.textContent = h ? h + 'h' + (m ? String(m).padStart(2,'0') : '') : dur + ' min';
+      }} else dEl.textContent = '\\u2014';
+    }}
+    var pEl = document.getElementById('price_display_{uid}');
+    if (pEl) pEl.textContent = price === '' ? '\\u2014' : (parseFloat(price) === 0 ? 'Free' : '\\u20ac' + Math.round(price));
+    toggleEdit_{uid}();
+    if (window.parent) window.parent.postMessage({{type: 'attraction-updated', id: '{uid}'}}, '*');
+  }});
+}}
+</script>
 """
     return html
 
@@ -95,10 +195,27 @@ def _tooltip_html(a: Attraction) -> str:
     """Build a short hover tooltip for an attraction."""
     info = get_category_info(a.category)
     hex_color = info.color
+    desc_line = ""
+    if a.description:
+        short = a.description[:80] + ("..." if len(a.description) > 80 else "")
+        desc_line = f'<div style="color:#555;font-size:10px;margin-top:2px;">{short}</div>'
+    meta_parts = []
+    if a.duration_minutes:
+        h, m = divmod(a.duration_minutes, 60)
+        meta_parts.append(f"{h}h{m:02d}" if h else f"{m}min")
+    if a.price_eur is not None:
+        meta_parts.append("Free" if a.price_eur == 0 else f"\u20AC{a.price_eur:.0f}")
+    if a.expected_score is not None:
+        meta_parts.append(f"\u2605{a.expected_score:.1f}")
+    meta_line = ""
+    if meta_parts:
+        sep = " \u00b7 "
+        meta_line = f'<div style="color:#888;font-size:10px;margin-top:1px;">{sep.join(meta_parts)}</div>'
     return (
-        f'<div style="font-family:\'{FONT_STACK_MAP}\';font-size:11px;line-height:1.4;">'
+        f'<div style="font-family:\'{FONT_STACK_MAP}\';font-size:11px;line-height:1.4;max-width:220px;">'
         f'<b>{a.name}</b><br>'
-        f'<span style="color:{hex_color};font-weight:600;">{category_label(a.category)}</span>'
+        f'<span style="color:{hex_color};font-weight:600;font-size:10px;">{category_label(a.category)}</span>'
+        f'{desc_line}{meta_line}'
         f'</div>'
     )
 
@@ -109,7 +226,7 @@ def _marker_html(emoji: str, name: str) -> str:
         f'<div style="display:flex;flex-direction:column;align-items:center;pointer-events:auto;">'
         f'<div style="font-size:22px;line-height:1;'
         f'filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">{emoji}</div>'
-        f'<div style="font-family:\'{FONT_STACK_MAP}\';font-size:9px;font-weight:600;'
+        f'<div class="marker-label" style="font-family:\'{FONT_STACK_MAP}\';font-size:9px;font-weight:600;'
         f'color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;'
         f'white-space:nowrap;line-height:1.1;margin-top:1px;'
         f'text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;'
@@ -182,6 +299,53 @@ class _ControlStyle(MacroElement):
     .marker-cluster-large {
         background: rgba(255,255,255,0.85) !important;
     }
+    /* Popup card styling */
+    .leaflet-popup-content-wrapper {
+        padding: 0 !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,.2) !important;
+    }
+    .leaflet-popup-content {
+        margin: 0 !important;
+        width: auto !important;
+    }
+    .leaflet-popup-close-button {
+        z-index: 10 !important;
+        color: #fff !important;
+        font-size: 20px !important;
+        font-weight: 400 !important;
+        width: 28px !important;
+        height: 28px !important;
+        line-height: 28px !important;
+        text-align: center;
+        right: 6px !important;
+        top: 6px !important;
+        opacity: 0.8;
+        text-shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
+    .leaflet-popup-close-button:hover {
+        color: #fff !important;
+        opacity: 1;
+    }
+    /* Label toggle */
+    .labels-hidden .marker-label {
+        display: none !important;
+    }
+    .label-toggle-control {
+        background: rgba(255,255,255,.95);
+        backdrop-filter: blur(4px);
+        border-radius: 8px;
+        padding: 6px 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .label-toggle-control input { cursor: pointer; }
 </style>
 {% endmacro %}
 """)
@@ -262,8 +426,38 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     # Unified layer control (top-right)
     folium.LayerControl(collapsed=False, position='topright').add_to(m)
 
-    # Custom CSS
-    _ControlStyle().add_to(m)
+    # Custom CSS — inject into <head> so it doesn't appear in layer control
+    m.get_root().header.add_child(_ControlStyle())
+
+    # Label toggle control — inject as raw script referencing the map variable
+    map_name = m.get_name()
+    label_toggle_js = f"""
+    <script>
+    (function() {{
+        var LabelToggle = L.Control.extend({{
+            options: {{ position: 'topright' }},
+            onAdd: function(map) {{
+                var div = L.DomUtil.create('div', 'label-toggle-control');
+                var cb = L.DomUtil.create('input', '', div);
+                cb.type = 'checkbox'; cb.checked = true; cb.id = 'label-toggle-cb';
+                var lbl = L.DomUtil.create('label', '', div);
+                lbl.htmlFor = 'label-toggle-cb';
+                lbl.textContent = 'Labels';
+                lbl.style.cursor = 'pointer'; lbl.style.margin = '0';
+                L.DomEvent.disableClickPropagation(div);
+                cb.addEventListener('change', function() {{
+                    var c = map.getContainer();
+                    if (cb.checked) {{ c.classList.remove('labels-hidden'); }}
+                    else {{ c.classList.add('labels-hidden'); }}
+                }});
+                return div;
+            }}
+        }});
+        new LabelToggle().addTo({map_name});
+    }})();
+    </script>
+    """
+    m.get_root().html.add_child(folium.Element(label_toggle_js))
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(output_path))

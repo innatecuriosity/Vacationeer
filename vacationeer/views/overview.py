@@ -179,57 +179,52 @@ def render_overview(trip: Trip) -> str:
 
   <!-- ===== Attraction cards ===== -->
   <template x-for="attraction in filtered()" :key="attraction.id">
-    <div :style="'background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.10);margin-bottom:20px;border:1px solid #d1d5db;border-left:6px solid ' + catColor(attraction.category)">
+    <div :style="'background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.10);margin-bottom:8px;border:1px solid #d1d5db;border-left:6px solid ' + catColor(attraction.category)">
 
       <!-- ===== Collapsed card header ===== -->
       <div x-show="editing !== attraction.id"
            @click="expanded = expanded === attraction.id ? null : attraction.id"
            style="padding:12px 16px;cursor:pointer;user-select:none;">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;">
-          <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
-            <h4 style="margin:0;font-size:14px;color:#1a2332;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
-                x-text="attraction.name"></h4>
-
-            <!-- Category pill -->
-            <span :style="'display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;color:#fff;background:' + catColor(attraction.category)"
-                  x-text="catLabel(attraction.category)"></span>
-
-            <!-- Expected score bar (compact) -->
-            <span x-show="attraction.expected_score != null"
-                  style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;">
-              <span style="display:inline-block;width:60px;height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden;vertical-align:middle;">
-                <span :style="'display:block;height:100%;border-radius:4px;background:' + scoreColor(attraction.expected_score) + ';width:' + scorePct(attraction.expected_score) + '%'"></span>
-              </span>
-              <span :style="'font-size:12px;font-weight:600;color:' + scoreColor(attraction.expected_score)"
-                    x-text="(attraction.expected_score || 0).toFixed(1)"></span>
-            </span>
-
-            <!-- User score compact -->
-            <span x-show="attraction.user_score != null"
-                  :style="'margin-left:6px;font-size:11px;font-weight:600;color:' + scoreColor(attraction.user_score)">
-              You: &#x2605; <span x-text="(attraction.user_score || 0).toFixed(1)"></span>
-            </span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-            <!-- Price pill -->
-            <span :style="'display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600;border:1px solid;'
-                          + ((attraction.price_eur == null || attraction.price_eur === 0)
-                             ? 'background:#27AE6022;color:#27AE60;border-color:#27AE6044;'
-                             : 'background:#E67E2222;color:#E67E22;border-color:#E67E2244;')"
-                  x-text="fmtPrice(attraction.price_eur)"></span>
-            <!-- Duration -->
-            <span x-show="attraction.duration_minutes" style="font-size:12px;color:#666;">
-              &#x23f1; <span x-text="fmtDuration(attraction.duration_minutes)"></span>
-            </span>
-            <!-- Chevron -->
-            <span style="font-size:12px;color:#999;transition:transform 0.2s;display:inline-block;"
-                  :style="expanded === attraction.id ? 'transform:rotate(180deg)' : ''">&#x25BC;</span>
-          </div>
+        <!-- Row 1: Name — short description -->
+        <div style="display:flex;align-items:baseline;gap:8px;min-width:0;">
+          <h4 style="margin:0;font-size:15px;color:#1a2332;white-space:nowrap;flex-shrink:0;"
+              x-text="attraction.name"></h4>
+          <span x-show="attraction.description && expanded !== attraction.id"
+                style="font-size:13px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;"
+                x-text="attraction.description"></span>
+          <!-- Chevron -->
+          <span style="font-size:11px;color:#999;transition:transform 0.2s;display:inline-block;flex-shrink:0;margin-left:auto;"
+                :style="expanded === attraction.id ? 'transform:rotate(180deg)' : ''">&#x25BC;</span>
         </div>
-        <!-- Short description -->
-        <div x-show="expanded !== attraction.id && attraction.description"
-             style="font-size:13px;color:#666;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;"
-             x-text="attraction.description"></div>
+        <!-- Row 2: Category, score, duration, price — compact badges -->
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap;">
+          <!-- Category pill -->
+          <span :style="'display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;color:#fff;background:' + catColor(attraction.category)"
+                x-text="catLabel(attraction.category)"></span>
+          <!-- Expected score -->
+          <span x-show="attraction.expected_score != null"
+                style="display:inline-flex;align-items:center;gap:3px;">
+            <span style="display:inline-block;width:40px;height:6px;background:#e0e0e0;border-radius:3px;overflow:hidden;">
+              <span :style="'display:block;height:100%;border-radius:3px;background:' + scoreColor(attraction.expected_score) + ';width:' + scorePct(attraction.expected_score) + '%'"></span>
+            </span>
+            <span :style="'font-size:11px;font-weight:600;color:' + scoreColor(attraction.expected_score)"
+                  x-text="(attraction.expected_score || 0).toFixed(1)"></span>
+          </span>
+          <!-- User score -->
+          <span x-show="attraction.user_score != null"
+                :style="'font-size:11px;font-weight:600;color:' + scoreColor(attraction.user_score)">
+            &#x2605; <span x-text="(attraction.user_score || 0).toFixed(1)"></span>
+          </span>
+          <!-- Duration -->
+          <span x-show="attraction.duration_minutes" style="font-size:11px;color:#666;">
+            &#x23f1; <span x-text="fmtDuration(attraction.duration_minutes)"></span>
+          </span>
+          <!-- Price -->
+          <span :style="'font-size:11px;font-weight:600;'
+                        + ((attraction.price_eur == null || attraction.price_eur === 0)
+                           ? 'color:#27AE60;' : 'color:#E67E22;')"
+                x-text="fmtPrice(attraction.price_eur)"></span>
+        </div>
       </div>
 
       <!-- ===== Expanded content ===== -->

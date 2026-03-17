@@ -24,13 +24,15 @@ def _location_picker_xdata() -> str:
                 "\n                pickerMarker: null,"
                 "\n                initPickerMap() {"
                 "\n                    var self = this;"
-                "\n                    this.$nextTick(function() {"
+                "\n                    setTimeout(function() {"
                 "\n                        if (self.pickerMap) { self.pickerMap.invalidateSize(); return; }"
                 "\n                        var el = self.$refs.pickerMapEl;"
                 "\n                        if (!el) return;"
                 "\n                        self.pickerMap = L.map(el).setView([39.4699, -0.3763], 13);"
-                "\n                        L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}@2x.png', {"
-                "\n                            attribution: '&copy; OpenStreetMap'"
+                "\n                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {"
+                "\n                            attribution: '&copy; OpenStreetMap &copy; CARTO',"
+                "\n                            subdomains: 'abcd',"
+                "\n                            maxZoom: 20"
                 "\n                        }).addTo(self.pickerMap);"
                 "\n                        self.pickerMap.on('click', function(e) {"
                 "\n                            self.form.lat = e.latlng.lat.toFixed(6);"
@@ -38,7 +40,7 @@ def _location_picker_xdata() -> str:
                 "\n                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);"
                 "\n                            self.pickerMarker = L.marker(e.latlng).addTo(self.pickerMap);"
                 "\n                        });"
-                "\n                    });"
+                "\n                    }, 200);"
                 "\n                },"
     )
 
@@ -818,6 +820,14 @@ function reloadMap() {{
         if (iframe) iframe.src = iframe.src.split('?')[0] + '?t=' + Date.now();
     }}, 1500);
 }}
+
+/* Listen for messages from map iframe (e.g. after inline edit) */
+window.addEventListener('message', function(e) {{
+    if (e.data && e.data.type === 'attraction-updated') {{
+        var store = Alpine.store('trip');
+        if (store && store.reload) store.reload();
+    }}
+}});
 
 /* Trip picker component */
 function tripPicker() {{
