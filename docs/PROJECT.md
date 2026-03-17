@@ -56,7 +56,7 @@ VacationeerPoc/
 │       ├── app_shell.py     # Main HTML shell with sidebar
 │       ├── overview.py      # Attractions overview tab
 │       ├── timeline.py      # Daily timeline tab
-│       └── chat.py          # Chat interface tab
+│       └── chat.py          # (legacy) Chat bubble renderer, unused — chat is now in sidebar
 ├── trips/
 │   └── valencia-2026/
 │       ├── trip-config.json  # Pipeline questionnaire output
@@ -181,17 +181,20 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [x] **Planning module** — `planning/scheduler.py` with pure functions: init_days, schedule, schedule_day_trip, unschedule, get_unscheduled, swap_days, move_activity
 - [x] **Map** — Interactive Folium map with:
   - CartoDB Voyager tiles (works offline/local)
-  - Circle markers color-coded by category
-  - Styled hover popups (card layout, price badges, tips, links)
+  - Circle markers color-coded by category, house emoji for accommodation
+  - Hover tooltips (name + category) + click-to-lock popups (rich card with links)
   - Toggleable text labels showing attraction names
   - Category legend
   - Layer control for filtering by category
+  - Auto-refresh after mutations (cache-busting iframe reload)
 - [x] **App shell** — Single HTML page with:
-  - Dark navy (#1a2332) sidebar with Map/Overview/Timeline/Chat tabs
-  - Responsive (collapses to icons on mobile)
+  - Dark navy (#1a2332) sidebar (340px) with Map/Overview/Timeline tabs
+  - Always-visible chat panel in sidebar (below nav, dark-themed)
+  - Responsive (collapses to icons on mobile, chat hidden)
   - Trip header with metadata
   - Trip picker dropdown (switch between trips, shows pipeline status for in-progress trips)
   - New Trip modal with form + real-time progress tracking (Alpine.js)
+  - 3-mode location picker (Address / GPS / Pick on Map with Leaflet mini-map) in all location modals
 - [x] **Overview tab** — Attractions grouped by category:
   - Colored left border per category
   - Expandable cards (click to reveal full details)
@@ -201,9 +204,11 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [x] **Timeline tab** — Basic structure:
   - Day tab bar, activity list with status dots
   - Placeholder when no days planned
-- [x] **Chat tab** — UI mockup only:
-  - Message bubbles (AI left, user right)
-  - Disabled input bar
+- [x] **Sidebar chat** — Always-visible AI assistant panel in sidebar:
+  - Dark-themed message bubbles (assistant / user / error states)
+  - Connected to Claude API via `POST /api/chat` (requires `ANTHROPIC_API_KEY`)
+  - System prompt includes trip context (attractions, days, preferences)
+  - Alpine.js `sidebarChat()` component with message history and auto-scroll
 - [x] **Sample data** — Valencia 2026 trip with 29 attractions + 3 day trips (with sub-attractions and travel segments)
 - [x] **CLI** — map, info, build, serve + scheduling commands (init-days, schedule, schedule-day-trip, unschedule, backlog, swap-days, move-activity)
 - [x] **Trip management** — `trips` (list with status), `use` (set active trip), `.active-trip` file
@@ -234,17 +239,21 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [ ] Map sync via postMessage (highlight day's attractions + route polyline)
 
 ### Planned — Interactive Features
-- [ ] Embed trip data as JSON in HTML for client-side editing
+- [x] Embed trip data as JSON in HTML for client-side editing (Alpine.js `$store.trip`)
+- [x] CRUD modals: Attraction, Accommodation, Transport, Day Trip, Day (FAB menu)
+- [x] Location picker with 3 modes (Address, GPS, Pick on Map) in all location modals
+- [x] Modal resilience (`@mousedown.self` prevents close on paste/drag)
 - [ ] Drag-and-drop reordering of activities
 - [ ] Drag attractions from backlog into days
 - [ ] Click-to-edit time/duration/notes
-- [ ] "Save" button (download JSON or POST to local server)
 
 ### Planned — Chat / AI
-- [ ] Connect chat to Claude API for natural language editing
+- [x] Connect chat to Claude API (sidebar panel, `POST /api/chat`)
+- [ ] Tool use: AI executes actions (add/edit attractions, schedule) via structured responses
 - [ ] AI-suggested day plans based on preferences + proximity
 - [ ] "Add attraction" via chat
 - [ ] "Reorganize day" via chat
+- [ ] Streaming responses (SSE) for better UX
 
 ### Planned — Scoring & Filtering
 - [ ] Map filtering by score range
@@ -358,6 +367,9 @@ The `pipeline/` module handles new trip creation. The AI provider abstraction (`
 
 Background execution is handled by `pipeline/runner.py`: `start_pipeline()` launches a daemon thread that runs research → conversion → HTML build, tracking progress in a `PipelineJob` dataclass. The server exposes this via REST endpoints (`/api/pipeline/start`, `/api/pipeline/status/{slug}`, `/api/pipeline/jobs`). The frontend `newTripForm()` Alpine.js component polls status every 3 seconds and renders a progress bar with step labels. Users can dismiss the modal and continue browsing — the pipeline keeps running.
 
+### Sidebar chat
+The chat assistant lives in the sidebar (always visible alongside map/overview/timeline). The Alpine.js `sidebarChat()` component sends messages to `POST /api/chat`, which forwards them to Claude Sonnet with a system prompt containing trip context (attractions, days, preferences). Requires `ANTHROPIC_API_KEY` env var. The chat is conversational only — tool use (AI executing actions like adding attractions) is planned but not yet implemented.
+
 ### Sync module
 The `sync/` module enables bidirectional sync between MD research files and `trip.json`. It uses `@vacationeer` marker blocks (HTML comments with key-value data) injected below attraction headings in MD files. The sync engine compares marker values against JSON fields and can apply updates in either direction.
 
@@ -369,7 +381,8 @@ The `sync/` module enables bidirectional sync between MD research files and `tri
 - Planning logic: `planning/scheduler.py` — pure functions, no side effects
 - Pipeline: `pipeline/` — AI provider cascade, questionnaire, research, conversion
 - Sync: `sync/` — MD ↔ JSON bidirectional sync via marker blocks
-- Views generate HTML strings — all CSS/JS is inline (no external deps)
+- Views generate HTML strings — all CSS/JS is inline (no external deps except Alpine.js + Leaflet CDN)
+- Chat is in the sidebar (not a tab) — `sidebarChat()` Alpine component, `POST /api/chat` backend
 - Map uses Folium — tiles must work without Referer header (no OSM tiles)
 - Color theme: navy #1a2332 + white, category colors listed above
 - Test with: `python -m vacationeer build trips/valencia-2026/trip.json`
