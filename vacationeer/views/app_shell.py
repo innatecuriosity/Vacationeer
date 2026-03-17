@@ -785,13 +785,26 @@ async function offlineFetch(url, opts, localFallback) {{
     try {{
         var resp = await fetch(url, opts);
         if (resp.ok) return {{ ok: true, resp: resp }};
-        // Server returned error — still try local
+        // Server returned error (404 on GitHub Pages, etc.) — fall back to local
         if (localFallback) {{ localFallback(); return {{ ok: true, resp: null, offline: true }}; }}
         return {{ ok: false, resp: resp }};
     }} catch(e) {{
         // Network error — we're offline
         if (localFallback) {{ localFallback(); return {{ ok: true, resp: null, offline: true }}; }}
         return {{ ok: false, resp: null, offline: true }};
+    }}
+}}
+
+// Helper: try fetch, on ANY failure (network or HTTP error) run local fallback
+async function tryServerOrLocal(url, opts, onSuccess, localFallback) {{
+    try {{
+        var resp = await fetch(url, opts);
+        if (resp.ok) {{ await onSuccess(resp); return; }}
+        // HTTP error (e.g. 404 on static hosting) — use local fallback
+        localFallback();
+    }} catch(e) {{
+        // Network error — use local fallback
+        localFallback();
     }}
 }}
 
@@ -1083,72 +1096,70 @@ document.addEventListener('alpine:init', function() {{
 
         async addAttraction(data) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/attractions', {{
-                    method: 'POST',
-                    headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify(data)
-                }});
-                if (resp.ok) {{
-                    var a = await resp.json();
-                    self.attractions.push(a);
-                    toast('success', 'Attraction added');
-                    reloadMap();
-                }} else {{ toast('error', 'Failed to add attraction'); }}
-                return resp;
-            }} catch(e) {{
-                // Offline: add locally
+            var added = false;
+            await tryServerOrLocal('/api/attractions', {{
+                method: 'POST',
+                headers: {{'Content-Type': 'application/json'}},
+                body: JSON.stringify(data)
+            }}, async function(resp) {{
+                var a = await resp.json();
+                self.attractions.push(a);
+                toast('success', 'Attraction added');
+                reloadMap();
+                added = true;
+            }}, function() {{
                 var local = Object.assign({{}}, data, {{ id: _genId() }});
                 if (!local.location) local.location = {{ lat: 0, lng: 0, address: '' }};
                 if (local.tags && typeof local.tags === 'string') local.tags = local.tags.split(',').map(function(t){{ return t.trim(); }});
                 self.attractions.push(local);
                 _persistLocal();
                 toast('success', 'Saved locally');
-                return {{ ok: true }};
-            }}
+                added = true;
+            }});
+            return {{ ok: added }};
         }},
 
         async updateAttraction(id, data) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/attractions/' + id, {{
-                    method: 'PATCH',
-                    headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify(data)
-                }});
-                if (resp.ok) {{
-                    var updated = await resp.json();
-                    var idx = self.attractions.findIndex(function(a) {{ return a.id === id; }});
-                    if (idx >= 0) self.attractions[idx] = updated;
-                    toast('success', 'Attraction updated');
-                    reloadMap();
-                }} else {{ toast('error', 'Failed to update attraction'); }}
-                return resp;
-            }} catch(e) {{
+            var updated = false;
+            await tryServerOrLocal('/api/attractions/' + id, {{
+                method: 'PATCH',
+                headers: {{'Content-Type': 'application/json'}},
+                body: JSON.stringify(data)
+            }}, async function(resp) {{
+                var u = await resp.json();
+                var idx = self.attractions.findIndex(function(a) {{ return a.id === id; }});
+                if (idx >= 0) self.attractions[idx] = u;
+                toast('success', 'Attraction updated');
+                reloadMap();
+                updated = true;
+            }}, function() {{
                 var idx = self.attractions.findIndex(function(a) {{ return a.id === id; }});
                 if (idx >= 0) Object.assign(self.attractions[idx], data);
                 _persistLocal();
                 toast('success', 'Saved locally');
-                return {{ ok: true }};
-            }}
+                updated = true;
+            }});
+            return {{ ok: updated }};
         }},
 
         async deleteAttraction(id) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/attractions/' + id, {{ method: 'DELETE' }});
-                if (resp.ok) {{
-                    self.attractions = self.attractions.filter(function(a) {{ return a.id !== id; }});
-                    toast('success', 'Attraction deleted');
-                    reloadMap();
-                }} else {{ toast('error', 'Failed to delete attraction'); }}
-                return resp;
-            }} catch(e) {{
+            var deleted = false;
+            await tryServerOrLocal('/api/attractions/' + id, {{
+                method: 'DELETE'
+            }}, async function(resp) {{
+                self.attractions = self.attractions.filter(function(a) {{ return a.id !== id; }});
+                toast('success', 'Attraction deleted');
+                reloadMap();
+                deleted = true;
+            }}, function() {{
                 self.attractions = self.attractions.filter(function(a) {{ return a.id !== id; }});
                 _persistLocal();
                 toast('success', 'Deleted locally');
-                return {{ ok: true }};
-            }}
+                deleted = true;
+            }});
+            return {{ ok: deleted }};
         }},
 
         async setScore(id, score) {{
@@ -1181,50 +1192,41 @@ document.addEventListener('alpine:init', function() {{
 
         async addDayTrip(data) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/day-trips', {{ method: 'POST', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(data) }});
-                if (resp.ok) {{ var dt = await resp.json(); self.day_trips.push(dt); toast('success', 'Day trip added'); reloadMap(); }}
-                else {{ toast('error', 'Failed to add day trip'); }}
-                return resp;
-            }} catch(e) {{
+            var added = false;
+            await tryServerOrLocal('/api/day-trips', {{ method: 'POST', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(data) }},
+            async function(resp) {{ var dt = await resp.json(); self.day_trips.push(dt); toast('success', 'Day trip added'); reloadMap(); added = true; }},
+            function() {{
                 var local = Object.assign({{}}, data, {{ id: _genId() }});
                 if (!local.location) local.location = {{ lat: 0, lng: 0, address: '' }};
                 self.day_trips.push(local);
-                _persistLocal();
-                toast('success', 'Saved locally');
-                return {{ ok: true }};
-            }}
+                _persistLocal(); toast('success', 'Saved locally'); added = true;
+            }});
+            return {{ ok: added }};
         }},
 
         async updateDayTrip(id, data) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/day-trips/' + id, {{ method: 'PATCH', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(data) }});
-                if (resp.ok) {{ var updated = await resp.json(); var idx = self.day_trips.findIndex(function(d) {{ return d.id === id; }}); if (idx >= 0) self.day_trips[idx] = updated; toast('success', 'Day trip updated'); reloadMap(); }}
-                else {{ toast('error', 'Failed to update day trip'); }}
-                return resp;
-            }} catch(e) {{
+            var ok = false;
+            await tryServerOrLocal('/api/day-trips/' + id, {{ method: 'PATCH', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(data) }},
+            async function(resp) {{ var u = await resp.json(); var idx = self.day_trips.findIndex(function(d) {{ return d.id === id; }}); if (idx >= 0) self.day_trips[idx] = u; toast('success', 'Day trip updated'); reloadMap(); ok = true; }},
+            function() {{
                 var idx = self.day_trips.findIndex(function(d) {{ return d.id === id; }});
                 if (idx >= 0) Object.assign(self.day_trips[idx], data);
-                _persistLocal();
-                toast('success', 'Saved locally');
-                return {{ ok: true }};
-            }}
+                _persistLocal(); toast('success', 'Saved locally'); ok = true;
+            }});
+            return {{ ok: ok }};
         }},
 
         async deleteDayTrip(id) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/day-trips/' + id, {{ method: 'DELETE' }});
-                if (resp.ok) {{ self.day_trips = self.day_trips.filter(function(d) {{ return d.id !== id; }}); toast('success', 'Day trip deleted'); reloadMap(); }}
-                else {{ toast('error', 'Failed to delete day trip'); }}
-                return resp;
-            }} catch(e) {{
+            var ok = false;
+            await tryServerOrLocal('/api/day-trips/' + id, {{ method: 'DELETE' }},
+            async function(resp) {{ self.day_trips = self.day_trips.filter(function(d) {{ return d.id !== id; }}); toast('success', 'Day trip deleted'); reloadMap(); ok = true; }},
+            function() {{
                 self.day_trips = self.day_trips.filter(function(d) {{ return d.id !== id; }});
-                _persistLocal();
-                toast('success', 'Deleted locally');
-                return {{ ok: true }};
-            }}
+                _persistLocal(); toast('success', 'Deleted locally'); ok = true;
+            }});
+            return {{ ok: ok }};
         }},
 
         async setDayTripScore(id, score) {{
@@ -1242,34 +1244,27 @@ document.addEventListener('alpine:init', function() {{
 
         async addDay(data) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/days', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(data) }});
-                if (resp.ok) {{
-                    var d = await resp.json();
-                    self.days.push(d);
-                    self.days.sort(function(a, b) {{ return a.date.localeCompare(b.date); }});
-                    toast('success', 'Day added');
-                }}
-                else {{ toast('error', 'Failed to add day'); }}
-                return resp;
-            }} catch(e) {{
+            var ok = false;
+            await tryServerOrLocal('/api/days', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(data) }},
+            async function(resp) {{
+                var d = await resp.json();
+                self.days.push(d);
+                self.days.sort(function(a, b) {{ return a.date.localeCompare(b.date); }});
+                toast('success', 'Day added'); ok = true;
+            }}, function() {{
                 var local = Object.assign({{ activities: [] }}, data, {{ id: _genId() }});
                 self.days.push(local);
                 self.days.sort(function(a, b) {{ return a.date.localeCompare(b.date); }});
-                _persistLocal();
-                toast('success', 'Saved locally');
-                return {{ ok: true }};
-            }}
+                _persistLocal(); toast('success', 'Saved locally'); ok = true;
+            }});
+            return {{ ok: ok }};
         }},
 
         async initDays() {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/init-days', {{ method: 'POST' }});
-                if (resp.ok) {{ await self.reload(); toast('success', 'Days initialized'); }}
-                else {{ toast('error', 'Failed to initialize days'); }}
-            }} catch(e) {{
-                // Offline: generate days from start_date to end_date
+            await tryServerOrLocal('/api/init-days', {{ method: 'POST' }},
+            async function(resp) {{ await self.reload(); toast('success', 'Days initialized'); }},
+            function() {{
                 if (self.start_date && self.end_date) {{
                     var start = new Date(self.start_date + 'T00:00:00');
                     var end = new Date(self.end_date + 'T00:00:00');
@@ -1281,58 +1276,49 @@ document.addEventListener('alpine:init', function() {{
                         }}
                     }}
                     self.days.sort(function(a, b) {{ return a.date.localeCompare(b.date); }});
-                    _persistLocal();
-                    toast('success', 'Days initialized locally');
+                    _persistLocal(); toast('success', 'Days initialized locally');
                 }} else {{ toast('error', 'Set trip dates first'); }}
-            }}
+            }});
         }},
 
         async addActivity(dayDate, data) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/days/' + dayDate + '/activities', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(data) }});
-                if (resp.ok) {{ await self.reload(); toast('success', 'Activity added'); }}
-                else {{ toast('error', 'Failed to add activity'); }}
-                return resp;
-            }} catch(e) {{
+            var ok = false;
+            await tryServerOrLocal('/api/days/' + dayDate + '/activities', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(data) }},
+            async function(resp) {{ await self.reload(); toast('success', 'Activity added'); ok = true; }},
+            function() {{
                 var day = (self.days || []).find(function(d) {{ return d.date === dayDate; }});
                 if (day) {{
                     var act = Object.assign({{}}, data, {{ id: _genId() }});
                     if (!day.activities) day.activities = [];
                     day.activities.push(act);
-                    _persistLocal();
-                    toast('success', 'Saved locally');
+                    _persistLocal(); toast('success', 'Saved locally');
                 }}
-                return {{ ok: true }};
-            }}
+                ok = true;
+            }});
+            return {{ ok: ok }};
         }},
 
         async deleteActivity(dayDate, activityId) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/days/' + dayDate + '/activities/' + activityId, {{ method: 'DELETE' }});
-                if (resp.ok) {{ await self.reload(); toast('success', 'Activity removed'); }}
-                else {{ toast('error', 'Failed to remove activity'); }}
-            }} catch(e) {{
+            await tryServerOrLocal('/api/days/' + dayDate + '/activities/' + activityId, {{ method: 'DELETE' }},
+            async function(resp) {{ await self.reload(); toast('success', 'Activity removed'); }},
+            function() {{
                 var day = (self.days || []).find(function(d) {{ return d.date === dayDate; }});
                 if (day) {{
                     day.activities = (day.activities || []).filter(function(a) {{ return a.id !== activityId; }});
-                    _persistLocal();
-                    toast('success', 'Removed locally');
+                    _persistLocal(); toast('success', 'Removed locally');
                 }}
-            }}
+            }});
         }},
 
         async scheduleAttraction(attractionId, date, startTime) {{
             var self = this;
             var body = {{ attraction_id: attractionId, date: date }};
             if (startTime) body.start_time = startTime;
-            try {{
-                var resp = await fetch('/api/schedule', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(body) }});
-                if (resp.ok) {{ await self.reload(); toast('success', 'Attraction scheduled'); }}
-                else {{ toast('error', 'Failed to schedule'); }}
-            }} catch(e) {{
-                // Offline: create activity from attraction data
+            await tryServerOrLocal('/api/schedule', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(body) }},
+            async function(resp) {{ await self.reload(); toast('success', 'Attraction scheduled'); }},
+            function() {{
                 var day = (self.days || []).find(function(d) {{ return d.date === date; }});
                 var attr = (self.attractions || []).find(function(a) {{ return a.id === attractionId; }});
                 if (day && attr) {{
@@ -1347,22 +1333,19 @@ document.addEventListener('alpine:init', function() {{
                         start_time: startTime || null,
                         status: 'planned'
                     }});
-                    _persistLocal();
-                    toast('success', 'Scheduled locally');
+                    _persistLocal(); toast('success', 'Scheduled locally');
                 }}
-            }}
+            }});
         }},
 
         async reorderActivities(dayDate, activityIds) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/days/' + dayDate + '/activities/reorder', {{
-                    method: 'PUT',
-                    headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{activity_ids: activityIds}})
-                }});
-                if (!resp.ok) {{ toast('error', 'Failed to reorder activities'); }}
-            }} catch(e) {{
+            await tryServerOrLocal('/api/days/' + dayDate + '/activities/reorder', {{
+                method: 'PUT',
+                headers: {{'Content-Type': 'application/json'}},
+                body: JSON.stringify({{activity_ids: activityIds}})
+            }}, async function(resp) {{ /* server handled it */ }},
+            function() {{
                 var day = (self.days || []).find(function(d) {{ return d.date === dayDate; }});
                 if (day && day.activities) {{
                     var byId = {{}};
@@ -1370,52 +1353,41 @@ document.addEventListener('alpine:init', function() {{
                     day.activities = activityIds.map(function(id) {{ return byId[id]; }}).filter(Boolean);
                     _persistLocal();
                 }}
-            }}
+            }});
         }},
 
         async swapDays(date1, date2) {{
             var self = this;
             if (!date1 || !date2) return;
-            try {{
-                var resp = await fetch('/api/days/swap', {{
-                    method: 'POST',
-                    headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{date1: date1, date2: date2}})
-                }});
-                if (resp.ok) {{ await self.reload(); toast('success', 'Days swapped'); }}
-                else {{ toast('error', 'Failed to swap days'); }}
-            }} catch(e) {{
+            await tryServerOrLocal('/api/days/swap', {{
+                method: 'POST',
+                headers: {{'Content-Type': 'application/json'}},
+                body: JSON.stringify({{date1: date1, date2: date2}})
+            }}, async function(resp) {{ await self.reload(); toast('success', 'Days swapped'); }},
+            function() {{
                 var d1 = (self.days || []).find(function(d) {{ return d.date === date1; }});
                 var d2 = (self.days || []).find(function(d) {{ return d.date === date2; }});
                 if (d1 && d2) {{
-                    var tmp = d1.activities;
-                    d1.activities = d2.activities;
-                    d2.activities = tmp;
+                    var tmp = d1.activities; d1.activities = d2.activities; d2.activities = tmp;
                     var tmpL = d1.label; d1.label = d2.label; d2.label = tmpL;
                     var tmpN = d1.notes; d1.notes = d2.notes; d2.notes = tmpN;
-                    _persistLocal();
-                    toast('success', 'Swapped locally');
+                    _persistLocal(); toast('success', 'Swapped locally');
                 }}
-            }}
+            }});
         }},
 
         async moveActivity(activityId, targetDate) {{
             var self = this;
-            try {{
-                var resp = await fetch('/api/activities/move', {{
-                    method: 'POST',
-                    headers: {{'Content-Type': 'application/json'}},
-                    body: JSON.stringify({{activity_id: activityId, target_date: targetDate}})
-                }});
-                if (resp.ok) {{ await self.reload(); }}
-                else {{ toast('error', 'Failed to move activity'); }}
-            }} catch(e) {{
+            await tryServerOrLocal('/api/activities/move', {{
+                method: 'POST',
+                headers: {{'Content-Type': 'application/json'}},
+                body: JSON.stringify({{activity_id: activityId, target_date: targetDate}})
+            }}, async function(resp) {{ await self.reload(); }},
+            function() {{
                 var act = null;
                 (self.days || []).forEach(function(d) {{
                     var idx = (d.activities || []).findIndex(function(a) {{ return a.id === activityId; }});
-                    if (idx >= 0) {{
-                        act = d.activities.splice(idx, 1)[0];
-                    }}
+                    if (idx >= 0) act = d.activities.splice(idx, 1)[0];
                 }});
                 if (act) {{
                     var target = (self.days || []).find(function(d) {{ return d.date === targetDate; }});
@@ -1425,16 +1397,15 @@ document.addEventListener('alpine:init', function() {{
                         _persistLocal();
                     }}
                 }}
-            }}
+            }});
         }},
 
         async reload() {{
             try {{
                 var resp = await fetch('/api/trip');
-                if (resp.ok) {{ Object.assign(this, await resp.json()); }}
-            }} catch(e) {{
-                // Offline: already have local state, nothing to reload
-            }}
+                if (resp.ok) {{ Object.assign(this, await resp.json()); return; }}
+            }} catch(e) {{}}
+            // Offline: nothing to reload, local state is current
         }},
 
         exportTrip() {{
@@ -2255,16 +2226,26 @@ document.addEventListener('alpine:init', function() {{
 (function() {{
     var buttons = document.querySelectorAll('.nav-btn');
     var panels = document.querySelectorAll('.tab-panel');
-    window.__activeTab = 'tab-map';
+    var saved = localStorage.getItem('vacationeer_tab') || 'tab-map';
+    window.__activeTab = saved;
+
+    function activateTab(target) {{
+        window.__activeTab = target;
+        localStorage.setItem('vacationeer_tab', target);
+        buttons.forEach(function(b) {{ b.classList.remove('active'); }});
+        panels.forEach(function(p) {{ p.classList.remove('active'); }});
+        var btn = document.querySelector('.nav-btn[data-tab="' + target + '"]');
+        if (btn) btn.classList.add('active');
+        var panel = document.getElementById(target);
+        if (panel) panel.classList.add('active');
+    }}
+
+    // Restore saved tab on load
+    if (saved !== 'tab-map') activateTab(saved);
 
     buttons.forEach(function(btn) {{
         btn.addEventListener('click', function() {{
-            var target = btn.getAttribute('data-tab');
-            window.__activeTab = target;
-            buttons.forEach(function(b) {{ b.classList.remove('active'); }});
-            panels.forEach(function(p) {{ p.classList.remove('active'); }});
-            btn.classList.add('active');
-            document.getElementById(target).classList.add('active');
+            activateTab(btn.getAttribute('data-tab'));
         }});
     }});
 }})();
