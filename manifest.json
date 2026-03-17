@@ -1,0 +1,15 @@
+{
+  "name": "Vacationeer — Valencia",
+  "short_name": "Valencia",
+  "start_url": "./valencia-app.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a2332",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

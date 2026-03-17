@@ -1,0 +1,3198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valencia Spring 2026 - Vacationeer</title>
+<meta name="theme-color" content="#1a2332">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<style>
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1a2332;
+    background: #fff;
+}
+
+/* ---- layout ---- */
+.app {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ---- sidebar ---- */
+.sidebar {
+    width: 340px;
+    min-width: 340px;
+    background: #1a2332;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.25s ease, min-width 0.25s ease;
+    overflow: hidden;
+}
+.sidebar-header {
+    padding: 20px 18px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-header .brand {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.5;
+    margin-bottom: 6px;
+    white-space: nowrap;
+}
+.sidebar-header .trip-name {
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---- trip picker ---- */
+.trip-picker {
+    position: relative;
+}
+.trip-picker-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+    margin-top: 6px;
+}
+.trip-picker-btn:hover {
+    background: rgba(255,255,255,0.14);
+}
+.trip-picker-btn .tp-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.trip-picker-btn .tp-chevron {
+    font-size: 10px;
+    opacity: 0.5;
+    transition: transform 0.2s;
+}
+.trip-picker-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #243040;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.trip-picker-dropdown .tp-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.12s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+}
+.trip-picker-dropdown .tp-item:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+.trip-picker-dropdown .tp-item.active {
+    color: #4ea4f6;
+    font-weight: 600;
+}
+.trip-picker-dropdown .tp-item .tp-status {
+    font-size: 10px;
+    opacity: 0.5;
+    margin-left: auto;
+}
+.trip-picker-dropdown .tp-divider {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 4px 0;
+}
+.trip-picker-dropdown .tp-new {
+    color: #4ea4f6;
+    font-weight: 500;
+}
+
+.nav {
+    list-style: none;
+    padding: 12px 0;
+    flex: 1;
+}
+.nav li {
+    position: relative;
+}
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+.nav-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+.nav-btn.active {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    border-left: 3px solid #4ea4f6;
+    padding-left: 17px;
+}
+.nav-btn .icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.nav-btn .label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-footer {
+    padding: 14px 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 12px;
+    opacity: 0.35;
+    white-space: nowrap;
+}
+
+/* ---- main ---- */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #fff;
+}
+
+.header {
+    padding: 18px 28px;
+    border-bottom: 1px solid #e8eaed;
+    background: #fff;
+}
+.header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 4px;
+}
+.header-title-row:hover .edit-icon {
+    opacity: 1;
+}
+.header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a2332;
+    margin: 0;
+}
+.edit-icon {
+    font-size: 14px;
+    opacity: 0.3;
+    transition: opacity 0.2s;
+}
+.header .meta {
+    font-size: 13px;
+    color: #5f6b7a;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+.header .meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.content {
+    flex: 1;
+    overflow: auto;
+    background: #f5f6f8;
+}
+
+.tab-panel {
+    display: none;
+    height: 100%;
+}
+.tab-panel.active {
+    display: block;
+}
+
+#tab-map {
+    padding: 0;
+}
+#tab-map iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+#tab-overview, #tab-timeline {
+    padding: 24px 28px;
+}
+.tab-placeholder {
+    color: #8893a2;
+    font-size: 14px;
+    padding: 40px 0;
+    text-align: center;
+}
+
+/* ---- modal ---- */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal-header {
+    background: #1a2332;
+    color: #fff;
+    padding: 18px 24px;
+    border-radius: 12px 12px 0 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+.modal-body {
+    padding: 24px;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1a2332;
+    transition: border-color 0.15s;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #4ea4f6;
+    box-shadow: 0 0 0 2px rgba(78,164,246,0.15);
+}
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+.form-row .form-group {
+    flex: 1;
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 8px;
+}
+.btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-primary {
+    background: #1a2332;
+    color: #fff;
+}
+.btn-primary:hover {
+    background: #2a3a4e;
+}
+.btn-cancel {
+    background: #e5e7eb;
+    color: #374151;
+}
+.btn-cancel:hover {
+    background: #d1d5db;
+}
+
+/* ---- required field marker ---- */
+label .req { color: #e74c3c; font-weight: bold; }
+.form-hint { font-size: 12px; color: #999; margin-top: 8px; }
+
+/* ---- fab ---- */
+.fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+.fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #1a2332;
+    color: #fff;
+    font-size: 28px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.15s;
+    z-index: 900;
+}
+.fab:hover {
+    background: #2a3a4e;
+    transform: scale(1.08);
+}
+.fab-active { transform: rotate(45deg); }
+.fab-menu { position: absolute; bottom: 60px; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); overflow: hidden; min-width: 160px; }
+.fab-menu button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 16px; border: none; background: white; cursor: pointer; font-size: 14px; }
+.fab-menu button:hover { background: #f5f6f8; }
+
+/* ---- toasts ---- */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.toast {
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: toast-in 0.3s ease;
+}
+.toast.success {
+    background: #059669;
+}
+.toast.error {
+    background: #dc2626;
+}
+.toast.info {
+    background: #2563eb;
+}
+@keyframes toast-in {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- sidebar chat ---- */
+.sidebar-chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    min-height: 0;
+}
+.sidebar-chat .chat-header {
+    padding: 10px 18px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+.sidebar-chat .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+}
+.sidebar-chat .chat-messages::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-chat .chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+}
+.chat-bubble {
+    max-width: 90%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+.chat-bubble.assistant {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.9);
+    border-bottom-left-radius: 4px;
+}
+.chat-bubble.user {
+    align-self: flex-end;
+    background: #4ea4f6;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+.chat-bubble.error {
+    align-self: flex-start;
+    background: rgba(220,53,69,0.3);
+    color: #ffb3b3;
+    border-bottom-left-radius: 4px;
+    font-size: 12px;
+}
+.chat-bubble .typing {
+    display: inline-block;
+    animation: pulse-typing 1.2s infinite;
+}
+@keyframes pulse-typing {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+.sidebar-chat .chat-input {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+.sidebar-chat .chat-input input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 18px;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+}
+.sidebar-chat .chat-input input::placeholder {
+    color: rgba(255,255,255,0.35);
+}
+.sidebar-chat .chat-input input:focus {
+    border-color: #4ea4f6;
+    background: rgba(255,255,255,0.12);
+}
+.sidebar-chat .chat-input button {
+    padding: 8px 14px;
+    background: #4ea4f6;
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+}
+.sidebar-chat .chat-input button:hover {
+    background: #3b8de0;
+}
+.sidebar-chat .chat-input button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ---- location picker ---- */
+.loc-tabs { display: flex; gap: 0; margin-bottom: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #d1d5db; }
+.loc-tab { flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: 600; cursor: pointer; background: #f5f6f8; border: none; color: #5f6b7a; }
+.loc-tab.active { background: #1a2332; color: #fff; }
+.loc-map-container { width: 100%; height: 250px; border-radius: 8px; border: 2px solid #d1d5db; margin-bottom: 8px; }
+
+/* ---- responsive ---- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+        min-width: 60px;
+    }
+    .sidebar-header .brand,
+    .sidebar-header .trip-name,
+    .trip-picker,
+    .nav-btn .label,
+    .sidebar-footer,
+    .sidebar-chat {
+        display: none;
+    }
+    .sidebar-header {
+        padding: 16px 0;
+        text-align: center;
+    }
+    .nav-btn {
+        justify-content: center;
+        padding: 14px 0;
+    }
+    .nav-btn.active {
+        border-left: 3px solid #4ea4f6;
+        padding-left: 0;
+    }
+    .header {
+        padding: 14px 16px;
+    }
+    .header h1 {
+        font-size: 17px;
+    }
+    #tab-overview, #tab-timeline {
+        padding: 16px;
+    }
+    .fab {
+        bottom: 20px;
+        right: 20px;
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+    }
+}
+</style>
+</head>
+<body>
+
+<script>
+window.__TRIP_DATA__ = {"id": "val2026", "name": "Valencia Spring 2026", "destination": "Valencia", "start_date": "2026-03-21", "end_date": "2026-03-28", "travelers": 2, "budget_eur": 2000.0, "preferences": {"interests": ["history", "nature", "food", "science"], "avoid": ["crowded", "expensive"], "pace": "moderate", "budget_per_day_eur": 250.0}, "attractions": [{"id": "oceanografic", "name": "Oceanografic", "description": "Europe's largest aquarium — 45,000+ animals, 500+ species, dolphin shows", "location": {"lat": 39.4529, "lng": -0.3477, "address": "City of Arts and Sciences"}, "category": "landmark", "price_eur": 41.8, "duration_minutes": 330, "tags": ["must-do", "full-day", "included-in-combo"], "tips": "Start at Arctic end (belugas), arrive 20 min early for dolphin show", "url": "https://www.oceanografic.org/en/", "expected_score": 8.5, "user_score": null}, {"id": "bioparc", "name": "Bioparc", "description": "Immersive African zoo — no visible cages, underwater hippo viewing", "location": {"lat": 39.4788, "lng": -0.4074, "address": "Av. Pío Baroja, 3"}, "category": "nature", "price_eur": 29.5, "duration_minutes": 310, "tags": ["must-do", "half-day", "included-in-combo"], "tips": "Start with savanna. Don't miss underwater hippo window", "url": "https://bioparcvalencia.es/en/", "expected_score": 8.0, "user_score": 10.0}, {"id": "science-museum", "name": "Museu de les Ciencies", "description": "3 floors of interactive science — Leonardo da Vinci exhibition, space, genetics", "location": {"lat": 39.4557, "lng": -0.3521, "address": "City of Arts and Sciences"}, "category": "museum", "price_eur": 8.0, "duration_minutes": 150, "tags": ["included-in-combo"], "tips": "Go weekday morning to avoid school groups", "url": null, "expected_score": 9.0, "user_score": null}, {"id": "cathedral", "name": "Valencia Cathedral + Miguelete Tower", "description": "Gothic/Baroque/Renaissance mix, claims to house the Holy Grail. 207 steps for panoramic views", "location": {"lat": 39.4753, "lng": -0.3753, "address": "Plaça de l'Almoina, s/n"}, "category": "landmark", "price_eur": 10.0, "duration_minutes": 75, "tags": ["free-during-mass"], "tips": "Free during mass hours", "url": null, "expected_score": 8.5, "user_score": null}, {"id": "la-lonja", "name": "La Lonja de la Seda", "description": "15th-century Gothic silk exchange — UNESCO World Heritage, stunning twisted columns", "location": {"lat": 39.4742, "lng": -0.3789, "address": "Carrer de la Llotja, 2"}, "category": "landmark", "price_eur": 2.0, "duration_minutes": 45, "tags": ["unesco", "free-sunday"], "tips": null, "url": null, "expected_score": 9.0, "user_score": null}, {"id": "mercado-central", "name": "Mercado Central", "description": "One of Europe's largest Art Nouveau food markets — 300+ stalls", "location": {"lat": 39.4735, "lng": -0.3793, "address": "Plaça de la Ciutat de Bruges"}, "category": "food", "price_eur": 0.0, "duration_minutes": 60, "tags": ["free-entry", "morning"], "tips": "Go early 8-10am. Mon-Sat 7:30-15:00, closed Sun", "url": null, "expected_score": 9.5, "user_score": null}, {"id": "turia-gardens", "name": "Turia Gardens", "description": "Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside", "location": {"lat": 39.478, "lng": -0.37, "address": "Jardín del Turia"}, "category": "nature", "price_eur": 0.0, "duration_minutes": 120, "tags": ["free", "cycling"], "tips": null, "url": null, "expected_score": 8.0, "user_score": null}, {"id": "almoina", "name": "L'Almoina Archaeological Centre", "description": "2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic", "location": {"lat": 39.4756, "lng": -0.3748, "address": "Plaça de l'Almoina, s/n"}, "category": "museum", "price_eur": 2.0, "duration_minutes": 50, "tags": ["underrated", "free-sunday"], "tips": null, "url": null, "expected_score": 9.0, "user_score": null}, {"id": "torres-serranos", "name": "Torres de Serranos", "description": "14th-century city gate with great old town views", "location": {"lat": 39.4792, "lng": -0.3755, "address": "Plaça dels Furs, s/n"}, "category": "landmark", "price_eur": 2.0, "duration_minutes": 30, "tags": ["free-sunday"], "tips": null, "url": null, "expected_score": 7.5, "user_score": null}, {"id": "hemisferic", "name": "L'Hemisferic", "description": "Europe's largest IMAX screen and planetarium inside a giant eye-shaped building", "location": {"lat": 39.454, "lng": -0.3503, "address": "City of Arts and Sciences"}, "category": "entertainment", "price_eur": 8.0, "duration_minutes": 60, "tags": ["included-in-combo"], "tips": "Pick a planetarium show over IMAX — better for adults. Check schedule at cac.es", "url": "https://www.cac.es/en/hemisferic/", "expected_score": 7.0, "user_score": null}, {"id": "liber-toy-soldiers", "name": "L'Iber Museum of Toy Soldiers", "description": "World's largest collection of historical miniatures — 100,000+ figures in obsessively detailed dioramas", "location": {"lat": 39.4748, "lng": -0.3769, "address": "Carrer dels Cavallers, 20"}, "category": "museum", "price_eur": 8.0, "duration_minutes": 90, "tags": ["hidden-gem"], "tips": "Adults enjoy it more than kids. Tue-Sat 11-14 & 16-19, Sun 11-14", "url": null, "expected_score": 7.5, "user_score": null}, {"id": "museum-of-illusions", "name": "Museum of Illusions", "description": "60+ optical illusion exhibits — holograms, impossible rooms, gravity-defying perspectives", "location": {"lat": 39.471, "lng": -0.377, "address": "Carrer dels Cavallers, 6"}, "category": "entertainment", "price_eur": 13.0, "duration_minutes": 60, "tags": ["photogenic"], "tips": "Fun lighthearted break from history. Daily 10-21", "url": null, "expected_score": 5.5, "user_score": null}, {"id": "prehistoric-caves", "name": "Prehistoric Caves Exhibition", "description": "Immersive recreation of French prehistoric cave galleries with projections and reconstructions — ending March 31", "location": {"lat": 39.4717, "lng": -0.3837, "address": "Museu de Prehistoria, C/ de la Corona, 36"}, "category": "museum", "price_eur": 0.0, "duration_minutes": 60, "tags": ["free", "temporary", "ending-soon"], "tips": "Check availability — exhibition ends March 31, 2026", "url": null, "expected_score": 7.5, "user_score": null}, {"id": "museo-del-arroz", "name": "Museo del Arroz", "description": "Rice cultivation and its role in Valencian cuisine — housed in a historic rice mill near the port", "location": {"lat": 39.462, "lng": -0.331, "address": "C/ del Rosari, 3"}, "category": "museum", "price_eur": 2.0, "duration_minutes": 40, "tags": ["free-sunday", "quirky"], "tips": "Pair with paella lunch nearby. Free on Sundays", "url": null, "expected_score": 6.5, "user_score": null}, {"id": "museo-fallero", "name": "Museo Fallero", "description": "Every pardoned Fallas ninot since 1934 — nearly a century of Valencian artistry and satire", "location": {"lat": 39.456, "lng": -0.354, "address": "Pl. de Monteolivete, 4"}, "category": "museum", "price_eur": 2.0, "duration_minutes": 60, "tags": ["free-sunday"], "tips": "Better post-festival when it's quiet. Pair with City of Arts and Sciences nearby", "url": null, "expected_score": 7.0, "user_score": null}, {"id": "torres-de-quart", "name": "Torres de Quart", "description": "Western medieval gate with visible Napoleonic cannonball damage — less crowded than Serranos", "location": {"lat": 39.4741, "lng": -0.3832, "address": "C/ de Quart, s/n"}, "category": "landmark", "price_eur": 2.0, "duration_minutes": 30, "tags": ["free-sunday"], "tips": null, "url": null, "expected_score": 7.0, "user_score": null}, {"id": "city-of-arts-exterior", "name": "City of Arts and Sciences (Exterior)", "description": "Calatrava's futuristic complex — free to walk around, spectacular at sunset reflected in water pools", "location": {"lat": 39.4545, "lng": -0.3505, "address": "Av. del Professor Lopez Pinero, 7"}, "category": "landmark", "price_eur": 0.0, "duration_minutes": 60, "tags": ["free", "sunset", "photogenic"], "tips": "Best at sunset when the buildings reflect in the water pools", "url": null, "expected_score": 8.5, "user_score": null}, {"id": "plaza-de-la-virgen", "name": "Plaza de la Virgen", "description": "Historic heart of old town — Roman forum site, Turia fountain, surrounded by Cathedral and Basilica", "location": {"lat": 39.4756, "lng": -0.3758, "address": "Plaça de la Mare de Deu"}, "category": "landmark", "price_eur": 0.0, "duration_minutes": 30, "tags": ["free"], "tips": null, "url": null, "expected_score": 7.5, "user_score": null}, {"id": "plaza-del-ayuntamiento", "name": "Plaza del Ayuntamiento", "description": "Valencia's grand central square — ornate City Hall, fountains, flower stalls", "location": {"lat": 39.4697, "lng": -0.3764, "address": "Plaça de l'Ajuntament"}, "category": "landmark", "price_eur": 0.0, "duration_minutes": 20, "tags": ["free"], "tips": null, "url": null, "expected_score": 7.0, "user_score": null}, {"id": "museo-bellas-artes", "name": "Museo de Bellas Artes", "description": "Spain's second-best art gallery — El Greco, Goya, Velazquez. Always free", "location": {"lat": 39.4793, "lng": -0.3695, "address": "C/ de Sant Pius V, 9"}, "category": "museum", "price_eur": 0.0, "duration_minutes": 75, "tags": ["free", "art"], "tips": "Worth a walk-through for the building and garden setting even if galleries aren't your thing", "url": null, "expected_score": 7.5, "user_score": null}, {"id": "centre-del-carme", "name": "Centre del Carme (CCCC)", "description": "Contemporary art in a 13th-century convent — go for the beautiful medieval cloisters", "location": {"lat": 39.4785, "lng": -0.3791, "address": "C/ del Museu, 2"}, "category": "museum", "price_eur": 0.0, "duration_minutes": 60, "tags": ["free", "art"], "tips": null, "url": null, "expected_score": 7.0, "user_score": null}, {"id": "jardin-botanico", "name": "Jardin Botanico", "description": "16th-century botanical garden with tropical species, cacti, and greenhouses — peaceful retreat", "location": {"lat": 39.4732, "lng": -0.3856, "address": "C/ de Quart, 80"}, "category": "nature", "price_eur": 4.0, "duration_minutes": 60, "tags": [], "tips": null, "url": null, "expected_score": 7.0, "user_score": null}, {"id": "viveros-gardens", "name": "Viveros Gardens", "description": "Large park with fountains next to Bellas Artes museum — free and relaxing", "location": {"lat": 39.481, "lng": -0.368, "address": "C/ de Sant Pius V, s/n"}, "category": "nature", "price_eur": 0.0, "duration_minutes": 45, "tags": ["free"], "tips": null, "url": null, "expected_score": 6.5, "user_score": null}, {"id": "mercado-colon", "name": "Mercado Colon", "description": "Restored Modernist building turned upscale food court — try horchata and fartons", "location": {"lat": 39.4672, "lng": -0.3712, "address": "C/ de Jorge Juan, 19"}, "category": "food", "price_eur": 0.0, "duration_minutes": 45, "tags": ["free-entry"], "tips": "Must try horchata and fartons here", "url": null, "expected_score": 7.5, "user_score": null}, {"id": "mercado-de-ruzafa", "name": "Mercado de Ruzafa", "description": "Local market in trendy Ruzafa — less touristy, explore street art and tapas bars nearby", "location": {"lat": 39.4618, "lng": -0.372, "address": "C/ del Literat Azorin, 17"}, "category": "food", "price_eur": 0.0, "duration_minutes": 40, "tags": ["free-entry", "local"], "tips": null, "url": null, "expected_score": 7.0, "user_score": null}, {"id": "el-hachazo", "name": "El Hachazo (Axe Throwing)", "description": "Throw axes at targets — no experience needed, instructor-guided, includes a drink", "location": {"lat": 39.4665, "lng": -0.378, "address": "C/ de Cuba, 38"}, "category": "entertainment", "price_eur": 19.0, "duration_minutes": 60, "tags": ["date-activity"], "tips": "Book ahead — popular on evenings and weekends", "url": null, "expected_score": 7.0, "user_score": null}, {"id": "virtual-zone-vr", "name": "Virtual Zone VR", "description": "Europe's largest VR arena — free-roam multiplayer games, not a booth experience", "location": {"lat": 39.4615, "lng": -0.3715, "address": "Ruzafa, Valencia"}, "category": "entertainment", "price_eur": 25.0, "duration_minutes": 60, "tags": [], "tips": "Combine with Ruzafa tapas and street art", "url": null, "expected_score": 6.0, "user_score": null}, {"id": "gulliver-park", "name": "Gulliver Park", "description": "Giant Gulliver sculpture with slides and climbing — fun even for adults, inside Turia Gardens", "location": {"lat": 39.462, "lng": -0.359, "address": "Jardín del Turia, tramo XII"}, "category": "entertainment", "price_eur": 0.0, "duration_minutes": 30, "tags": ["free", "playful"], "tips": null, "url": null, "expected_score": 6.5, "user_score": null}, {"id": "cines-babel", "name": "Cines Babel", "description": "Independent cinema showing films in original language — vintage charm, curated programme", "location": {"lat": 39.468, "lng": -0.371, "address": "C/ de Vicente Sancho Tello, 10"}, "category": "entertainment", "price_eur": 8.0, "duration_minutes": 120, "tags": ["hidden-gem", "rainy-day"], "tips": "Check programme at cinesbabel.com. Perfect for a rainy evening", "url": "https://www.cinesbabel.com/", "expected_score": 6.0, "user_score": null}], "day_trips": [{"id": "sagunto-day-trip", "name": "Sagunto Day Trip", "destination": "Sagunto", "description": "Roman theatre, hilltop castle with panoramic views, Jewish quarter — 30 min by train from Valencia", "location": {"lat": 39.68, "lng": -0.265, "address": "Sagunto, Valencia province"}, "sub_attractions": [{"id": "sagunto-roman-theatre", "name": "Roman Theatre (Teatro Romano)", "description": "1st-century AD theatre carved into hillside, seats 4,000. Spain's first National Monument (1896)", "location": {"lat": 39.681, "lng": -0.264, "address": "Calle del Castillo, Sagunto"}, "category": "landmark", "price_eur": 0.0, "duration_minutes": 40, "tags": ["free", "roman-ruins"], "tips": null, "url": null, "expected_score": null, "user_score": null}, {"id": "sagunto-castle", "name": "Sagunto Castle", "description": "Nearly 1 km hilltop fortress spanning 2,000+ years — Iberian, Roman, Moorish, and medieval layers", "location": {"lat": 39.682, "lng": -0.263, "address": "Castillo de Sagunto"}, "category": "landmark", "price_eur": 0.0, "duration_minutes": 90, "tags": ["free", "panoramic-views"], "tips": null, "url": null, "expected_score": null, "user_score": null}, {"id": "sagunto-jewish-quarter", "name": "Jewish Quarter (Juderia)", "description": "Medieval Jewish quarter with narrow streets, one of the few maintained under Moorish rule", "location": {"lat": 39.6795, "lng": -0.2655, "address": "Barrio Judio, Sagunto"}, "category": "landmark", "price_eur": 0.0, "duration_minutes": 30, "tags": ["free", "history"], "tips": null, "url": null, "expected_score": null, "user_score": null}], "outbound": {"mode": "train", "origin": "Valencia Estacio del Nord", "destination": "Sagunt station", "departure_time": null, "arrival_time": null, "duration_minutes": 30, "price_eur": 3.7, "booking_reference": null, "notes": "Renfe Cercanias C-5/C-6, every 20-30 min"}, "return_trip": {"mode": "train", "origin": "Sagunt station", "destination": "Valencia Estacio del Nord", "departure_time": null, "arrival_time": null, "duration_minutes": 30, "price_eur": 3.7, "booking_reference": null, "notes": "Last train ~22:00"}, "total_price_eur": 7.4, "total_duration_minutes": 360, "tags": ["history", "roman-ruins", "free-attractions"], "tips": "Best value day trip — castle and theatre are free. Closed Mondays", "expected_score": 8.0, "user_score": null}, {"id": "albufera-day-trip", "name": "Albufera + El Palmar Day Trip", "destination": "Albufera / El Palmar", "description": "Freshwater lagoon nature park and birthplace of paella — sunset boat rides through rice paddies", "location": {"lat": 39.333, "lng": -0.353, "address": "Parc Natural de l'Albufera"}, "sub_attractions": [{"id": "albufera-boat-ride", "name": "Albufera Sunset Boat Ride", "description": "Traditional wooden boat ride through the lagoon and rice paddies at sunset", "location": {"lat": 39.334, "lng": -0.352, "address": "Embarcadero Albufera"}, "category": "nature", "price_eur": 5.0, "duration_minutes": 45, "tags": ["sunset", "highlight"], "tips": null, "url": null, "expected_score": null, "user_score": null}, {"id": "albufera-paella-lunch", "name": "Authentic Paella Lunch in El Palmar", "description": "Eat paella at its birthplace — El Palmar restaurants serve the real deal", "location": {"lat": 39.315, "lng": -0.342, "address": "El Palmar village"}, "category": "food", "price_eur": 15.0, "duration_minutes": 90, "tags": ["paella", "must-do"], "tips": null, "url": null, "expected_score": null, "user_score": null}, {"id": "albufera-nature-walk", "name": "Albufera Nature Park Walk", "description": "Walking trails through wetlands — birdwatching, rice fields, lagoon views", "location": {"lat": 39.337, "lng": -0.355, "address": "Parc Natural de l'Albufera"}, "category": "nature", "price_eur": 0.0, "duration_minutes": 60, "tags": ["free", "birdwatching"], "tips": null, "url": null, "expected_score": null, "user_score": null}], "outbound": {"mode": "bus", "origin": "Valencia (Plaza del Ayuntamiento)", "destination": "El Palmar / Albufera", "departure_time": null, "arrival_time": null, "duration_minutes": 50, "price_eur": 1.5, "booking_reference": null, "notes": "Bus line 25, runs regularly"}, "return_trip": {"mode": "bus", "origin": "El Palmar / Albufera", "destination": "Valencia (Plaza del Ayuntamiento)", "departure_time": null, "arrival_time": null, "duration_minutes": 50, "price_eur": 1.5, "booking_reference": null, "notes": "Check last bus time — can be early"}, "total_price_eur": 23.0, "total_duration_minutes": 300, "tags": ["nature", "paella", "sunset", "birdwatching"], "tips": "Eat authentic paella in El Palmar. Sunset boat ride is the highlight", "expected_score": 8.5, "user_score": null}, {"id": "xativa-day-trip", "name": "Xativa Day Trip", "destination": "Xativa", "description": "Impressive hilltop castle, Borgia family history, medieval old town — 50 min by train", "location": {"lat": 38.99, "lng": -0.5185, "address": "Xativa, Valencia province"}, "sub_attractions": [{"id": "xativa-castle", "name": "Xativa Castle", "description": "Double-walled hilltop fortress with spectacular views — one of the best castles in the Valencia region", "location": {"lat": 38.992, "lng": -0.52, "address": "Castillo de Xativa"}, "category": "landmark", "price_eur": 6.0, "duration_minutes": 120, "tags": ["panoramic-views", "highlight"], "tips": null, "url": null, "expected_score": null, "user_score": null}, {"id": "xativa-old-town", "name": "Xativa Old Town & Borgia Sites", "description": "Medieval streets, Borgia family connections, Collegiate Basilica, Almodi museum", "location": {"lat": 38.99, "lng": -0.518, "address": "Centro Historico, Xativa"}, "category": "landmark", "price_eur": 0.0, "duration_minutes": 90, "tags": ["borgia", "history", "free"], "tips": null, "url": null, "expected_score": null, "user_score": null}], "outbound": {"mode": "train", "origin": "Valencia Estacio del Nord", "destination": "Xativa station", "departure_time": null, "arrival_time": null, "duration_minutes": 55, "price_eur": 6.5, "booking_reference": null, "notes": "Renfe regional train, roughly hourly"}, "return_trip": {"mode": "train", "origin": "Xativa station", "destination": "Valencia Estacio del Nord", "departure_time": null, "arrival_time": null, "duration_minutes": 55, "price_eur": 6.5, "booking_reference": null, "notes": "Last train ~21:30"}, "total_price_eur": 19.0, "total_duration_minutes": 420, "tags": ["history", "castle", "borgia"], "tips": "Closed Mondays. The castle views are among the best in the region", "expected_score": 8.0, "user_score": null}], "days": [{"date": "2026-03-21", "label": null, "start_time": null, "activities": [{"id": "71c3b63c", "attraction_id": "mercado-central", "day_trip_id": null, "name": "Mercado Central", "start_time": null, "duration_minutes": 60, "price_eur": 0.0, "category": "food", "travel_from_prev_minutes": null, "status": "planned", "notes": null}], "notes": null}, {"date": "2026-03-22", "label": null, "start_time": null, "activities": [{"id": "439973cd", "attraction_id": "oceanografic", "day_trip_id": null, "name": "Oceanografic", "start_time": null, "duration_minutes": 330, "price_eur": 41.8, "category": "landmark", "travel_from_prev_minutes": null, "status": "planned", "notes": null}, {"id": "20d771a7", "attraction_id": "la-lonja", "day_trip_id": null, "name": "La Lonja de la Seda", "start_time": null, "duration_minutes": 45, "price_eur": 2.0, "category": "landmark", "travel_from_prev_minutes": null, "status": "planned", "notes": null}], "notes": null}, {"date": "2026-03-23", "label": null, "start_time": null, "activities": [{"id": "dc873f60", "attraction_id": "turia-gardens", "day_trip_id": null, "name": "Turia Gardens", "start_time": null, "duration_minutes": 120, "price_eur": 0.0, "category": "nature", "travel_from_prev_minutes": null, "status": "planned", "notes": null}, {"id": "973d5b3b", "attraction_id": "hemisferic", "day_trip_id": null, "name": "L'Hemisferic", "start_time": null, "duration_minutes": 60, "price_eur": 8.0, "category": "entertainment", "travel_from_prev_minutes": null, "status": "planned", "notes": null}, {"id": "b2399f4d", "attraction_id": "bioparc", "day_trip_id": null, "name": "Bioparc", "start_time": null, "duration_minutes": 310, "price_eur": 29.5, "category": "nature", "travel_from_prev_minutes": null, "status": "planned", "notes": null}], "notes": null}, {"date": "2026-03-24", "label": null, "start_time": null, "activities": [], "notes": null}, {"date": "2026-03-25", "label": null, "start_time": null, "activities": [], "notes": null}, {"date": "2026-03-26", "label": null, "start_time": null, "activities": [], "notes": null}, {"date": "2026-03-27", "label": null, "start_time": null, "activities": [], "notes": null}, {"date": "2026-03-28", "label": null, "start_time": null, "activities": [], "notes": null}]};
+// Restore from localStorage if we have local edits
+(function() {
+    var key = 'vacationeer_trip_' + (window.__TRIP_DATA__.id || 'default');
+    var saved = localStorage.getItem(key);
+    if (saved) {
+        try {
+            var local = JSON.parse(saved);
+            // Only use local if it has a _localTs (was saved by offline layer)
+            if (local._localTs) {
+                // Merge: keep local mutations over embedded data
+                Object.assign(window.__TRIP_DATA__, local);
+            }
+        } catch(e) { /* ignore corrupt data */ }
+    }
+})();
+</script>
+
+<script>
+// Offline-aware fetch: try server first, fall back to local mutation
+async function offlineFetch(url, opts, localFallback) {
+    try {
+        var resp = await fetch(url, opts);
+        if (resp.ok) return { ok: true, resp: resp };
+        // Server returned error — still try local
+        if (localFallback) { localFallback(); return { ok: true, resp: null, offline: true }; }
+        return { ok: false, resp: resp };
+    } catch(e) {
+        // Network error — we're offline
+        if (localFallback) { localFallback(); return { ok: true, resp: null, offline: true }; }
+        return { ok: false, resp: null, offline: true };
+    }
+}
+
+function _persistLocal() {
+    var store = Alpine.store('trip');
+    var key = 'vacationeer_trip_' + (store.id || 'default');
+    var data = {};
+    // Copy serializable trip fields
+    ['id','name','destination','start_date','end_date','travelers','budget_eur',
+     'attractions','days','day_trips','preferences','travel_segments'].forEach(function(f) {
+        if (store[f] !== undefined) data[f] = JSON.parse(JSON.stringify(store[f]));
+    });
+    data._localTs = Date.now();
+    localStorage.setItem(key, JSON.stringify(data));
+}
+
+function _genId() {
+    // crypto.randomUUID available on all modern browsers
+    if (crypto.randomUUID) return crypto.randomUUID();
+    return 'local-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+}
+
+function reloadMap() {
+    setTimeout(function() {
+        var iframe = document.querySelector('#tab-map iframe');
+        if (iframe) iframe.src = iframe.src.split('?')[0] + '?t=' + Date.now();
+    }, 1500);
+}
+
+/* Trip picker component */
+function tripPicker() {
+    return {
+        open: false,
+        trips: [],
+        currentName: 'Valencia',
+        toggle() {
+            if (!this.open) this.loadTrips();
+            this.open = !this.open;
+        },
+        async loadTrips() {
+            try {
+                const resp = await fetch('/api/trips');
+                if (resp.ok) this.trips = await resp.json();
+            } catch(e) {
+                /* static mode, no server */
+                this.trips = [{slug: 'val2026', name: 'Valencia', active: true, has_trip: true}];
+            }
+        },
+        switchTrip(t) {
+            this.open = false;
+            if (t.active) return;
+            if (t.app_url) {
+                window.location.href = t.app_url;
+            } else if (!t.has_trip) {
+                window.dispatchEvent(new CustomEvent('open-modal', {detail: 'new-trip-guide'}));
+            }
+        },
+        newTrip() {
+            this.open = false;
+            window.dispatchEvent(new CustomEvent('open-modal', {detail: 'new-trip-guide'}));
+        }
+    };
+}
+
+/* New trip form component */
+function newTripForm() {
+    return {
+        phase: 'form',
+        pollInterval: null,
+        form: {
+            destination: '',
+            name: '',
+            start_date: '',
+            end_date: '',
+            travelers: 2,
+            budget_eur: null,
+            interests_str: '',
+            pace: 'moderate',
+            include_day_trips: 'true',
+            must_do: '',
+            context: ''
+        },
+        job: {
+            slug: '',
+            status: 'queued',
+            step: '',
+            error: null,
+            attractions_count: 0,
+            day_trips_count: 0,
+            app_url: null
+        },
+        async submit() {
+            var dest = this.form.destination.trim();
+            if (!dest || !this.form.start_date || !this.form.end_date) return;
+
+            var interests = this.form.interests_str
+                ? this.form.interests_str.split(',').map(function(s) { return s.trim(); }).filter(Boolean)
+                : [];
+            var payload = {
+                destination: dest,
+                start_date: this.form.start_date,
+                end_date: this.form.end_date,
+                travelers: parseInt(this.form.travelers) || 2,
+                interests: interests,
+                pace: this.form.pace,
+                include_day_trips: this.form.include_day_trips === 'true'
+            };
+            if (this.form.name) payload.name = this.form.name;
+            if (this.form.budget_eur) payload.budget_eur = parseFloat(this.form.budget_eur);
+            if (this.form.must_do) payload.must_do = this.form.must_do;
+            if (this.form.context) payload.context = this.form.context;
+
+            try {
+                var resp = await fetch('/api/pipeline/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!resp.ok) {
+                    var err = await resp.json().catch(function() { return {detail: 'Failed to start pipeline'}; });
+                    alert(err.detail || 'Failed to start pipeline');
+                    return;
+                }
+                var data = await resp.json();
+                this.job.slug = data.slug;
+                this.job.status = data.status;
+                this.job.step = data.step || 'Starting...';
+                this.phase = 'progress';
+                this.startPolling();
+            } catch (e) {
+                alert('Network error: ' + e.message);
+            }
+        },
+        startPolling() {
+            var self = this;
+            this.pollInterval = setInterval(async function() {
+                try {
+                    var resp = await fetch('/api/pipeline/status/' + self.job.slug);
+                    if (!resp.ok) return;
+                    var data = await resp.json();
+                    self.job.status = data.status;
+                    self.job.step = data.step;
+                    self.job.error = data.error;
+                    self.job.attractions_count = data.attractions_count || 0;
+                    self.job.day_trips_count = data.day_trips_count || 0;
+                    if (data.status === 'done') {
+                        self.job.app_url = data.app_url || null;
+                        self.stopPolling();
+                    } else if (data.status === 'error') {
+                        self.stopPolling();
+                    }
+                } catch (e) {
+                    /* ignore polling errors */
+                }
+            }, 3000);
+        },
+        stopPolling() {
+            if (this.pollInterval) {
+                clearInterval(this.pollInterval);
+                this.pollInterval = null;
+            }
+        },
+        cleanup() {
+            this.stopPolling();
+        },
+        statusIcon() {
+            var s = this.job.status;
+            if (s === 'error') return '⚠';
+            if (s === 'done') return '✓';
+            if (s === 'researching') return '🔍';
+            if (s === 'converting') return '⚙';
+            if (s === 'building') return '🏗';
+            return '⏳';
+        },
+        progressPct() {
+            var map = { queued: 5, researching: 25, converting: 55, building: 80, done: 100, error: 100 };
+            return map[this.job.status] || 5;
+        },
+        progressStepStyle(step) {
+            var order = ['queued', 'researching', 'converting', 'building', 'done'];
+            var current = order.indexOf(this.job.status);
+            var target = order.indexOf(step);
+            if (this.job.status === 'error') return 'color:#dc2626';
+            if (target < current) return 'color:#059669;font-weight:600';
+            if (target === current) return 'color:#1a2332;font-weight:600';
+            return '';
+        }
+    };
+}
+
+/* Sidebar chat component */
+function sidebarChat() {
+    return {
+        messages: [
+            { role: 'assistant', content: "Hi! I'm your travel assistant for Valencia. Ask me to suggest plans, add attractions, or help organize your trip!" }
+        ],
+        input: '',
+        loading: false,
+        scrollToBottom() {
+            var self = this;
+            this.$nextTick(function() {
+                var el = self.$refs.chatMessages;
+                if (el) el.scrollTop = el.scrollHeight;
+            });
+        },
+        async send() {
+            var text = this.input.trim();
+            if (!text || this.loading) return;
+            this.messages.push({ role: 'user', content: text });
+            this.input = '';
+            this.loading = true;
+            this.scrollToBottom();
+
+            try {
+                var apiMessages = this.messages.filter(function(m) { return m.role === 'user' || m.role === 'assistant'; }).map(function(m) {
+                    return { role: m.role, content: m.content };
+                });
+                var resp = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages: apiMessages })
+                });
+                if (!resp.ok) {
+                    var err = await resp.json().catch(function() { return {detail: 'Chat unavailable'}; });
+                    this.messages.push({ role: 'error', content: err.detail || 'Something went wrong' });
+                } else {
+                    var data = await resp.json();
+                    this.messages.push({ role: 'assistant', content: data.content });
+                    if (data.actions && data.actions.length > 0) {
+                        await this.executeActions(data.actions);
+                    }
+                }
+            } catch (e) {
+                this.messages.push({ role: 'error', content: 'Network error: ' + e.message });
+            }
+            this.loading = false;
+            this.scrollToBottom();
+        },
+        async executeActions(actions) {
+            for (var action of actions) {
+                try {
+                    if (action.type === 'add_attraction') {
+                        await $store.trip.addAttraction(action.data);
+                    } else if (action.type === 'add_day_trip') {
+                        await $store.trip.addDayTrip(action.data);
+                    } else if (action.type === 'add_day') {
+                        await $store.trip.addDay(action.data);
+                    } else if (action.type === 'schedule') {
+                        await $store.trip.scheduleAttraction(action.data);
+                    }
+                } catch (e) {
+                    console.error('Action failed:', action, e);
+                }
+            }
+        }
+    };
+}
+
+document.addEventListener('alpine:init', function() {
+    function toast(type, message) {
+        window.dispatchEvent(new CustomEvent('toast', {detail: {type: type, message: message}}));
+    }
+
+    Alpine.store('trip', Object.assign({}, window.__TRIP_DATA__, {
+
+        async save(field, value) {
+            var self = this;
+            var result = await offlineFetch('/api/trip', {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({[field]: value})
+            }, function() {
+                self[field] = value;
+                _persistLocal();
+            });
+            if (result.ok) {
+                toast('success', result.offline ? 'Saved locally' : 'Trip updated');
+            } else { toast('error', 'Failed to save'); }
+            return result.resp || { ok: result.ok };
+        },
+
+        async addAttraction(data) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/attractions', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                if (resp.ok) {
+                    var a = await resp.json();
+                    self.attractions.push(a);
+                    toast('success', 'Attraction added');
+                    reloadMap();
+                } else { toast('error', 'Failed to add attraction'); }
+                return resp;
+            } catch(e) {
+                // Offline: add locally
+                var local = Object.assign({}, data, { id: _genId() });
+                if (!local.location) local.location = { lat: 0, lng: 0, address: '' };
+                if (local.tags && typeof local.tags === 'string') local.tags = local.tags.split(',').map(function(t){ return t.trim(); });
+                self.attractions.push(local);
+                _persistLocal();
+                toast('success', 'Saved locally');
+                return { ok: true };
+            }
+        },
+
+        async updateAttraction(id, data) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/attractions/' + id, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                if (resp.ok) {
+                    var updated = await resp.json();
+                    var idx = self.attractions.findIndex(function(a) { return a.id === id; });
+                    if (idx >= 0) self.attractions[idx] = updated;
+                    toast('success', 'Attraction updated');
+                    reloadMap();
+                } else { toast('error', 'Failed to update attraction'); }
+                return resp;
+            } catch(e) {
+                var idx = self.attractions.findIndex(function(a) { return a.id === id; });
+                if (idx >= 0) Object.assign(self.attractions[idx], data);
+                _persistLocal();
+                toast('success', 'Saved locally');
+                return { ok: true };
+            }
+        },
+
+        async deleteAttraction(id) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/attractions/' + id, { method: 'DELETE' });
+                if (resp.ok) {
+                    self.attractions = self.attractions.filter(function(a) { return a.id !== id; });
+                    toast('success', 'Attraction deleted');
+                    reloadMap();
+                } else { toast('error', 'Failed to delete attraction'); }
+                return resp;
+            } catch(e) {
+                self.attractions = self.attractions.filter(function(a) { return a.id !== id; });
+                _persistLocal();
+                toast('success', 'Deleted locally');
+                return { ok: true };
+            }
+        },
+
+        async setScore(id, score) {
+            var self = this;
+            var result = await offlineFetch('/api/attractions/' + id + '/score', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({score: score})
+            }, function() {
+                var idx = self.attractions.findIndex(function(a) { return a.id === id; });
+                if (idx >= 0) self.attractions[idx].user_score = score;
+                _persistLocal();
+            });
+            if (result.ok) reloadMap();
+        },
+
+        async updatePreferences(prefs) {
+            var self = this;
+            var result = await offlineFetch('/api/trip/preferences', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(prefs)
+            }, function() {
+                self.preferences = prefs;
+                _persistLocal();
+            });
+            if (result.ok) toast('success', result.offline ? 'Saved locally' : 'Preferences updated');
+            else toast('error', 'Failed to update preferences');
+        },
+
+        async addDayTrip(data) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/day-trips', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+                if (resp.ok) { var dt = await resp.json(); self.day_trips.push(dt); toast('success', 'Day trip added'); reloadMap(); }
+                else { toast('error', 'Failed to add day trip'); }
+                return resp;
+            } catch(e) {
+                var local = Object.assign({}, data, { id: _genId() });
+                if (!local.location) local.location = { lat: 0, lng: 0, address: '' };
+                self.day_trips.push(local);
+                _persistLocal();
+                toast('success', 'Saved locally');
+                return { ok: true };
+            }
+        },
+
+        async updateDayTrip(id, data) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/day-trips/' + id, { method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+                if (resp.ok) { var updated = await resp.json(); var idx = self.day_trips.findIndex(function(d) { return d.id === id; }); if (idx >= 0) self.day_trips[idx] = updated; toast('success', 'Day trip updated'); reloadMap(); }
+                else { toast('error', 'Failed to update day trip'); }
+                return resp;
+            } catch(e) {
+                var idx = self.day_trips.findIndex(function(d) { return d.id === id; });
+                if (idx >= 0) Object.assign(self.day_trips[idx], data);
+                _persistLocal();
+                toast('success', 'Saved locally');
+                return { ok: true };
+            }
+        },
+
+        async deleteDayTrip(id) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/day-trips/' + id, { method: 'DELETE' });
+                if (resp.ok) { self.day_trips = self.day_trips.filter(function(d) { return d.id !== id; }); toast('success', 'Day trip deleted'); reloadMap(); }
+                else { toast('error', 'Failed to delete day trip'); }
+                return resp;
+            } catch(e) {
+                self.day_trips = self.day_trips.filter(function(d) { return d.id !== id; });
+                _persistLocal();
+                toast('success', 'Deleted locally');
+                return { ok: true };
+            }
+        },
+
+        async setDayTripScore(id, score) {
+            var self = this;
+            var result = await offlineFetch('/api/day-trips/' + id + '/score', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({score: score})
+            }, function() {
+                var idx = self.day_trips.findIndex(function(d) { return d.id === id; });
+                if (idx >= 0) self.day_trips[idx].user_score = score;
+                _persistLocal();
+            });
+            if (result.ok) reloadMap();
+        },
+
+        async addDay(data) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/days', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+                if (resp.ok) {
+                    var d = await resp.json();
+                    self.days.push(d);
+                    self.days.sort(function(a, b) { return a.date.localeCompare(b.date); });
+                    toast('success', 'Day added');
+                }
+                else { toast('error', 'Failed to add day'); }
+                return resp;
+            } catch(e) {
+                var local = Object.assign({ activities: [] }, data, { id: _genId() });
+                self.days.push(local);
+                self.days.sort(function(a, b) { return a.date.localeCompare(b.date); });
+                _persistLocal();
+                toast('success', 'Saved locally');
+                return { ok: true };
+            }
+        },
+
+        async initDays() {
+            var self = this;
+            try {
+                var resp = await fetch('/api/init-days', { method: 'POST' });
+                if (resp.ok) { await self.reload(); toast('success', 'Days initialized'); }
+                else { toast('error', 'Failed to initialize days'); }
+            } catch(e) {
+                // Offline: generate days from start_date to end_date
+                if (self.start_date && self.end_date) {
+                    var start = new Date(self.start_date + 'T00:00:00');
+                    var end = new Date(self.end_date + 'T00:00:00');
+                    var existingDates = new Set((self.days || []).map(function(d) { return d.date; }));
+                    for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                        var ds = d.toISOString().split('T')[0];
+                        if (!existingDates.has(ds)) {
+                            self.days.push({ id: _genId(), date: ds, label: null, notes: null, activities: [] });
+                        }
+                    }
+                    self.days.sort(function(a, b) { return a.date.localeCompare(b.date); });
+                    _persistLocal();
+                    toast('success', 'Days initialized locally');
+                } else { toast('error', 'Set trip dates first'); }
+            }
+        },
+
+        async addActivity(dayDate, data) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/days/' + dayDate + '/activities', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+                if (resp.ok) { await self.reload(); toast('success', 'Activity added'); }
+                else { toast('error', 'Failed to add activity'); }
+                return resp;
+            } catch(e) {
+                var day = (self.days || []).find(function(d) { return d.date === dayDate; });
+                if (day) {
+                    var act = Object.assign({}, data, { id: _genId() });
+                    if (!day.activities) day.activities = [];
+                    day.activities.push(act);
+                    _persistLocal();
+                    toast('success', 'Saved locally');
+                }
+                return { ok: true };
+            }
+        },
+
+        async deleteActivity(dayDate, activityId) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/days/' + dayDate + '/activities/' + activityId, { method: 'DELETE' });
+                if (resp.ok) { await self.reload(); toast('success', 'Activity removed'); }
+                else { toast('error', 'Failed to remove activity'); }
+            } catch(e) {
+                var day = (self.days || []).find(function(d) { return d.date === dayDate; });
+                if (day) {
+                    day.activities = (day.activities || []).filter(function(a) { return a.id !== activityId; });
+                    _persistLocal();
+                    toast('success', 'Removed locally');
+                }
+            }
+        },
+
+        async scheduleAttraction(attractionId, date, startTime) {
+            var self = this;
+            var body = { attraction_id: attractionId, date: date };
+            if (startTime) body.start_time = startTime;
+            try {
+                var resp = await fetch('/api/schedule', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+                if (resp.ok) { await self.reload(); toast('success', 'Attraction scheduled'); }
+                else { toast('error', 'Failed to schedule'); }
+            } catch(e) {
+                // Offline: create activity from attraction data
+                var day = (self.days || []).find(function(d) { return d.date === date; });
+                var attr = (self.attractions || []).find(function(a) { return a.id === attractionId; });
+                if (day && attr) {
+                    if (!day.activities) day.activities = [];
+                    day.activities.push({
+                        id: _genId(),
+                        attraction_id: attractionId,
+                        name: attr.name,
+                        category: attr.category,
+                        duration_minutes: attr.duration_minutes || 60,
+                        price_eur: attr.price_eur || 0,
+                        start_time: startTime || null,
+                        status: 'planned'
+                    });
+                    _persistLocal();
+                    toast('success', 'Scheduled locally');
+                }
+            }
+        },
+
+        async reorderActivities(dayDate, activityIds) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/days/' + dayDate + '/activities/reorder', {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({activity_ids: activityIds})
+                });
+                if (!resp.ok) { toast('error', 'Failed to reorder activities'); }
+            } catch(e) {
+                var day = (self.days || []).find(function(d) { return d.date === dayDate; });
+                if (day && day.activities) {
+                    var byId = {};
+                    day.activities.forEach(function(a) { byId[a.id] = a; });
+                    day.activities = activityIds.map(function(id) { return byId[id]; }).filter(Boolean);
+                    _persistLocal();
+                }
+            }
+        },
+
+        async swapDays(date1, date2) {
+            var self = this;
+            if (!date1 || !date2) return;
+            try {
+                var resp = await fetch('/api/days/swap', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({date1: date1, date2: date2})
+                });
+                if (resp.ok) { await self.reload(); toast('success', 'Days swapped'); }
+                else { toast('error', 'Failed to swap days'); }
+            } catch(e) {
+                var d1 = (self.days || []).find(function(d) { return d.date === date1; });
+                var d2 = (self.days || []).find(function(d) { return d.date === date2; });
+                if (d1 && d2) {
+                    var tmp = d1.activities;
+                    d1.activities = d2.activities;
+                    d2.activities = tmp;
+                    var tmpL = d1.label; d1.label = d2.label; d2.label = tmpL;
+                    var tmpN = d1.notes; d1.notes = d2.notes; d2.notes = tmpN;
+                    _persistLocal();
+                    toast('success', 'Swapped locally');
+                }
+            }
+        },
+
+        async moveActivity(activityId, targetDate) {
+            var self = this;
+            try {
+                var resp = await fetch('/api/activities/move', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({activity_id: activityId, target_date: targetDate})
+                });
+                if (resp.ok) { await self.reload(); }
+                else { toast('error', 'Failed to move activity'); }
+            } catch(e) {
+                var act = null;
+                (self.days || []).forEach(function(d) {
+                    var idx = (d.activities || []).findIndex(function(a) { return a.id === activityId; });
+                    if (idx >= 0) {
+                        act = d.activities.splice(idx, 1)[0];
+                    }
+                });
+                if (act) {
+                    var target = (self.days || []).find(function(d) { return d.date === targetDate; });
+                    if (target) {
+                        if (!target.activities) target.activities = [];
+                        target.activities.push(act);
+                        _persistLocal();
+                    }
+                }
+            }
+        },
+
+        async reload() {
+            try {
+                var resp = await fetch('/api/trip');
+                if (resp.ok) { Object.assign(this, await resp.json()); }
+            } catch(e) {
+                // Offline: already have local state, nothing to reload
+            }
+        },
+
+        exportTrip() {
+            var data = {};
+            ['id','name','destination','start_date','end_date','travelers','budget_eur',
+             'attractions','days','day_trips','preferences','travel_segments'].forEach(function(f) {
+                var val = Alpine.store('trip')[f];
+                if (val !== undefined) data[f] = JSON.parse(JSON.stringify(val));
+            });
+            var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = (data.destination || 'trip').toLowerCase().replace(/\s+/g, '-') + '-trip.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            toast('success', 'Trip exported');
+        },
+
+        importTrip(file) {
+            var self = this;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var data = JSON.parse(e.target.result);
+                    if (!data.destination) { toast('error', 'Invalid trip file'); return; }
+                    Object.assign(self, data);
+                    _persistLocal();
+                    toast('success', 'Trip imported');
+                } catch(err) {
+                    toast('error', 'Failed to parse file');
+                }
+            };
+            reader.readAsText(file);
+        },
+
+        clearLocal() {
+            var key = 'vacationeer_trip_' + (this.id || 'default');
+            localStorage.removeItem(key);
+            Object.assign(this, window.__TRIP_DATA__);
+            toast('success', 'Local changes cleared');
+        }
+    }));
+});
+</script>
+
+<div class="app">
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">Vacationeer</div>
+            <div class="trip-picker" x-data="tripPicker()">
+                <button class="trip-picker-btn" @click="toggle()" @click.outside="open = false">
+                    <span class="tp-label" x-text="currentName">Valencia</span>
+                    <span class="tp-chevron" :class="{ 'open': open }">&#9660;</span>
+                </button>
+                <div class="trip-picker-dropdown" x-show="open" x-cloak x-transition.opacity>
+                    <template x-for="t in trips" :key="t.slug">
+                        <button class="tp-item" :class="{ 'active': t.active }"
+                                @click="switchTrip(t)">
+                            <span x-text="t.name"></span>
+                            <span class="tp-status" x-text="t.pipeline && t.pipeline.status !== 'done' && t.pipeline.status !== 'error' ? '⏳ ' + t.pipeline.step : t.has_trip ? 'ready' : t.has_research ? 'research' : 'config'"></span>
+                        </button>
+                    </template>
+                    <div class="tp-divider"></div>
+                    <button class="tp-item tp-new" @click="newTrip()">
+                        + New trip
+                    </button>
+                </div>
+            </div>
+        </div>
+        <ul class="nav">
+            <li><button class="nav-btn active" data-tab="tab-map"><span class="icon">🗺</span><span class="label">Map</span></button></li>
+            <li><button class="nav-btn" data-tab="tab-overview"><span class="icon">📋</span><span class="label">Overview</span></button></li>
+            <li><button class="nav-btn" data-tab="tab-timeline"><span class="icon">📅</span><span class="label">Timeline</span></button></li>
+        </ul>
+        <div class="sidebar-chat" x-data="sidebarChat()">
+            <div class="chat-header">Assistant</div>
+            <div class="chat-messages" x-ref="chatMessages">
+                <template x-for="(msg, i) in messages" :key="i">
+                    <div class="chat-bubble" :class="msg.role" x-html="msg.html || msg.content"></div>
+                </template>
+                <template x-if="loading">
+                    <div class="chat-bubble assistant"><span class="typing">Thinking...</span></div>
+                </template>
+            </div>
+            <div class="chat-input">
+                <input type="text" x-model="input" placeholder="Ask the assistant..."
+                       @keydown.enter="send()" :disabled="loading" />
+                <button @click="send()" :disabled="loading || !input.trim()">Send</button>
+            </div>
+        </div>
+        <div class="sidebar-data-actions" style="padding:8px 16px;display:flex;gap:6px;">
+            <button onclick="Alpine.store('trip').exportTrip()"
+                    style="flex:1;padding:6px 0;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#ccc;border-radius:6px;cursor:pointer;font-size:11px;"
+                    title="Download trip as JSON">⬇ Export</button>
+            <label style="flex:1;padding:6px 0;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#ccc;border-radius:6px;cursor:pointer;font-size:11px;text-align:center;"
+                   title="Import trip from JSON">⬆ Import
+                <input type="file" accept=".json" style="display:none"
+                       onchange="if(this.files[0]) Alpine.store('trip').importTrip(this.files[0]); this.value='';">
+            </label>
+        </div>
+        <div class="sidebar-footer">Vacationeer v0.1</div>
+    </aside>
+
+    <div class="main">
+        <header class="header">
+            <div class="header-title-row" onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'edit-trip'}))">
+                <h1>Valencia Spring 2026</h1>
+                <span class="edit-icon">✏️</span>
+            </div>
+            <div class="meta" style="cursor:pointer" onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'edit-trip'}))">
+                <span>📍 Valencia</span>
+                <span>📆 Mar 21, 2026 &ndash; Mar 28, 2026 (8 days)</span>
+                <span>👥 2 travelers</span>
+                <span>💶 €2,000 budget</span>
+            </div>
+        </header>
+        <div class="content">
+            <div id="tab-map" class="tab-panel active">
+                <iframe src="valencia-map.html"></iframe>
+            </div>
+            <div id="tab-overview" class="tab-panel">
+                <div id="overview-content">
+<div style="background:#f5f6f8;padding:20px;border-radius:12px;
+            font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;"
+     x-data="{
+       filter: 'all',
+       search: '',
+       sortBy: 'category',
+       expanded: null,
+       editing: null,
+       editForm: {},
+       catColors: {'landmark': '#C0392B', 'museum': '#2980B9', 'nature': '#27AE60', 'food': '#E67E22', 'entertainment': '#8E44AD', 'transport': '#7F8C8D', 'accommodation': '#922B21', 'shopping': '#2E86C1', 'day_trip': '#1E8449', 'infrastructure': '#34495E'},
+       catLabels: {'landmark': 'Landmarks', 'museum': 'Museums', 'nature': 'Nature', 'food': 'Food', 'entertainment': 'Entertainment', 'transport': 'Transport', 'accommodation': 'Accommodation', 'shopping': 'Shopping', 'day_trip': 'Day Trips', 'infrastructure': 'Infrastructure'},
+       catIcons: {'landmark': '&#x1f3db;', 'museum': '&#x1f5bc;', 'nature': '&#x1f333;', 'food': '&#x1f374;', 'entertainment': '&#x1f3ad;', 'transport': '&#x1f68c;', 'accommodation': '&#x1f3e8;', 'shopping': '&#x1f6cd;', 'day_trip': '&#x1f697;', 'infrastructure': '&#x2708;'},
+       catColor(c) { return this.catColors[c] || '#888'; },
+       catLabel(c) { return this.catLabels[c] || c; },
+       catIcon(c) { return this.catIcons[c] || ''; },
+       scoreColor(s) { return s >= 8 ? '#27AE60' : s >= 6 ? '#F1C40F' : '#E74C3C'; },
+       scorePct(s) { return Math.min((s / 10) * 100, 100); },
+       fmtPrice(p) {
+         if (p == null || p === 0) return 'Free';
+         return p === Math.floor(p) ? '€' + p : '€' + p.toFixed(2);
+       },
+       fmtDuration(m) {
+         if (m == null) return '';
+         if (m < 60) return m + 'min';
+         var h = Math.floor(m / 60), r = m % 60;
+         return r ? h + 'h ' + r + 'min' : h + 'h';
+       },
+       filtered() {
+         let list = $store.trip.attractions || [];
+         if (this.filter !== 'all') list = list.filter(a => a.category === this.filter);
+         if (this.search.trim()) {
+           let q = this.search.trim().toLowerCase();
+           list = list.filter(a => a.name.toLowerCase().includes(q));
+         }
+         let key = this.sortBy;
+         return [...list].sort((a, b) => {
+           if (key === 'name') return (a.name || '').localeCompare(b.name || '');
+           if (key === 'expected_score') return (b.expected_score || 0) - (a.expected_score || 0);
+           if (key === 'user_score') return (b.user_score || 0) - (a.user_score || 0);
+           if (key === 'price') return (a.price_eur || 0) - (b.price_eur || 0);
+           if (key === 'category') return (a.category || '').localeCompare(b.category || '');
+           return 0;
+         });
+       },
+       startEdit(a) {
+         this.editing = a.id;
+         this.editForm = {
+           name: a.name,
+           description: a.description || '',
+           price_eur: a.price_eur,
+           duration_minutes: a.duration_minutes,
+           tips: a.tips || '',
+           url: a.url || '',
+           tags: (a.tags || []).join(', '),
+           expected_score: a.expected_score
+         };
+       },
+       saveEdit(id) {
+         let f = this.editForm;
+         let tags = f.tags ? f.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+         $store.trip.updateAttraction(id, {
+           name: f.name,
+           description: f.description || null,
+           price_eur: f.price_eur != null && f.price_eur !== '' ? parseFloat(f.price_eur) : null,
+           duration_minutes: f.duration_minutes != null && f.duration_minutes !== '' ? parseInt(f.duration_minutes) : null,
+           tips: f.tips || null,
+           url: f.url || null,
+           tags: tags,
+           expected_score: f.expected_score != null && f.expected_score !== '' ? parseFloat(f.expected_score) : null
+         });
+         this.editing = null;
+       }
+     }">
+
+  <!-- ===== Trip summary header ===== -->
+  <div style="background:#1a2332;color:#fff;padding:24px 28px;border-radius:12px;margin-bottom:20px;">
+    <h2 style="margin:0 0 8px 0;font-size:24px;" x-text="$store.trip.destination"></h2>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:14px;opacity:0.9;">
+      <span>&#x1f4c5; <span x-text="$store.trip.start_date + ' &ndash; ' + $store.trip.end_date"></span></span>
+      <span>&#x1f465; <span x-text="$store.trip.travelers"></span> traveler<span x-show="$store.trip.travelers !== 1">s</span></span>
+      <span>&#x1f4b0; Budget: <span x-text="$store.trip.budget_eur ? fmtPrice($store.trip.budget_eur) : 'Not set'"></span></span>
+      <span x-text="($store.trip.attractions || []).length + ' attractions'" style="font-weight:600;"></span>
+    </div>
+  </div>
+
+  <!-- ===== Category filter bar ===== -->
+  <div style="margin-bottom:16px;padding:16px;background:#fff;border-radius:10px;
+              box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+    <div style="font-size:13px;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">
+      Filter by Category
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <button @click="filter = 'all'"
+              :style="'display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:2px solid #1a2332;transition:all .15s;'
+                      + (filter === 'all' ? 'background:#1a2332;color:#fff;' : 'background:#fff;color:#1a2332;')"
+      >All (<span x-text="($store.trip.attractions || []).length"></span>)</button>
+
+      <template x-for="cat in [...new Set(($store.trip.attractions || []).map(a => a.category))]" :key="cat">
+        <button @click="filter = cat"
+                :style="'display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:2px solid ' + catColor(cat) + ';transition:all .15s;'
+                        + (filter === cat ? 'background:' + catColor(cat) + ';color:#fff;' : 'background:#fff;color:' + catColor(cat) + ';')">
+          <span x-text="catLabel(cat)"></span>
+          (<span x-text="($store.trip.attractions || []).filter(a => a.category === cat).length"></span>)
+        </button>
+      </template>
+    </div>
+  </div>
+
+  <!-- ===== Search & Sort bar ===== -->
+  <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+    <input type="text" x-model="search" placeholder="Search attractions..."
+           style="flex:1;min-width:200px;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;
+                  outline:none;transition:border-color .15s;"
+           @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+    <select x-model="sortBy"
+            style="padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;
+                   background:#fff;cursor:pointer;outline:none;"
+            @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+      <option value="name">Sort: Name</option>
+      <option value="expected_score">Sort: Expected Score</option>
+      <option value="user_score">Sort: Your Score</option>
+      <option value="price">Sort: Price</option>
+      <option value="category">Sort: Category</option>
+    </select>
+  </div>
+
+  <!-- ===== Empty state ===== -->
+  <div x-show="!($store.trip.attractions || []).length"
+       style="text-align:center;padding:40px 20px;color:#999;">
+    <div style="font-size:32px;margin-bottom:12px;">&#x1f5fa;</div>
+    <p style="font-size:15px;">No attractions added yet. Use the chat to discover places!</p>
+  </div>
+
+  <!-- ===== No results state ===== -->
+  <div x-show="($store.trip.attractions || []).length && !filtered().length"
+       style="text-align:center;padding:40px 20px;color:#999;">
+    <div style="font-size:28px;margin-bottom:12px;">&#x1f50d;</div>
+    <p style="font-size:15px;">No attractions match your filters.</p>
+  </div>
+
+  <!-- ===== Attraction cards ===== -->
+  <template x-for="attraction in filtered()" :key="attraction.id">
+    <div :style="'background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.10);margin-bottom:20px;border:1px solid #d1d5db;border-left:6px solid ' + catColor(attraction.category)">
+
+      <!-- ===== Collapsed card header ===== -->
+      <div x-show="editing !== attraction.id"
+           @click="expanded = expanded === attraction.id ? null : attraction.id"
+           style="padding:12px 16px;cursor:pointer;user-select:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;">
+          <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
+            <h4 style="margin:0;font-size:14px;color:#1a2332;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                x-text="attraction.name"></h4>
+
+            <!-- Category pill -->
+            <span :style="'display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;color:#fff;background:' + catColor(attraction.category)"
+                  x-text="catLabel(attraction.category)"></span>
+
+            <!-- Expected score bar (compact) -->
+            <span x-show="attraction.expected_score != null"
+                  style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;">
+              <span style="display:inline-block;width:60px;height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden;vertical-align:middle;">
+                <span :style="'display:block;height:100%;border-radius:4px;background:' + scoreColor(attraction.expected_score) + ';width:' + scorePct(attraction.expected_score) + '%'"></span>
+              </span>
+              <span :style="'font-size:12px;font-weight:600;color:' + scoreColor(attraction.expected_score)"
+                    x-text="(attraction.expected_score || 0).toFixed(1)"></span>
+            </span>
+
+            <!-- User score compact -->
+            <span x-show="attraction.user_score != null"
+                  :style="'margin-left:6px;font-size:11px;font-weight:600;color:' + scoreColor(attraction.user_score)">
+              You: &#x2605; <span x-text="(attraction.user_score || 0).toFixed(1)"></span>
+            </span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+            <!-- Price pill -->
+            <span :style="'display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600;border:1px solid;'
+                          + ((attraction.price_eur == null || attraction.price_eur === 0)
+                             ? 'background:#27AE6022;color:#27AE60;border-color:#27AE6044;'
+                             : 'background:#E67E2222;color:#E67E22;border-color:#E67E2244;')"
+                  x-text="fmtPrice(attraction.price_eur)"></span>
+            <!-- Duration -->
+            <span x-show="attraction.duration_minutes" style="font-size:12px;color:#666;">
+              &#x23f1; <span x-text="fmtDuration(attraction.duration_minutes)"></span>
+            </span>
+            <!-- Chevron -->
+            <span style="font-size:12px;color:#999;transition:transform 0.2s;display:inline-block;"
+                  :style="expanded === attraction.id ? 'transform:rotate(180deg)' : ''">&#x25BC;</span>
+          </div>
+        </div>
+        <!-- Short description -->
+        <div x-show="expanded !== attraction.id && attraction.description"
+             style="font-size:13px;color:#666;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;"
+             x-text="attraction.description"></div>
+      </div>
+
+      <!-- ===== Expanded content ===== -->
+      <div x-show="expanded === attraction.id && editing !== attraction.id"
+           x-transition:enter="transition ease-out duration-200"
+           x-transition:enter-start="opacity-0"
+           x-transition:enter-end="opacity-100"
+           style="padding:0 16px 14px 16px;border-top:1px solid #f0f0f0;">
+
+        <!-- Full description -->
+        <p x-show="attraction.description"
+           style="margin:10px 0;font-size:13px;color:#555;line-height:1.6;"
+           x-text="attraction.description"></p>
+
+        <!-- Scores detail -->
+        <div x-show="attraction.expected_score != null || attraction.user_score != null"
+             style="margin:10px 0;padding:10px 12px;background:#f8f9fa;border-radius:8px;">
+          <!-- Expected score detail -->
+          <div x-show="attraction.expected_score != null"
+               style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <span style="font-size:13px;color:#666;min-width:70px;">Expected</span>
+            <span style="display:inline-block;width:100px;height:10px;background:#e0e0e0;border-radius:5px;overflow:hidden;">
+              <span :style="'display:block;height:100%;border-radius:5px;background:' + scoreColor(attraction.expected_score) + ';width:' + scorePct(attraction.expected_score) + '%'"></span>
+            </span>
+            <span :style="'font-size:13px;font-weight:600;color:' + scoreColor(attraction.expected_score)"
+                  x-text="(attraction.expected_score || 0).toFixed(1) + '/10'"></span>
+          </div>
+          <!-- User score detail -->
+          <div x-show="attraction.user_score != null"
+               style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <span style="font-size:13px;color:#666;min-width:70px;">Your score</span>
+            <span style="display:inline-block;width:100px;height:10px;background:#e0e0e0;border-radius:5px;overflow:hidden;">
+              <span :style="'display:block;height:100%;border-radius:5px;background:' + scoreColor(attraction.user_score) + ';width:' + scorePct(attraction.user_score) + '%'"></span>
+            </span>
+            <span :style="'font-size:13px;font-weight:600;color:' + scoreColor(attraction.user_score)"
+                  x-text="(attraction.user_score || 0).toFixed(1) + '/10'"></span>
+          </div>
+        </div>
+
+        <!-- Star rating (clickable, 1-10) -->
+        <div style="margin:10px 0;" @click.stop>
+          <div style="font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Rate this attraction</div>
+          <div style="display:flex;align-items:center;gap:2px;">
+            <template x-for="s in [1,2,3,4,5,6,7,8,9,10]" :key="s">
+              <span @click="$store.trip.setScore(attraction.id, s)"
+                    :style="'cursor:pointer;font-size:20px;transition:color .1s;color:' + (s <= (attraction.user_score || 0) ? '#f39c12' : '#ddd')"
+                    style="cursor:pointer;">&#x2605;</span>
+            </template>
+            <span x-show="attraction.user_score"
+                  style="margin-left:8px;font-size:13px;font-weight:600;color:#f39c12;"
+                  x-text="(attraction.user_score || 0) + '/10'"></span>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div x-show="attraction.tags && attraction.tags.length"
+             style="margin:8px 0;">
+          <div style="font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Tags</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">
+            <template x-for="tag in (attraction.tags || [])" :key="tag">
+              <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#e8ecf1;color:#4a5568;font-size:11px;font-weight:500;"
+                    x-text="tag"></span>
+            </template>
+          </div>
+        </div>
+
+        <!-- Tips -->
+        <div x-show="attraction.tips"
+             style="margin:10px 0;padding:10px 14px;background:#FFF9E6;border-left:3px solid #F1C40F;border-radius:0 8px 8px 0;
+                    font-size:13px;color:#7D6608;line-height:1.5;">
+          <strong>&#x1f4a1; Tip:</strong> <span x-text="attraction.tips"></span>
+        </div>
+
+        <!-- URL link -->
+        <div x-show="attraction.url" style="margin:8px 0;">
+          <a :href="attraction.url" target="_blank" rel="noopener"
+             style="display:inline-block;padding:6px 14px;background:#1a2332;color:#fff;border-radius:6px;font-size:12px;font-weight:500;text-decoration:none;">
+            &#x1f517; Visit website</a>
+        </div>
+
+        <!-- Image (only if available) -->
+        <div x-show="attraction.image_url" style="margin:10px 0;">
+          <img :src="attraction.image_url" :alt="attraction.name"
+               style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;" />
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button @click.stop="startEdit(attraction)"
+                  style="padding:8px 16px;background:#1a2332;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;">
+            &#x270f; Edit</button>
+          <button @click.stop="if(confirm('Delete ' + attraction.name + '?')) $store.trip.deleteAttraction(attraction.id)"
+                  style="padding:8px 16px;background:#E74C3C;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;">
+            &#x1f5d1; Delete</button>
+        </div>
+      </div>
+
+      <!-- ===== Inline edit form ===== -->
+      <div x-show="editing === attraction.id"
+           @click.stop
+           style="padding:16px;border-top:1px solid #f0f0f0;">
+        <h4 style="margin:0 0 12px 0;font-size:15px;color:#1a2332;">Edit Attraction</h4>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div>
+            <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Name</label>
+            <input x-model="editForm.name" placeholder="Name"
+                   style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;"
+                   @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+          </div>
+          <div>
+            <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Description</label>
+            <textarea x-model="editForm.description" placeholder="Description" rows="3"
+                      style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;resize:vertical;box-sizing:border-box;"
+                      @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'"></textarea>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:120px;">
+              <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Price (&euro;)</label>
+              <input type="number" x-model="editForm.price_eur" placeholder="0" min="0" step="0.01"
+                     style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;"
+                     @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+            </div>
+            <div style="flex:1;min-width:120px;">
+              <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Duration (min)</label>
+              <input type="number" x-model="editForm.duration_minutes" placeholder="60" min="0" step="5"
+                     style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;"
+                     @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+            </div>
+            <div style="flex:1;min-width:120px;">
+              <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Expected Score</label>
+              <input type="number" x-model="editForm.expected_score" placeholder="7.5" min="0" max="10" step="0.1"
+                     style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;"
+                     @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Tags (comma separated)</label>
+            <input x-model="editForm.tags" placeholder="tag1, tag2, tag3"
+                   style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;"
+                   @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+          </div>
+          <div>
+            <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Tips</label>
+            <input x-model="editForm.tips" placeholder="Helpful tips..."
+                   style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;"
+                   @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+          </div>
+          <div>
+            <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">URL</label>
+            <input x-model="editForm.url" placeholder="https://..."
+                   style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;"
+                   @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button @click="saveEdit(attraction.id)"
+                    style="padding:8px 20px;background:#27AE60;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">
+              Save</button>
+            <button @click="editing = null"
+                    style="padding:8px 20px;background:#fff;color:#666;border:2px solid #ddd;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;">
+              Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </template>
+</div>
+</div>
+            </div>
+            <div id="tab-timeline" class="tab-panel">
+                <div id="timeline-content">
+    <style>
+    .kanban {
+        display: flex;
+        height: calc(100vh - 160px);
+        overflow: hidden;
+        font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* ---- Pool sidebar ---- */
+    .kanban-pool {
+        width: 260px;
+        min-width: 260px;
+        border-right: 1px solid #d1d5db;
+        background: #f5f6f8;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .kanban-pool-header {
+        padding: 14px 14px 10px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a2332;
+        border-bottom: 1px solid #d1d5db;
+        flex-shrink: 0;
+    }
+    .kanban-pool-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+    }
+
+    /* ---- Day columns ---- */
+    .kanban-days {
+        flex: 1;
+        overflow-x: auto;
+        overflow-y: hidden;
+        background: #f5f6f8;
+    }
+    .kanban-days-scroll {
+        display: flex;
+        gap: 12px;
+        padding: 12px;
+        height: 100%;
+        min-width: min-content;
+    }
+
+    .day-col {
+        width: 270px;
+        min-width: 270px;
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #d1d5db;
+        display: flex;
+        flex-direction: column;
+        max-height: 100%;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .day-col-header {
+        padding: 12px 14px 8px;
+        border-bottom: 1px solid #e2e5e9;
+        flex-shrink: 0;
+    }
+    .day-col-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .day-num {
+        font-weight: 700;
+        font-size: 14px;
+        color: #1a2332;
+    }
+    .day-date {
+        font-size: 12px;
+        color: #888;
+    }
+    .day-col-label {
+        font-size: 12px;
+        color: #1a2332;
+        font-weight: 600;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .day-col-actions {
+        display: flex;
+        gap: 4px;
+        margin-top: 6px;
+    }
+    .day-col-actions button {
+        background: #f5f6f8;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 2px 8px;
+        font-size: 12px;
+        color: #1a2332;
+        line-height: 1;
+    }
+    .day-col-actions button:hover {
+        background: #d1d5db;
+    }
+    .day-col-notes {
+        padding: 4px 14px 6px;
+        font-size: 11px;
+        color: #888;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .day-col-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 8px;
+        min-height: 80px;
+    }
+    .day-col-footer {
+        padding: 8px 14px;
+        border-top: 1px solid #e2e5e9;
+        font-size: 12px;
+        color: #888;
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    /* ---- Cards (shared between pool and day) ---- */
+    .pool-card, .act-card {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        margin-bottom: 6px;
+        background: #ffffff;
+        border-radius: 8px;
+        border-left: 3px solid #999;
+        cursor: grab;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+        transition: box-shadow 0.15s;
+    }
+    .pool-card:hover, .act-card:hover {
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    .pool-card .card-name, .act-card .card-name {
+        font-weight: 600;
+        font-size: 13px;
+        color: #1a2332;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .pool-card .card-meta, .act-card .card-meta {
+        font-size: 11px;
+        color: #888;
+    }
+    .act-card .card-time {
+        font-size: 11px;
+        font-weight: 600;
+        color: #1a2332;
+        opacity: 0.6;
+        min-width: 38px;
+    }
+    .act-card .act-remove {
+        background: none;
+        border: none;
+        color: #ccc;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 0 2px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+    .act-card .act-remove:hover {
+        color: #e74c3c;
+    }
+    .drag-handle {
+        cursor: grab;
+        color: #ccc;
+        font-size: 14px;
+        flex-shrink: 0;
+        user-select: none;
+    }
+
+    .day-col-empty {
+        padding: 24px 12px;
+        text-align: center;
+        color: #888;
+        font-size: 13px;
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        margin: 4px;
+    }
+
+    /* SortableJS ghost styling */
+    .sortable-ghost {
+        opacity: 0.4;
+    }
+
+    /* ---- Pool in day columns area (for items in BG_LIGHT context) ---- */
+    .kanban-pool-list .pool-card {
+        background: #fff;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 768px) {
+        .kanban {
+            flex-direction: column;
+            height: auto;
+        }
+        .kanban-pool {
+            width: 100%;
+            min-width: 100%;
+            max-height: 200px;
+            border-right: none;
+            border-bottom: 1px solid #d1d5db;
+        }
+        .kanban-days {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .kanban-days-scroll {
+            flex-direction: column;
+            min-width: auto;
+        }
+        .day-col {
+            width: 100%;
+            min-width: 100%;
+            max-height: none;
+        }
+    }
+    </style>
+
+    <div class="kanban" x-data="kanbanTimeline()" x-init="$nextTick(function() { initAllSortables(); })"
+         x-effect="days; $nextTick(function() { initAllSortables(); })">
+
+        <!-- Pool sidebar -->
+        <aside class="kanban-pool">
+            <div class="kanban-pool-header">
+                Unscheduled (<span x-text="unscheduled.length">0</span>)
+            </div>
+            <div class="kanban-pool-list" x-ref="poolList">
+                <template x-for="attr in unscheduled" :key="attr.id">
+                    <div class="pool-card" :data-attraction-id="attr.id"
+                         :style="'border-left-color:' + catColor(attr.category)">
+                        <span class="drag-handle">&#x2630;</span>
+                        <div style="flex:1;min-width:0;">
+                            <div class="card-name" x-text="attr.name"></div>
+                            <div class="card-meta">
+                                <span x-show="attr.duration_minutes" x-text="fmtDur(attr.duration_minutes)"></span>
+                                <span x-show="attr.price_eur != null"
+                                      x-text="attr.price_eur === 0 ? 'Free' : '\u20ac' + attr.price_eur"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template x-for="dt in unscheduledDayTrips" :key="dt.id">
+                    <div class="pool-card" :data-daytrip-id="dt.id"
+                         style="border-left-color:#1E8449;">
+                        <span class="drag-handle">&#x2630;</span>
+                        <div style="flex:1;min-width:0;">
+                            <div class="card-name"><span style="font-size:11px;">\U0001f30d</span> <span x-text="dt.name"></span></div>
+                            <div class="card-meta">
+                                <span>Day trip</span>
+                                <span x-show="dt.total_duration_minutes" x-text="fmtDur(dt.total_duration_minutes)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div x-show="!unscheduled.length && !unscheduledDayTrips.length"
+                     style="text-align:center;padding:30px 12px;color:#888;font-size:13px;">
+                    All attractions scheduled!
+                </div>
+            </div>
+        </aside>
+
+        <!-- Day columns -->
+        <main class="kanban-days">
+            <div class="kanban-days-scroll" x-ref="daysScroll">
+                <template x-for="(day, i) in days" :key="day.date">
+                    <div class="day-col">
+                        <div class="day-col-header">
+                            <div class="day-col-title">
+                                <span class="day-num" x-text="'Day ' + (i+1)"></span>
+                                <span class="day-date" x-text="fmtDate(day.date)"></span>
+                            </div>
+                            <div class="day-col-label" x-show="day.label" x-text="day.label"></div>
+                            <div class="day-col-actions">
+                                <button x-show="i > 0"
+                                        @click="$store.trip.swapDays(days[i-1].date, day.date)"
+                                        title="Swap with previous day">&larr;</button>
+                                <button x-show="i < days.length - 1"
+                                        @click="$store.trip.swapDays(day.date, days[i+1].date)"
+                                        title="Swap with next day">&rarr;</button>
+                            </div>
+                        </div>
+                        <div class="day-col-notes" x-show="day.notes" x-text="day.notes"></div>
+                        <div class="day-col-list" :data-day-list="day.date">
+                            <template x-for="act in day.activities" :key="act.id">
+                                <div class="act-card" :data-activity-id="act.id" :data-attraction-id="act.attraction_id || ''"
+                                     :style="'border-left-color:' + catColor(act.category)">
+                                    <span class="drag-handle">&#x2630;</span>
+                                    <span class="card-time" x-text="act.start_time ? act.start_time.substring(0,5) : ''"></span>
+                                    <div style="flex:1;min-width:0;">
+                                        <div class="card-name" x-text="act.name"></div>
+                                        <div class="card-meta" x-text="fmtDur(act.duration_minutes)"></div>
+                                    </div>
+                                    <button class="act-remove" @click="unscheduleItem(day.date, act.id)"
+                                            title="Remove from day">&times;</button>
+                                </div>
+                            </template>
+                            <div class="day-col-empty" x-show="!(day.activities || []).length">
+                                Drop activities here
+                            </div>
+                        </div>
+                        <div class="day-col-footer">
+                            <span x-text="dayStats(day).hours + 'h'"></span>
+                            <span x-text="dayStats(day).cost > 0 ? '\u20ac' + dayStats(day).cost : 'Free'"></span>
+                            <span x-text="(day.activities || []).length + ' items'"></span>
+                        </div>
+                    </div>
+                </template>
+                <div x-show="!days.length"
+                     style="display:flex;align-items:center;justify-content:center;width:100%;color:#888;font-size:14px;">
+                    No days yet. Use the + button to add a day.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+    function kanbanTimeline() {
+        return {
+            _sortables: [],
+            catColors: {'landmark': '#C0392B', 'museum': '#2980B9', 'nature': '#27AE60', 'food': '#E67E22', 'entertainment': '#8E44AD', 'transport': '#7F8C8D', 'accommodation': '#922B21', 'shopping': '#2E86C1', 'day_trip': '#1E8449', 'infrastructure': '#34495E'},
+            catColor: function(c) { return this.catColors[c] || '#999'; },
+
+            get days() { return this.$store.trip.days || []; },
+            get attractions() { return this.$store.trip.attractions || []; },
+            get dayTrips() { return this.$store.trip.day_trips || []; },
+
+            get scheduledAttrIds() {
+                var ids = new Set();
+                (this.days || []).forEach(function(d) {
+                    (d.activities || []).forEach(function(a) {
+                        if (a.attraction_id) ids.add(a.attraction_id);
+                    });
+                });
+                return ids;
+            },
+            get scheduledDtIds() {
+                var ids = new Set();
+                (this.days || []).forEach(function(d) {
+                    (d.activities || []).forEach(function(a) {
+                        if (a.day_trip_id) ids.add(a.day_trip_id);
+                    });
+                });
+                return ids;
+            },
+            get unscheduled() {
+                var self = this;
+                return (this.attractions || []).filter(function(a) {
+                    return !self.scheduledAttrIds.has(a.id);
+                });
+            },
+            get unscheduledDayTrips() {
+                var self = this;
+                return (this.dayTrips || []).filter(function(dt) {
+                    return !self.scheduledDtIds.has(dt.id);
+                });
+            },
+
+            fmtDur: function(m) {
+                if (!m) return '';
+                if (m < 60) return m + 'min';
+                var h = Math.floor(m / 60);
+                var r = m % 60;
+                return r ? h + 'h ' + r + 'min' : h + 'h';
+            },
+            fmtDate: function(d) {
+                if (!d) return '';
+                var parts = d.split('-');
+                var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                return months[parseInt(parts[1], 10) - 1] + ' ' + parseInt(parts[2], 10);
+            },
+            dayStats: function(day) {
+                var mins = 0, cost = 0;
+                (day.activities || []).forEach(function(a) {
+                    mins += a.duration_minutes || 0;
+                    cost += a.price_eur || 0;
+                });
+                return { hours: Math.round(mins / 60 * 10) / 10, cost: Math.round(cost * 100) / 100 };
+            },
+
+            initAllSortables: function() {
+                var self = this;
+                // Destroy existing
+                this._sortables.forEach(function(s) { try { s.destroy(); } catch(e) {} });
+                this._sortables = [];
+
+                // Pool
+                var poolEl = self.$refs.poolList;
+                if (poolEl && typeof Sortable !== 'undefined') {
+                    self._sortables.push(Sortable.create(poolEl, {
+                        group: 'kanban',
+                        sort: false,
+                        animation: 150,
+                        onAdd: function(evt) {
+                            var actId = evt.item.dataset.activityId;
+                            var fromDate = evt.from.dataset.dayList;
+                            if (actId && fromDate) {
+                                self.unscheduleItem(fromDate, actId);
+                            }
+                        }
+                    }));
+                }
+
+                // Each day column
+                var dayEls = document.querySelectorAll('[data-day-list]');
+                dayEls.forEach(function(el) {
+                    var dayDate = el.dataset.dayList;
+                    self._sortables.push(Sortable.create(el, {
+                        group: 'kanban',
+                        animation: 150,
+                        handle: '.drag-handle',
+                        onEnd: function(evt) {
+                            if (evt.from === evt.to) {
+                                self.reorderDay(dayDate, evt.to);
+                            }
+                        },
+                        onAdd: function(evt) {
+                            var attractionId = evt.item.dataset.attractionId;
+                            var activityId = evt.item.dataset.activityId;
+
+                            if (attractionId && !activityId) {
+                                // From pool: schedule attraction to this day
+                                self.scheduleToDay(attractionId, dayDate);
+                            } else if (activityId) {
+                                // From another day: move activity
+                                self.moveToDay(activityId, dayDate);
+                            }
+                        }
+                    }));
+                });
+            },
+
+            async scheduleToDay(attractionId, dayDate) {
+                await fetch('/api/schedule', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({attraction_id: attractionId, date: dayDate})
+                });
+                await this.$store.trip.reload();
+                var self = this;
+                this.$nextTick(function() { self.initAllSortables(); });
+            },
+
+            async unscheduleItem(dayDate, activityId) {
+                await fetch('/api/days/' + dayDate + '/activities/' + activityId, {method: 'DELETE'});
+                await this.$store.trip.reload();
+                var self = this;
+                this.$nextTick(function() { self.initAllSortables(); });
+            },
+
+            async moveToDay(activityId, targetDate) {
+                await this.$store.trip.moveActivity(activityId, targetDate);
+                var self = this;
+                this.$nextTick(function() { self.initAllSortables(); });
+            },
+
+            async reorderDay(dayDate, container) {
+                var ids = Array.from(container.children)
+                    .map(function(c) { return c.dataset.activityId; })
+                    .filter(Boolean);
+                await this.$store.trip.reorderActivities(dayDate, ids);
+            }
+        };
+    }
+    </script>
+    </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Floating add button -->
+<div class="fab-container" x-data="{ open: false }">
+    <button class="fab" @click="if (window.__activeTab === 'tab-timeline') { window.dispatchEvent(new CustomEvent('open-modal', {detail: 'add-day'})); } else { open = !open; }" :class="open && 'fab-active'" title="Add...">+</button>
+    <div class="fab-menu" x-show="open" @click.outside="open = false" x-transition>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {detail: 'add-attraction'}))">
+            <span>🏛</span> Attraction
+        </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {detail: 'add-accommodation'}))">
+            <span>🏨</span> Accommodation
+        </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {detail: 'add-transport'}))">
+            <span>🚌</span> Transport
+        </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {detail: 'add-day-trip'}))">
+            <span>🚂</span> Day Trip
+        </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {detail: 'add-day'}))">
+            <span>📅</span> Day
+        </button>
+    </div>
+</div>
+
+<!-- Toast notifications -->
+<div class="toast-container" x-data="{ toasts: [] }" @toast.window="toasts.push($event.detail); setTimeout(function() { toasts.shift() }, 3000)">
+    <template x-for="(t, i) in toasts" :key="i">
+        <div class="toast" :class="t.type" x-text="t.message"></div>
+    </template>
+</div>
+
+<!-- Modals -->
+<div x-data="{ modal: null }" @open-modal.window="modal = $event.detail" @close-modal.window="modal = null" @keydown.escape.window="modal = null">
+
+    <!-- Add Attraction Modal -->
+    <template x-if="modal === 'add-attraction'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{
+                form: { name: '', description: '', category: 'landmark', lat: '', lng: '', address: '', price_eur: '', duration_minutes: '', tags: '', tips: '', url: '' },
+
+                locMode: 'gps',
+                pickerMap: null,
+                pickerMarker: null,
+                initPickerMap() {
+                    var self = this;
+                    this.$nextTick(function() {
+                        if (self.pickerMap) { self.pickerMap.invalidateSize(); return; }
+                        var el = self.$refs.pickerMapEl;
+                        if (!el) return;
+                        self.pickerMap = L.map(el).setView([39.4699, -0.3763], 13);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}@2x.png', {
+                            attribution: '&copy; OpenStreetMap'
+                        }).addTo(self.pickerMap);
+                        self.pickerMap.on('click', function(e) {
+                            self.form.lat = e.latlng.lat.toFixed(6);
+                            self.form.lng = e.latlng.lng.toFixed(6);
+                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);
+                            self.pickerMarker = L.marker(e.latlng).addTo(self.pickerMap);
+                        });
+                    });
+                },
+                async submit() {
+                    if (!this.form.name.trim()) return;
+                    const data = {
+                        name: this.form.name.trim(),
+                        description: this.form.description.trim() || null,
+                        category: this.form.category,
+                        location: {
+                            lat: parseFloat(this.form.lat) || 0,
+                            lng: parseFloat(this.form.lng) || 0,
+                            address: this.form.address.trim() || null
+                        },
+                        price_eur: this.form.price_eur ? parseFloat(this.form.price_eur) : null,
+                        duration_minutes: this.form.duration_minutes ? parseInt(this.form.duration_minutes) : null,
+                        tags: this.form.tags ? this.form.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean) : [],
+                        tips: this.form.tips.trim() || null,
+                        url: this.form.url.trim() || null
+                    };
+                    const resp = await $store.trip.addAttraction(data);
+                    if (resp.ok) window.dispatchEvent(new CustomEvent('close-modal'));
+                }
+            }">
+                <div class="modal-header">Add Attraction</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" placeholder="Attraction name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea x-model="form.description" placeholder="Brief description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select x-model="form.category">
+                        <option value="landmark">Landmarks</option>
+                        <option value="museum">Museums</option>
+                        <option value="nature">Nature</option>
+                        <option value="food">Food</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="transport">Transport</option>
+                        <option value="accommodation">Accommodation</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="day_trip">Day Trips</option>
+                        <option value="infrastructure">Infrastructure</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location <span class="req">*</span></label>
+                        <div class="loc-tabs">
+                            <button type="button" class="loc-tab" :class="locMode === 'address' && 'active'" @click="locMode = 'address'">Address</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'gps' && 'active'" @click="locMode = 'gps'">GPS</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Pick on Map</button>
+                        </div>
+                    </div>
+                    <div class="form-group" x-show="locMode === 'address'">
+                        <input type="text" x-model="form.address" placeholder="Enter full address">
+                    </div>
+                    <div class="form-row" x-show="locMode === 'gps' || locMode === 'address'">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                        </div>
+                    </div>
+                    <div x-show="locMode === 'map'">
+                        <div class="loc-map-container" x-ref="pickerMapEl"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Lat</label>
+                                <input type="number" step="any" x-model="form.lat" readonly style="background:#f5f6f8;">
+                            </div>
+                            <div class="form-group">
+                                <label>Lng</label>
+                                <input type="number" step="any" x-model="form.lng" readonly style="background:#f5f6f8;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Price (&euro;)</label>
+                            <input type="number" step="0.01" x-model="form.price_eur" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (min)</label>
+                            <input type="number" x-model="form.duration_minutes" placeholder="60">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags (comma-separated)</label>
+                        <input type="text" x-model="form.tags" placeholder="beach, sunset, free">
+                    </div>
+                    <div class="form-group">
+                        <label>Tips</label>
+                        <textarea x-model="form.tips" placeholder="Travel tips or notes"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input type="url" x-model="form.url" placeholder="https://...">
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Add Attraction</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Edit Trip Modal -->
+    <template x-if="modal === 'edit-trip'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{
+                form: {
+                    name: $store.trip.name,
+                    destination: $store.trip.destination,
+                    start_date: $store.trip.start_date,
+                    end_date: $store.trip.end_date,
+                    travelers: $store.trip.travelers,
+                    budget_eur: $store.trip.budget_eur || ''
+                },
+                async submit() {
+                    for (const [key, val] of Object.entries(this.form)) {
+                        const parsed = (key === 'travelers') ? parseInt(val) : (key === 'budget_eur' && val) ? parseFloat(val) : (key === 'budget_eur' && !val) ? null : val;
+                        if (parsed !== $store.trip[key]) {
+                            await $store.trip.save(key, parsed);
+                            $store.trip[key] = parsed;
+                        }
+                    }
+                    window.dispatchEvent(new CustomEvent('close-modal'));
+                }
+            }">
+                <div class="modal-header">Edit Trip</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Trip Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Destination <span class="req">*</span></label>
+                        <input type="text" x-model="form.destination" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Date <span class="req">*</span></label>
+                            <input type="date" x-model="form.start_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>End Date <span class="req">*</span></label>
+                            <input type="date" x-model="form.end_date" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Travelers <span class="req">*</span></label>
+                            <input type="number" min="1" x-model="form.travelers" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Budget (&euro;)</label>
+                            <input type="number" step="0.01" x-model="form.budget_eur" placeholder="Optional">
+                        </div>
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Edit Preferences Modal -->
+    <template x-if="modal === 'edit-preferences'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{
+                form: {
+                    interests: ($store.trip.preferences && $store.trip.preferences.interests) ? $store.trip.preferences.interests.join(', ') : '',
+                    avoid: ($store.trip.preferences && $store.trip.preferences.avoid) ? $store.trip.preferences.avoid.join(', ') : '',
+                    pace: ($store.trip.preferences && $store.trip.preferences.pace) ? $store.trip.preferences.pace : 'moderate',
+                    budget_per_day_eur: ($store.trip.preferences && $store.trip.preferences.budget_per_day_eur) ? $store.trip.preferences.budget_per_day_eur : ''
+                },
+                async submit() {
+                    const prefs = {
+                        interests: this.form.interests ? this.form.interests.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [],
+                        avoid: this.form.avoid ? this.form.avoid.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [],
+                        pace: this.form.pace,
+                        budget_per_day_eur: this.form.budget_per_day_eur ? parseFloat(this.form.budget_per_day_eur) : null
+                    };
+                    await $store.trip.updatePreferences(prefs);
+                    window.dispatchEvent(new CustomEvent('close-modal'));
+                }
+            }">
+                <div class="modal-header">Edit Preferences</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Interests (comma-separated)</label>
+                        <input type="text" x-model="form.interests" placeholder="architecture, food, history">
+                    </div>
+                    <div class="form-group">
+                        <label>Avoid (comma-separated)</label>
+                        <input type="text" x-model="form.avoid" placeholder="crowds, long walks">
+                    </div>
+                    <div class="form-group">
+                        <label>Pace</label>
+                        <select x-model="form.pace">
+                            <option value="relaxed">Relaxed</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="fast">Fast</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Budget per Day (&euro;)</label>
+                        <input type="number" step="0.01" x-model="form.budget_per_day_eur" placeholder="Optional">
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Save Preferences</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Day Trip Modal -->
+    <template x-if="modal === 'add-day-trip'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{
+                form: { name: '', destination: '', description: '', lat: '', lng: '', address: '', total_price_eur: '', total_duration_minutes: '', tags: '', tips: '' },
+
+                locMode: 'gps',
+                pickerMap: null,
+                pickerMarker: null,
+                initPickerMap() {
+                    var self = this;
+                    this.$nextTick(function() {
+                        if (self.pickerMap) { self.pickerMap.invalidateSize(); return; }
+                        var el = self.$refs.pickerMapEl;
+                        if (!el) return;
+                        self.pickerMap = L.map(el).setView([39.4699, -0.3763], 13);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}@2x.png', {
+                            attribution: '&copy; OpenStreetMap'
+                        }).addTo(self.pickerMap);
+                        self.pickerMap.on('click', function(e) {
+                            self.form.lat = e.latlng.lat.toFixed(6);
+                            self.form.lng = e.latlng.lng.toFixed(6);
+                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);
+                            self.pickerMarker = L.marker(e.latlng).addTo(self.pickerMap);
+                        });
+                    });
+                },
+                async submit() {
+                    if (!this.form.name.trim() || !this.form.destination.trim()) return;
+                    if (!this.form.lat || !this.form.lng) return;
+                    const data = {
+                        name: this.form.name.trim(),
+                        destination: this.form.destination.trim(),
+                        description: this.form.description.trim() || null,
+                        location: {
+                            lat: parseFloat(this.form.lat) || 0,
+                            lng: parseFloat(this.form.lng) || 0,
+                            address: this.form.address.trim() || null
+                        },
+                        total_price_eur: this.form.total_price_eur ? parseFloat(this.form.total_price_eur) : null,
+                        total_duration_minutes: this.form.total_duration_minutes ? parseInt(this.form.total_duration_minutes) : null,
+                        tags: this.form.tags ? this.form.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean) : [],
+                        tips: this.form.tips.trim() || null
+                    };
+                    const resp = await $store.trip.addDayTrip(data);
+                    if (resp.ok) window.dispatchEvent(new CustomEvent('close-modal'));
+                }
+            }">
+                <div class="modal-header">Add Day Trip</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" placeholder="Day trip name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Destination <span class="req">*</span></label>
+                        <input type="text" x-model="form.destination" placeholder="Where to?" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea x-model="form.description" placeholder="Brief description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location <span class="req">*</span></label>
+                        <div class="loc-tabs">
+                            <button type="button" class="loc-tab" :class="locMode === 'address' && 'active'" @click="locMode = 'address'">Address</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'gps' && 'active'" @click="locMode = 'gps'">GPS</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Pick on Map</button>
+                        </div>
+                    </div>
+                    <div class="form-group" x-show="locMode === 'address'">
+                        <input type="text" x-model="form.address" placeholder="Enter full address">
+                    </div>
+                    <div class="form-row" x-show="locMode === 'gps' || locMode === 'address'">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                        </div>
+                    </div>
+                    <div x-show="locMode === 'map'">
+                        <div class="loc-map-container" x-ref="pickerMapEl"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Lat</label>
+                                <input type="number" step="any" x-model="form.lat" readonly style="background:#f5f6f8;">
+                            </div>
+                            <div class="form-group">
+                                <label>Lng</label>
+                                <input type="number" step="any" x-model="form.lng" readonly style="background:#f5f6f8;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Price (&euro;)</label>
+                            <input type="number" step="0.01" x-model="form.total_price_eur" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Duration (min)</label>
+                            <input type="number" x-model="form.total_duration_minutes" placeholder="60">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags (comma-separated)</label>
+                        <input type="text" x-model="form.tags" placeholder="beach, nature, hiking">
+                    </div>
+                    <div class="form-group">
+                        <label>Tips</label>
+                        <textarea x-model="form.tips" placeholder="Travel tips or notes"></textarea>
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Add Day Trip</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Day Modal -->
+    <template x-if="modal === 'add-day'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{
+                form: { date: '', label: '', start_time: '', notes: '', useAI: false, aiPrompt: '' },
+                loading: false,
+                async submit() {
+                    if (!this.form.date) return;
+                    var existing = ($store.trip.days || []).some(function(d) { return d.date === this.form.date; }.bind(this));
+                    if (existing) {
+                        window.dispatchEvent(new CustomEvent('toast', {detail: {type:'error', message:'Day already exists for ' + this.form.date}}));
+                        return;
+                    }
+                    this.loading = true;
+                    var data = {
+                        date: this.form.date,
+                        label: this.form.label.trim() || null,
+                        start_time: this.form.start_time || null,
+                        notes: this.form.notes.trim() || null
+                    };
+                    var resp = await $store.trip.addDay(data);
+                    if (!resp.ok) { this.loading = false; return; }
+                    if (this.form.useAI && this.form.aiPrompt.trim()) {
+                        try {
+                            var aiResp = await fetch('/api/days/' + this.form.date + '/ai-plan', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({ prompt: this.form.aiPrompt.trim() })
+                            });
+                            if (aiResp.ok) {
+                                var result = await aiResp.json();
+                                await $store.trip.reload();
+                                window.dispatchEvent(new CustomEvent('toast', {detail: {type:'success', message: result.activities_created + ' activities added by AI'}}));
+                            } else {
+                                window.dispatchEvent(new CustomEvent('toast', {detail: {type:'error', message:'AI planning failed — day created but empty'}}));
+                            }
+                        } catch(e) {
+                            window.dispatchEvent(new CustomEvent('toast', {detail: {type:'error', message:'AI error: ' + e.message}}));
+                        }
+                    }
+                    this.loading = false;
+                    window.dispatchEvent(new CustomEvent('close-modal'));
+                }
+            }">
+                <div class="modal-header">Add Day</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Date <span class="req">*</span></label>
+                        <input type="date" x-model="form.date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Label</label>
+                        <input type="text" x-model="form.label" placeholder="e.g. Old Town Day">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" x-model="form.start_time">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea x-model="form.notes" placeholder="Notes for this day"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-top:8px">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                            <input type="checkbox" x-model="form.useAI" style="width:16px;height:16px">
+                            <span>Design with AI</span>
+                        </label>
+                    </div>
+                    <div class="form-group" x-show="form.useAI" x-transition>
+                        <label>Describe the day</label>
+                        <textarea x-model="form.aiPrompt" rows="3" placeholder="e.g. Relaxed morning at the beach, then explore the old town in the afternoon with a nice dinner"></textarea>
+                        <p style="font-size:11px;color:#888;margin-top:4px">AI will pick activities from your unscheduled attractions and fill the day.</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()" :disabled="!form.date || loading">
+                            <span x-show="!loading">Add Day</span>
+                            <span x-show="loading">Creating...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Accommodation Modal -->
+    <template x-if="modal === 'add-accommodation'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{
+                form: { name: '', address: '', checkin: '', checkout: '', lat: '', lng: '', total_price_eur: '', description: '', tags: '', tips: '', url: '' },
+
+                locMode: 'gps',
+                pickerMap: null,
+                pickerMarker: null,
+                initPickerMap() {
+                    var self = this;
+                    this.$nextTick(function() {
+                        if (self.pickerMap) { self.pickerMap.invalidateSize(); return; }
+                        var el = self.$refs.pickerMapEl;
+                        if (!el) return;
+                        self.pickerMap = L.map(el).setView([39.4699, -0.3763], 13);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}@2x.png', {
+                            attribution: '&copy; OpenStreetMap'
+                        }).addTo(self.pickerMap);
+                        self.pickerMap.on('click', function(e) {
+                            self.form.lat = e.latlng.lat.toFixed(6);
+                            self.form.lng = e.latlng.lng.toFixed(6);
+                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);
+                            self.pickerMarker = L.marker(e.latlng).addTo(self.pickerMap);
+                        });
+                    });
+                },
+                async submit() {
+                    if (!this.form.name.trim()) return;
+                    var desc = this.form.description.trim() || '';
+                    if (this.form.checkin && this.form.checkout) {
+                        desc = 'Check-in: ' + this.form.checkin + ' / Check-out: ' + this.form.checkout + (desc ? '\n' + desc : '');
+                    } else if (this.form.checkin) {
+                        desc = 'Check-in: ' + this.form.checkin + (desc ? '\n' + desc : '');
+                    } else if (this.form.checkout) {
+                        desc = 'Check-out: ' + this.form.checkout + (desc ? '\n' + desc : '');
+                    }
+                    const data = {
+                        name: this.form.name.trim(),
+                        description: desc || null,
+                        category: 'accommodation',
+                        location: {
+                            lat: parseFloat(this.form.lat) || 0,
+                            lng: parseFloat(this.form.lng) || 0,
+                            address: this.form.address.trim() || null
+                        },
+                        price_eur: this.form.total_price_eur ? parseFloat(this.form.total_price_eur) : null,
+                        tags: this.form.tags ? this.form.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean) : [],
+                        tips: this.form.tips.trim() || null,
+                        url: this.form.url.trim() || null
+                    };
+                    const resp = await $store.trip.addAttraction(data);
+                    if (resp.ok) { reloadMap(); window.dispatchEvent(new CustomEvent('close-modal')); }
+                }
+            }">
+                <div class="modal-header" style="background:#922B21;">🏨 Add Accommodation</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" placeholder="Hotel / Apartment name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Check-in Date</label>
+                            <input type="date" x-model="form.checkin">
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out Date</label>
+                            <input type="date" x-model="form.checkout">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location <span class="req">*</span></label>
+                        <div class="loc-tabs">
+                            <button type="button" class="loc-tab" :class="locMode === 'address' && 'active'" @click="locMode = 'address'">Address</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'gps' && 'active'" @click="locMode = 'gps'">GPS</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Pick on Map</button>
+                        </div>
+                    </div>
+                    <div class="form-group" x-show="locMode === 'address'">
+                        <input type="text" x-model="form.address" placeholder="Enter full address">
+                    </div>
+                    <div class="form-row" x-show="locMode === 'gps' || locMode === 'address'">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                        </div>
+                    </div>
+                    <div x-show="locMode === 'map'">
+                        <div class="loc-map-container" x-ref="pickerMapEl"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Lat</label>
+                                <input type="number" step="any" x-model="form.lat" readonly style="background:#f5f6f8;">
+                            </div>
+                            <div class="form-group">
+                                <label>Lng</label>
+                                <input type="number" step="any" x-model="form.lng" readonly style="background:#f5f6f8;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Price (&euro;)</label>
+                        <input type="number" step="0.01" x-model="form.total_price_eur" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea x-model="form.description" placeholder="Notes about the accommodation"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags (comma-separated)</label>
+                        <input type="text" x-model="form.tags" placeholder="hotel, pool, central">
+                    </div>
+                    <div class="form-group">
+                        <label>Tips</label>
+                        <textarea x-model="form.tips" placeholder="Useful tips"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input type="url" x-model="form.url" placeholder="https://...">
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Add Accommodation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Transport Modal -->
+    <template x-if="modal === 'add-transport'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{
+                form: { name: '', mode: 'train', origin: '', destination: '', departure: '', arrival: '', lat: '', lng: '', address: '', price: '', booking_ref: '', notes: '' },
+
+                locMode: 'gps',
+                pickerMap: null,
+                pickerMarker: null,
+                initPickerMap() {
+                    var self = this;
+                    this.$nextTick(function() {
+                        if (self.pickerMap) { self.pickerMap.invalidateSize(); return; }
+                        var el = self.$refs.pickerMapEl;
+                        if (!el) return;
+                        self.pickerMap = L.map(el).setView([39.4699, -0.3763], 13);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}@2x.png', {
+                            attribution: '&copy; OpenStreetMap'
+                        }).addTo(self.pickerMap);
+                        self.pickerMap.on('click', function(e) {
+                            self.form.lat = e.latlng.lat.toFixed(6);
+                            self.form.lng = e.latlng.lng.toFixed(6);
+                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);
+                            self.pickerMarker = L.marker(e.latlng).addTo(self.pickerMap);
+                        });
+                    });
+                },
+                async submit() {
+                    if (!this.form.name.trim()) return;
+                    var parts = [];
+                    if (this.form.mode) parts.push('Mode: ' + this.form.mode);
+                    if (this.form.origin.trim() && this.form.destination.trim()) parts.push(this.form.origin.trim() + ' → ' + this.form.destination.trim());
+                    else if (this.form.origin.trim()) parts.push('From: ' + this.form.origin.trim());
+                    else if (this.form.destination.trim()) parts.push('To: ' + this.form.destination.trim());
+                    if (this.form.departure) parts.push('Departs: ' + this.form.departure);
+                    if (this.form.arrival) parts.push('Arrives: ' + this.form.arrival);
+                    if (this.form.booking_ref.trim()) parts.push('Booking: ' + this.form.booking_ref.trim());
+                    if (this.form.notes.trim()) parts.push(this.form.notes.trim());
+                    var tags = [this.form.mode];
+                    const data = {
+                        name: this.form.name.trim(),
+                        description: parts.join('\n') || null,
+                        category: 'transport',
+                        location: {
+                            lat: parseFloat(this.form.lat) || 0,
+                            lng: parseFloat(this.form.lng) || 0,
+                            address: this.form.address.trim() || this.form.origin.trim() || null
+                        },
+                        price_eur: this.form.price ? parseFloat(this.form.price) : null,
+                        tags: tags,
+                        tips: null,
+                        url: null
+                    };
+                    const resp = await $store.trip.addAttraction(data);
+                    if (resp.ok) { reloadMap(); window.dispatchEvent(new CustomEvent('close-modal')); }
+                }
+            }">
+                <div class="modal-header" style="background:#7F8C8D;">🚌 Add Transport</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" placeholder="e.g. Train to Barcelona" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mode</label>
+                        <select x-model="form.mode">
+                            <option value="train">Train</option>
+                            <option value="bus">Bus</option>
+                            <option value="metro">Metro</option>
+                            <option value="car">Car</option>
+                            <option value="boat">Boat</option>
+                            <option value="walk">Walk</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Origin</label>
+                            <input type="text" x-model="form.origin" placeholder="Departure location">
+                        </div>
+                        <div class="form-group">
+                            <label>Destination</label>
+                            <input type="text" x-model="form.destination" placeholder="Arrival location">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Departure Time</label>
+                            <input type="datetime-local" x-model="form.departure">
+                        </div>
+                        <div class="form-group">
+                            <label>Arrival Time</label>
+                            <input type="datetime-local" x-model="form.arrival">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location</label>
+                        <div class="loc-tabs">
+                            <button type="button" class="loc-tab" :class="locMode === 'address' && 'active'" @click="locMode = 'address'">Address</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'gps' && 'active'" @click="locMode = 'gps'">GPS</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Pick on Map</button>
+                        </div>
+                    </div>
+                    <div class="form-group" x-show="locMode === 'address'">
+                        <input type="text" x-model="form.address" placeholder="Enter full address">
+                    </div>
+                    <div class="form-row" x-show="locMode === 'gps' || locMode === 'address'">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                        </div>
+                    </div>
+                    <div x-show="locMode === 'map'">
+                        <div class="loc-map-container" x-ref="pickerMapEl"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Lat</label>
+                                <input type="number" step="any" x-model="form.lat" readonly style="background:#f5f6f8;">
+                            </div>
+                            <div class="form-group">
+                                <label>Lng</label>
+                                <input type="number" step="any" x-model="form.lng" readonly style="background:#f5f6f8;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (&euro;)</label>
+                        <input type="number" step="0.01" x-model="form.price" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Booking Reference</label>
+                        <input type="text" x-model="form.booking_ref" placeholder="Confirmation code">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea x-model="form.notes" placeholder="Additional notes"></textarea>
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Add Transport</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- New Trip Guide Modal -->
+    <template x-if="modal === 'new-trip-guide'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" style="max-width:560px" x-data="newTripForm()">
+                <div class="modal-header">
+                    <h2 x-text="phase === 'form' ? 'Create a New Trip' : 'Creating Trip...'"></h2>
+                    <button class="modal-close" @click="cleanup(); window.dispatchEvent(new CustomEvent('close-modal'))">&times;</button>
+                </div>
+
+                <!-- Form phase -->
+                <template x-if="phase === 'form'">
+                    <div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Destination <span class="req">*</span></label>
+                                <input type="text" x-model="form.destination" placeholder="e.g. Rome, Italy" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Trip Name</label>
+                                <input type="text" x-model="form.name" :placeholder="form.destination ? form.destination.split(',')[0].trim() + ' 2026' : 'Auto-generated'">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Start Date <span class="req">*</span></label>
+                                    <input type="date" x-model="form.start_date">
+                                </div>
+                                <div class="form-group">
+                                    <label>End Date <span class="req">*</span></label>
+                                    <input type="date" x-model="form.end_date">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Travelers</label>
+                                    <input type="number" x-model="form.travelers" min="1" max="20">
+                                </div>
+                                <div class="form-group">
+                                    <label>Budget (EUR)</label>
+                                    <input type="number" x-model="form.budget_eur" placeholder="Optional" step="100">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Interests</label>
+                                <input type="text" x-model="form.interests_str" placeholder="history, food, art, nature...">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Pace</label>
+                                    <select x-model="form.pace">
+                                        <option value="relaxed">Relaxed</option>
+                                        <option value="moderate" selected>Moderate</option>
+                                        <option value="fast">Fast</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Day Trips</label>
+                                    <select x-model="form.include_day_trips">
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Must-do</label>
+                                <input type="text" x-model="form.must_do" placeholder="e.g. Colosseum, authentic carbonara">
+                            </div>
+                            <div class="form-group">
+                                <label>Context</label>
+                                <input type="text" x-model="form.context" placeholder="e.g. anniversary trip, with kids">
+                            </div>
+                            <p style="margin-top:8px;font-size:12px;color:#888">
+                                AI will research your destination in the background. You can keep browsing.
+                            </p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                            <button class="btn btn-primary" @click="submit()" :disabled="!form.destination || !form.start_date || !form.end_date">
+                                Start Research
+                            </button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Progress phase -->
+                <template x-if="phase === 'progress'">
+                    <div class="modal-body" style="padding:24px">
+                        <div style="text-align:center;margin-bottom:20px">
+                            <div style="font-size:32px;margin-bottom:8px" x-text="statusIcon()"></div>
+                            <div style="font-size:15px;font-weight:600;color:#1a2332" x-text="job.step || 'Starting...'"></div>
+                            <div style="font-size:13px;color:#888;margin-top:4px" x-text="job.slug"></div>
+                        </div>
+                        <div style="background:#f5f6f8;border-radius:8px;overflow:hidden;height:6px;margin-bottom:16px">
+                            <div style="height:100%;border-radius:8px;transition:width 0.5s ease"
+                                 :style="'width:' + progressPct() + '%; background:' + (job.status === 'error' ? '#dc2626' : job.status === 'done' ? '#059669' : '#4ea4f6')">
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;color:#888">
+                            <span :class="{ 'font-weight:600;color:#1a2332': job.status === 'researching' }"
+                                  :style="progressStepStyle('researching')">Research</span>
+                            <span :style="progressStepStyle('converting')">Convert</span>
+                            <span :style="progressStepStyle('building')">Build</span>
+                            <span :style="progressStepStyle('done')">Done</span>
+                        </div>
+                        <template x-if="job.status === 'error'">
+                            <div style="margin-top:16px;padding:12px;background:#fef2f2;border-radius:8px;color:#dc2626;font-size:13px">
+                                <strong>Error:</strong> <span x-text="job.error"></span>
+                            </div>
+                        </template>
+                        <template x-if="job.status === 'done'">
+                            <div style="margin-top:16px;padding:12px;background:#f0fdf4;border-radius:8px;color:#059669;font-size:13px">
+                                Trip ready! <span x-text="job.attractions_count"></span> attractions, <span x-text="job.day_trips_count"></span> day trips.
+                            </div>
+                        </template>
+                        <div class="modal-actions" style="margin-top:16px">
+                            <button class="btn btn-cancel" @click="cleanup(); window.dispatchEvent(new CustomEvent('close-modal'))">
+                                <span x-text="job.status === 'done' || job.status === 'error' ? 'Close' : 'Dismiss (keeps running)'"></span>
+                            </button>
+                            <template x-if="job.status === 'done' && job.app_url">
+                                <button class="btn btn-primary" @click="window.location.href = job.app_url">
+                                    Open Trip
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </template>
+
+</div>
+
+<script>
+(function() {
+    var buttons = document.querySelectorAll('.nav-btn');
+    var panels = document.querySelectorAll('.tab-panel');
+    window.__activeTab = 'tab-map';
+
+    buttons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var target = btn.getAttribute('data-tab');
+            window.__activeTab = target;
+            buttons.forEach(function(b) { b.classList.remove('active'); });
+            panels.forEach(function(p) { p.classList.remove('active'); });
+            btn.classList.add('active');
+            document.getElementById(target).classList.add('active');
+        });
+    });
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(function() {});
+}
+</script>
+</body>
+</html>
