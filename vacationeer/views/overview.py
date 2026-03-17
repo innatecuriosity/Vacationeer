@@ -42,7 +42,7 @@ def render_overview(trip: Trip) -> str:
      x-data="{{
        filter: 'all',
        search: '',
-       sortBy: 'name',
+       sortBy: 'category',
        expanded: null,
        editing: null,
        editForm: {{}},
@@ -179,8 +179,8 @@ def render_overview(trip: Trip) -> str:
 
   <!-- ===== Attraction cards ===== -->
   <template x-for="attraction in filtered()" :key="attraction.id">
-    <div style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.10);margin-bottom:16px;"
-         :style="'border-left:4px solid ' + catColor(attraction.category)">
+    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12);margin-bottom:20px;border:1px solid #e8ecf1;"
+         :style="'border-left:5px solid ' + catColor(attraction.category)">
 
       <!-- ===== Collapsed card header ===== -->
       <div x-show="editing !== attraction.id"

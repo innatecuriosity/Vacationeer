@@ -8,7 +8,7 @@ from branca.element import MacroElement
 from jinja2 import Template
 
 from vacationeer.models.trip import Attraction, Category, Trip
-from vacationeer.theme import FONT_STACK_MAP, get_category_info
+from vacationeer.theme import CATEGORY_META, FONT_STACK_MAP, get_category_info
 from vacationeer.views.helpers import category_label
 
 
@@ -102,33 +102,45 @@ def _tooltip_html(a: Attraction) -> str:
     )
 
 
-class _Legend(MacroElement):
-    """A custom legend overlay for the bottom-left corner of the map."""
+class _ControlStyle(MacroElement):
+    """Custom CSS to style the Leaflet layer control as a unified legend+toggle card."""
 
     _template = Template("""
-{% macro header(this, kwargs) %}{% endmacro %}
-{% macro html(this, kwargs) %}
-<div id="legend-box" style="
-    position:fixed;bottom:28px;left:12px;z-index:1000;
-    background:rgba(255,255,255,.95);backdrop-filter:blur(4px);
-    border-radius:12px;padding:16px 22px;
-    box-shadow:0 2px 12px rgba(0,0,0,.2);font-family:'Segoe UI',Roboto,Arial,sans-serif;
-    font-size:14px;max-height:55vh;overflow-y:auto;min-width:180px;">
-  <div style="font-weight:700;margin-bottom:8px;font-size:15px;color:#222;">Categories</div>
-  {% for item in this.items %}
-  <div style="display:flex;align-items:center;gap:8px;padding:3px 0;">
-    <span style="font-size:17px;">{{ item.icon }}</span>
-    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:{{ item.hex }};flex-shrink:0;"></span>
-    <span style="color:#333;font-size:14px;">{{ item.label }}</span>
-  </div>
-  {% endfor %}
-</div>
+{% macro header(this, kwargs) %}
+<style>
+    .leaflet-control-layers {
+        border-radius: 12px !important;
+        padding: 14px 18px !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,.2) !important;
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif !important;
+        font-size: 13px !important;
+        background: rgba(255,255,255,.95) !important;
+        backdrop-filter: blur(4px);
+        border: none !important;
+        min-width: 180px;
+    }
+    .leaflet-control-layers-overlays label {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 3px 0 !important;
+        margin: 0 !important;
+        cursor: pointer;
+    }
+    .leaflet-control-layers-overlays label span {
+        font-size: 13px;
+    }
+    .leaflet-control-layers-separator {
+        border-top: 1px solid #e0e0e0 !important;
+        margin: 6px 0 !important;
+    }
+    .leaflet-control-layers-toggle {
+        width: 36px !important;
+        height: 36px !important;
+    }
+</style>
 {% endmacro %}
 """)
-
-    def __init__(self, items: list[dict]):
-        super().__init__()
-        self.items = items
 
 
 def generate_map(trip: Trip, output_path: Path) -> Path:
@@ -138,7 +150,7 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     # Filter out coordinate outliers (e.g. 0,0) before computing center
     valid = [a for a in trip.attractions if not (abs(a.location.lat) < 0.01 and abs(a.location.lng) < 0.01)]
     if not valid:
-        valid = trip.attractions  # fallback to all if everything is "invalid"
+        valid = trip.attractions
 
     # Use median-based filtering: exclude points > 2 degrees from median
     med_lat = statistics.median(a.location.lat for a in valid)
@@ -156,88 +168,70 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         tiles="CartoDB Voyager",
     )
 
-    # Create a feature group per category for layer toggling
+    # Create a feature group per category — ALL categories, even if empty
     groups: dict[Category, folium.FeatureGroup] = {}
     for cat in Category:
-        fg = folium.FeatureGroup(name=category_label(cat))
+        info = get_category_info(cat)
+        fg = folium.FeatureGroup(name=f"{info.html_icon} {info.label}")
         groups[cat] = fg
 
+    # Labels group (toggleable)
+    labels_group = folium.FeatureGroup(name="Labels", show=True)
 
     for attraction in trip.attractions:
         info = get_category_info(attraction.category)
-        hex_color = info.color
 
         popup_html = _popup_html(attraction)
         tooltip_html = _tooltip_html(attraction)
 
-        if attraction.category == Category.ACCOMMODATION:
-            marker = folium.Marker(
-                location=[attraction.location.lat, attraction.location.lng],
-                icon=folium.DivIcon(
-                    html='<div style="font-size:24px;text-align:center;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">\U0001f3e0</div>',
-                    icon_size=(30, 30),
-                    icon_anchor=(15, 15),
+        # ALL categories use emoji DivIcon markers
+        marker = folium.Marker(
+            location=[attraction.location.lat, attraction.location.lng],
+            icon=folium.DivIcon(
+                html=(
+                    f'<div style="font-size:22px;text-align:center;line-height:1;'
+                    f'filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">'
+                    f'{info.emoji}</div>'
                 ),
-                tooltip=folium.Tooltip(tooltip_html, sticky=False),
-                popup=folium.Popup(popup_html, max_width=320),
-            )
-        elif attraction.category == Category.LANDMARK:
-            marker = folium.Marker(
-                location=[attraction.location.lat, attraction.location.lng],
-                icon=folium.DivIcon(
-                    html='<div style="font-size:22px;text-align:center;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">\U0001f3db</div>',
-                    icon_size=(28, 28),
-                    icon_anchor=(14, 14),
-                ),
-                tooltip=folium.Tooltip(tooltip_html, sticky=False),
-                popup=folium.Popup(popup_html, max_width=320),
-            )
-        elif attraction.category == Category.INFRASTRUCTURE:
-            marker = folium.Marker(
-                location=[attraction.location.lat, attraction.location.lng],
-                icon=folium.DivIcon(
-                    html='<div style="font-size:22px;text-align:center;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">\u2708</div>',
-                    icon_size=(28, 28),
-                    icon_anchor=(14, 14),
-                ),
-                tooltip=folium.Tooltip(tooltip_html, sticky=False),
-                popup=folium.Popup(popup_html, max_width=320),
-            )
-        else:
-            marker = folium.CircleMarker(
-                location=[attraction.location.lat, attraction.location.lng],
-                radius=8,
-                color=hex_color,
-                weight=2,
-                fill=True,
-                fill_color=hex_color,
-                fill_opacity=0.75,
-                tooltip=folium.Tooltip(tooltip_html, sticky=False),
-                popup=folium.Popup(popup_html, max_width=320),
-            )
+                icon_size=(28, 28),
+                icon_anchor=(14, 14),
+            ),
+            tooltip=folium.Tooltip(tooltip_html, sticky=False),
+            popup=folium.Popup(popup_html, max_width=320),
+        )
         marker.add_to(groups[attraction.category])
 
+        # Text label via DivIcon
+        label_html = (
+            f'<div style="'
+            f'font-family:\'{FONT_STACK_MAP}\';'
+            f'font-size:10px;font-weight:600;color:#222;'
+            f'text-shadow:0 0 3px #fff, 0 0 3px #fff, 1px 1px 2px #fff, -1px -1px 2px #fff;'
+            f'max-width:100px;word-wrap:break-word;line-height:1.2;'
+            f'pointer-events:none;white-space:normal;'
+            f'">{attraction.name}</div>'
+        )
+        label_marker = folium.Marker(
+            location=[attraction.location.lat, attraction.location.lng],
+            icon=folium.DivIcon(
+                html=label_html,
+                icon_size=(100, 30),
+                icon_anchor=(-10, 10),
+            ),
+        )
+        label_marker.add_to(labels_group)
 
-    # Only add groups that have markers
-    used_categories: list[Category] = []
+    # Add ALL groups to map (even empty ones show in layer control)
     for cat, fg in groups.items():
-        if any(True for _ in fg._children.values()):
-            fg.add_to(m)
-            used_categories.append(cat)
+        fg.add_to(m)
 
+    labels_group.add_to(m)
 
-    folium.LayerControl(collapsed=False).add_to(m)
+    # Unified layer control (top-right, acts as both legend and toggle)
+    folium.LayerControl(collapsed=False, position='topright').add_to(m)
 
-    # Add legend for used categories
-    legend_items = []
-    for cat in used_categories:
-        info = get_category_info(cat)
-        legend_items.append({
-            "icon": info.emoji,
-            "hex": info.color,
-            "label": info.label,
-        })
-    _Legend(items=legend_items).add_to(m)
+    # Custom CSS to style the layer control as a nice card
+    _ControlStyle().add_to(m)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(output_path))

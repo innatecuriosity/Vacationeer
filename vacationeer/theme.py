@@ -73,8 +73,8 @@ CATEGORY_META: dict[Category, CategoryInfo] = {
     ),
     Category.MUSEUM: CategoryInfo(
         color="#2980B9", folium_color="blue",
-        icon="info-sign", emoji="\U0001F3DB",
-        html_icon="&#x1f3db;", label="Museums",
+        icon="info-sign", emoji="\U0001F5BC",
+        html_icon="&#x1f5bc;", label="Museums",
     ),
     Category.NATURE: CategoryInfo(
         color="#27AE60", folium_color="green",
