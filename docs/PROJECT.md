@@ -247,7 +247,10 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - AI-driven MD → JSON conversion (`import-trip`) → `trip.json`
   - Light mode (default) for fast testing, `--no-light` for full research
   - Background execution via daemon threads — user can browse other trips while AI works
-  - Frontend form (`newTripForm()` Alpine.js) with progress polling (3s interval)
+  - **Instant trip creation**: skeleton trip.json + placeholder map + app HTML built synchronously in `start_pipeline()` before thread launches — trip is navigable immediately
+  - Frontend auto-navigates to the new trip page after submit (no progress modal)
+  - Pipeline progress banner on trip page: polls `/api/pipeline/status/{slug}` every 3s, auto-reloads when done
+  - Trip picker shows pulsing `⏳` indicator for in-progress pipeline trips
   - REST API: `POST /api/pipeline/start`, `GET /api/pipeline/status/{slug}`, `GET /api/pipeline/jobs`
 - [x] **AI provider abstraction** — `AIProvider` ABC with cascade:
   - `ClaudeCodeProvider` — invokes `claude` CLI subprocess (preferred, uses logged-in session); Windows-compatible (shell=True + shutil.which + UTF-8 encoding + stdin prompt)
@@ -409,7 +412,7 @@ All generated activities carry `day_trip_id` so they can be traced back to the s
 ### Pipeline module
 The `pipeline/` module handles new trip creation. The AI provider abstraction (`ai_provider.py`) defines a cascade: Claude Code CLI → Anthropic API → manual prompt file. All AI-dependent steps (research generation, MD→JSON conversion) go through this interface. The `--light` flag (default ON) prefixes the research prompt with instructions to produce minimal output for faster iteration.
 
-Background execution is handled by `pipeline/runner.py`: `start_pipeline()` launches a daemon thread that runs research → conversion → HTML build, tracking progress in a `PipelineJob` dataclass. The server exposes this via REST endpoints (`/api/pipeline/start`, `/api/pipeline/status/{slug}`, `/api/pipeline/jobs`). The frontend `newTripForm()` Alpine.js component polls status every 3 seconds and renders a progress bar with step labels. Users can dismiss the modal and continue browsing — the pipeline keeps running.
+Background execution is handled by `pipeline/runner.py`: `start_pipeline()` first creates a **skeleton trip** synchronously (empty trip.json + placeholder map + app HTML via `_build_skeleton()`), then launches a daemon thread that runs research → conversion → HTML build, tracking progress in a `PipelineJob` dataclass. This means the trip is navigable immediately — the user can browse the empty trip page while AI works in the background. The server exposes pipeline status via REST endpoints (`/api/pipeline/start`, `/api/pipeline/status/{slug}`, `/api/pipeline/jobs`). The frontend auto-navigates to the new trip after creation. A `pipelineBanner()` Alpine component on the trip page polls status every 3 seconds and auto-reloads when the pipeline completes. The trip picker shows a pulsing indicator for in-progress trips.
 
 ### Sidebar chat
 The chat assistant lives in the sidebar (always visible alongside map/overview/timeline). The Alpine.js `sidebarChat()` component sends messages to `POST /api/chat`, which uses the AI provider cascade (`get_provider()` from `pipeline/ai_provider.py`): Claude Code CLI first, then Anthropic API, with system prompt containing full trip context (all attractions with IDs, scheduled days, preferences, unscheduled list, available categories).
