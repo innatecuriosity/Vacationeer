@@ -236,119 +236,12 @@ def _marker_html(emoji: str, name: str) -> str:
 
 
 class _ControlStyle(MacroElement):
-    """Custom CSS to style the Leaflet layer control and MarkerCluster."""
+    """DEPRECATED — CSS is now injected directly via folium.Element.
 
-    _template = Template("""
-{% macro header(this, kwargs) %}
-<style>
-    .leaflet-control-layers {
-        border-radius: 12px !important;
-        padding: 14px 18px !important;
-        box-shadow: 0 2px 12px rgba(0,0,0,.2) !important;
-        font-family: 'Segoe UI', Roboto, Arial, sans-serif !important;
-        font-size: 13px !important;
-        background: rgba(255,255,255,.95) !important;
-        backdrop-filter: blur(4px);
-        border: none !important;
-        min-width: 180px;
-    }
-    .leaflet-control-layers-overlays label {
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        padding: 3px 0 !important;
-        margin: 0 !important;
-        cursor: pointer;
-    }
-    .leaflet-control-layers-overlays label span {
-        font-size: 13px;
-    }
-    .leaflet-control-layers-separator {
-        border-top: 1px solid #e0e0e0 !important;
-        margin: 6px 0 !important;
-    }
-    .leaflet-control-layers-toggle {
-        width: 36px !important;
-        height: 36px !important;
-    }
-    /* MarkerCluster custom styling */
-    .marker-cluster {
-        background: rgba(255,255,255,0.85) !important;
-        border: 2px solid #1a2332 !important;
-        border-radius: 50% !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .marker-cluster div {
-        background: #1a2332 !important;
-        color: #fff !important;
-        font-weight: 700;
-        font-size: 13px;
-        border-radius: 50%;
-        width: 30px !important;
-        height: 30px !important;
-        margin: 3px !important;
-        line-height: 30px !important;
-        text-align: center;
-    }
-    .marker-cluster-small {
-        background: rgba(255,255,255,0.85) !important;
-    }
-    .marker-cluster-medium {
-        background: rgba(255,255,255,0.85) !important;
-    }
-    .marker-cluster-large {
-        background: rgba(255,255,255,0.85) !important;
-    }
-    /* Popup card styling */
-    .leaflet-popup-content-wrapper {
-        padding: 0 !important;
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,.2) !important;
-    }
-    .leaflet-popup-content {
-        margin: 0 !important;
-        width: auto !important;
-    }
-    .leaflet-popup-close-button {
-        z-index: 10 !important;
-        color: #fff !important;
-        font-size: 20px !important;
-        font-weight: 400 !important;
-        width: 28px !important;
-        height: 28px !important;
-        line-height: 28px !important;
-        text-align: center;
-        right: 6px !important;
-        top: 6px !important;
-        opacity: 0.8;
-        text-shadow: 0 1px 3px rgba(0,0,0,.3);
-    }
-    .leaflet-popup-close-button:hover {
-        color: #fff !important;
-        opacity: 1;
-    }
-    /* Label toggle */
-    .labels-hidden .marker-label {
-        display: none !important;
-    }
-    .label-toggle-control {
-        background: rgba(255,255,255,.95);
-        backdrop-filter: blur(4px);
-        border-radius: 8px;
-        padding: 6px 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,.15);
-        font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-        font-size: 12px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .label-toggle-control input { cursor: pointer; }
-</style>
-{% endmacro %}
-""")
+    Kept as empty class to avoid import errors if referenced elsewhere.
+    """
+
+    _template = Template("")
 
 
 def generate_map(trip: Trip, output_path: Path) -> Path:
@@ -426,8 +319,108 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     # Unified layer control (top-right)
     folium.LayerControl(collapsed=False, position='topright').add_to(m)
 
-    # Custom CSS — inject into <head> so it doesn't appear in layer control
-    m.get_root().header.add_child(_ControlStyle())
+    # Custom CSS — inject into HTML body (header MacroElement doesn't render reliably)
+    css_html = """
+    <style>
+    .leaflet-control-layers {
+        border-radius: 12px !important;
+        padding: 14px 18px !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,.2) !important;
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif !important;
+        font-size: 13px !important;
+        background: rgba(255,255,255,.95) !important;
+        backdrop-filter: blur(4px);
+        border: none !important;
+        min-width: 180px;
+    }
+    .leaflet-control-layers-overlays label {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 3px 0 !important;
+        margin: 0 !important;
+        cursor: pointer;
+    }
+    .leaflet-control-layers-overlays label span { font-size: 13px; }
+    .leaflet-control-layers-separator {
+        border-top: 1px solid #e0e0e0 !important;
+        margin: 6px 0 !important;
+    }
+    .leaflet-control-layers-toggle {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    .marker-cluster {
+        background: rgba(255,255,255,0.85) !important;
+        border: 2px solid #1a2332 !important;
+        border-radius: 50% !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .marker-cluster div {
+        background: #1a2332 !important;
+        color: #fff !important;
+        font-weight: 700;
+        font-size: 13px;
+        border-radius: 50%;
+        width: 30px !important;
+        height: 30px !important;
+        margin: 3px !important;
+        line-height: 30px !important;
+        text-align: center;
+    }
+    .marker-cluster-small,
+    .marker-cluster-medium,
+    .marker-cluster-large {
+        background: rgba(255,255,255,0.85) !important;
+    }
+    .leaflet-popup-content-wrapper {
+        padding: 0 !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,.2) !important;
+    }
+    .leaflet-popup-content {
+        margin: 0 !important;
+        width: auto !important;
+    }
+    .leaflet-popup-close-button {
+        z-index: 10 !important;
+        color: #fff !important;
+        font-size: 20px !important;
+        font-weight: 400 !important;
+        width: 28px !important;
+        height: 28px !important;
+        line-height: 28px !important;
+        text-align: center;
+        right: 6px !important;
+        top: 6px !important;
+        opacity: 0.8;
+        text-shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
+    .leaflet-popup-close-button:hover {
+        color: #fff !important;
+        opacity: 1;
+    }
+    .labels-hidden .marker-label {
+        display: none !important;
+    }
+    .label-toggle-control {
+        background: rgba(255,255,255,.95);
+        backdrop-filter: blur(4px);
+        border-radius: 8px;
+        padding: 6px 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .label-toggle-control input { cursor: pointer; }
+    </style>
+    """
+    m.get_root().html.add_child(folium.Element(css_html))
 
     # Label toggle control — inject as raw script referencing the map variable
     map_name = m.get_name()

@@ -435,6 +435,7 @@ Tests live in `tests/` and use pytest. Run with `python -m pytest tests/ -v`. Cu
 - Views generate HTML strings — all CSS/JS is inline (CDN deps: Alpine.js, Leaflet, SortableJS)
 - Chat is in the sidebar (not a tab) — `sidebarChat()` Alpine component, `POST /api/chat` backend
 - Map uses Folium — tiles must work without Referer header (no OSM tiles)
+- Map CSS: inject via `folium.Element` into `get_root().html`, NOT via `MacroElement` (Jinja2 header macro doesn't render reliably)
 - Color theme: navy #1a2332 + white, category colors in `theme.py`
 - Test with: `python -m vacationeer build trips/valencia-2026/trip.json`
 - Run tests: `python -m pytest tests/ -v`
