@@ -33,6 +33,20 @@ Book at: https://www.visitvalencia.com/en/shop/tickets-to-tourist-attractions/jo
 
 Europe's biggest aquarium: 110,000 m², 45,000+ animals, 500+ species across 10 zones. Not a "look at some fish" place — this is a full-day immersive experience.
 
+<!-- @vacationeer
+id: oceanografic
+type: attraction
+name: Oceanografic
+description: Europe's largest aquarium — 45,000+ animals, 500+ species, dolphin shows
+price_eur: 41.8
+duration_minutes: 330
+location: 39.4529, -0.3477 | City of Arts and Sciences
+expected_score: 8.5
+tips: Start at Arctic end (belugas), arrive 20 min early for dolphin show
+url: https://www.oceanografic.org/en/
+-->
+
+
 ### The Zones
 
 **Arctic Zone** — Home to the **only beluga whales in Europe**. This alone makes Oceanografic special. Walruses and cold-water species in climate-controlled habitats.
@@ -103,6 +117,20 @@ https://www.oceanografic.org/en/
 
 100,000 m² of "zoo-immersion" — no visible cages, bars, or railings. Rivers, rocks, and vegetation serve as natural barriers. You feel like you're walking through Africa, not a zoo.
 
+<!-- @vacationeer
+id: bioparc
+type: attraction
+name: Bioparc
+description: Immersive African zoo — no visible cages, underwater hippo viewing
+price_eur: 29.5
+duration_minutes: 310
+location: 39.4788, -0.4074 | Av. Pío Baroja, 3
+expected_score: 8.0
+tips: Start with savanna. Don't miss underwater hippo window
+url: https://bioparcvalencia.es/en/
+-->
+
+
 ### The Habitats
 
 **African Savanna** — The largest zone. African elephants (calves Makena and Malik still young and playful), Baringo giraffes, African lions on elevated rock "watchtowers," **baby white rhinoceros Kairu** (born Nov 2025, ~5 months old), zebras, meerkats, flamingos, gazelles.
@@ -161,6 +189,20 @@ Three floors of genuinely interactive, hands-on science. Not dumbed down for kid
 | **Time needed** | 2-3 hours (science enthusiasts: 4) |
 | **Tip** | Go weekday morning to avoid school groups |
 
+<!-- @vacationeer
+id: science-museum
+type: attraction
+name: Museu de les Ciencies
+description: 3 floors of interactive science — Leonardo da Vinci exhibition, space, genetics
+price_eur: 8.0
+duration_minutes: 150
+location: 39.4557, -0.3521 | City of Arts and Sciences
+expected_score: 9.0
+tips: Go weekday morning to avoid school groups
+url: null
+-->
+
+
 ### L'Hemisferic (IMAX / Planetarium)
 *City of Arts and Sciences*
 
@@ -171,6 +213,20 @@ Europe's largest IMAX screen (900 m²) inside a giant eye-shaped building. The r
 | **Price** | ~7-9 EUR per show (included in combo package) |
 | **Time needed** | 45 min - 1 hour |
 | **Tip** | Check schedule at cac.es/en/hemisferic/ — pick a show that appeals to you |
+
+<!-- @vacationeer
+id: hemisferic
+type: attraction
+name: L'Hemisferic
+description: Europe's largest IMAX screen and planetarium inside a giant eye-shaped building
+price_eur: 8.0
+duration_minutes: 60
+location: 39.454, -0.3503 | City of Arts and Sciences
+expected_score: 7.0
+tips: Pick a planetarium show over IMAX — better for adults. Check schedule at cac.es
+url: https://www.cac.es/en/hemisferic/
+-->
+
 
 ### L'Iber — Museum of Toy Soldiers ★ Hidden Gem
 *Old town, Palau de Malferit*
@@ -194,6 +250,19 @@ The **world's largest collection of historical miniatures**: ~100,000 figures on
 | **Hours** | Tue-Sat 10:00-19:00, Sun 10:00-14:00 |
 | **Time needed** | 45 min - 1 hour |
 
+<!-- @vacationeer
+id: almoina
+type: attraction
+name: L'Almoina Archaeological Centre
+description: 2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic
+price_eur: 2.0
+duration_minutes: 50
+location: 39.4756, -0.3748 | Plaça de l'Almoina, s/n
+expected_score: 9.0
+url: null
+-->
+
+
 ### Museum of Illusions
 *Central Valencia*
 
@@ -207,6 +276,20 @@ The **world's largest collection of historical miniatures**: ~100,000 figures on
 
 > **No Camera Obscura in Valencia** — nearest are in Cadiz and Seville. The Museum of Illusions is the closest equivalent for optical fun.
 
+<!-- @vacationeer
+id: museum-of-illusions
+type: attraction
+name: Museum of Illusions
+description: 60+ optical illusion exhibits — holograms, impossible rooms, gravity-defying perspectives
+price_eur: 13.0
+duration_minutes: 60
+location: 39.471, -0.377 | Carrer dels Cavallers, 6
+expected_score: 5.5
+tips: Fun lighthearted break from history. Daily 10-21
+url: null
+-->
+
+
 ### Prehistoric Caves Immersive Exhibition ★ Ending Soon
 *Museum of Prehistory — until March 31, 2026*
 
@@ -216,6 +299,20 @@ Recreates 200 metres of French prehistoric cave galleries with projections, hype
 |---|---|
 | **Price** | Free (Museum of Prehistory is always free) |
 | **Time needed** | ~1 hour |
+
+<!-- @vacationeer
+id: prehistoric-caves
+type: attraction
+name: Prehistoric Caves Exhibition
+description: Immersive recreation of French prehistoric cave galleries with projections and reconstructions — ending March 31
+price_eur: 0.0
+duration_minutes: 60
+location: 39.4717, -0.3837 | Museu de Prehistoria, C/ de la Corona, 36
+expected_score: 7.5
+tips: Check availability — exhibition ends March 31, 2026
+url: null
+-->
+
 
 ### Museo del Arroz (Rice Museum)
 *Near the port*
@@ -228,6 +325,20 @@ Dedicated entirely to rice — cultivation, processing, and its central role in 
 | **Time needed** | 30-45 minutes |
 
 ---
+
+<!-- @vacationeer
+id: museo-del-arroz
+type: attraction
+name: Museo del Arroz
+description: Rice cultivation and its role in Valencian cuisine — housed in a historic rice mill near the port
+price_eur: 2.0
+duration_minutes: 40
+location: 39.462, -0.331 | C/ del Rosari, 3
+expected_score: 6.5
+tips: Pair with paella lunch nearby. Free on Sundays
+url: null
+-->
+
 
 ## FALLAS — What You Can Still Experience
 
@@ -244,6 +355,20 @@ Located near City of Arts and Sciences — pair them together.
 | **Hours** | Mon-Sat 10:00-19:00, Sun 10:00-14:00 |
 | **Time needed** | 45 min - 1.5 hours |
 | **Worth it?** | At 2 EUR, absolutely. Better post-festival when it's quiet |
+
+<!-- @vacationeer
+id: museo-fallero
+type: attraction
+name: Museo Fallero
+description: Every pardoned Fallas ninot since 1934 — nearly a century of Valencian artistry and satire
+price_eur: 2.0
+duration_minutes: 60
+location: 39.456, -0.354 | Pl. de Monteolivete, 4
+expected_score: 7.0
+tips: Better post-festival when it's quiet. Pair with City of Arts and Sciences nearby
+url: null
+-->
+
 
 ### Hands-On Fallas Workshop ★ Recommended
 Work alongside actual fallas craftsmen in the Ciutat Fallera (warehouse district where next year's monuments are already being planned). Carve, sand, and paint your own small ninot to take home.
@@ -264,30 +389,137 @@ Gothic/Baroque/Renaissance mix claiming to house the Holy Grail. Climb 207 steps
 - **Price:** ~8 EUR (incl. audio guide), bell tower +2 EUR
 - **Free during mass** (Mon-Sat 7:30-9:30 & 18:30-20:30, Sun 7:30-13:30 & 18:30-20:30)
 
+<!-- @vacationeer
+id: cathedral
+type: attraction
+name: Valencia Cathedral + Miguelete Tower
+description: Gothic/Baroque/Renaissance mix, claims to house the Holy Grail. 207 steps for panoramic views
+price_eur: 10.0
+duration_minutes: 75
+location: 39.4753, -0.3753 | Plaça de l'Almoina, s/n
+expected_score: 8.5
+tips: Free during mass hours
+url: null
+-->
+
+
 ### La Lonja de la Seda (Silk Exchange) — UNESCO
 15th-century Gothic trading hall with stunning twisted columns. One of Europe's best-preserved medieval buildings.
 - **Price:** 2 EUR. **Free on Sundays**
+
+<!-- @vacationeer
+id: la-lonja
+type: attraction
+name: La Lonja de la Seda
+description: 15th-century Gothic silk exchange — UNESCO World Heritage, stunning twisted columns
+price_eur: 2.0
+duration_minutes: 45
+location: 39.4742, -0.3789 | Carrer de la Llotja, 2
+expected_score: 9.0
+url: null
+-->
+
 
 ### Torres de Serranos
 14th-century city gate. Great old town views from the top.
 - **Price:** 2 EUR. **Free on Sundays**
 
+<!-- @vacationeer
+id: torres-serranos
+type: attraction
+name: Torres de Serranos
+description: 14th-century city gate with great old town views
+price_eur: 2.0
+duration_minutes: 30
+location: 39.4792, -0.3755 | Plaça dels Furs, s/n
+expected_score: 7.5
+url: null
+-->
+
+
 ### Torres de Quart
 Western medieval gate with visible Napoleonic cannonball damage. Less crowded.
 - **Price:** 2 EUR. **Free on Sundays**
 
+<!-- @vacationeer
+id: torres-de-quart
+type: attraction
+name: Torres de Quart
+description: Western medieval gate with visible Napoleonic cannonball damage — less crowded than Serranos
+price_eur: 2.0
+duration_minutes: 30
+location: 39.4741, -0.3832 | C/ de Quart, s/n
+expected_score: 7.0
+url: null
+-->
+
+
 ### City of Arts and Sciences (Exterior)
 Calatrava's futuristic complex. Walking the exterior is free and spectacular, especially at sunset reflected in the water pools.
+
+<!-- @vacationeer
+id: city-of-arts-exterior
+type: attraction
+name: City of Arts and Sciences (Exterior)
+description: Calatrava's futuristic complex — free to walk around, spectacular at sunset reflected in water pools
+price_eur: 0.0
+duration_minutes: 60
+location: 39.4545, -0.3505 | Av. del Professor Lopez Pinero, 7
+expected_score: 8.5
+tips: Best at sunset when the buildings reflect in the water pools
+url: null
+-->
+
 
 ### Plaza de la Virgen & Plaza del Ayuntamiento
 The two main squares. Architecture, fountains, old town heart. Free.
 
 ---
 
+<!-- @vacationeer
+id: plaza-de-la-virgen
+type: attraction
+name: Plaza de la Virgen
+description: Historic heart of old town — Roman forum site, Turia fountain, surrounded by Cathedral and Basilica
+price_eur: 0.0
+duration_minutes: 30
+location: 39.4756, -0.3758 | Plaça de la Mare de Deu
+expected_score: 7.5
+url: null
+-->
+
+<!-- @vacationeer
+id: plaza-del-ayuntamiento
+type: attraction
+name: Plaza del Ayuntamiento
+description: Valencia's grand central square — ornate City Hall, fountains, flower stalls
+price_eur: 0.0
+duration_minutes: 20
+location: 39.4697, -0.3764 | Plaça de l'Ajuntament
+expected_score: 7.0
+url: null
+-->
+
+
+
 ## GALLERIES — Pick One or Two
 
 ### Museo de Bellas Artes — Always Free
 Spain's #2 art gallery (El Greco, Goya, Velazquez). Next to Viveros Gardens. Worth a quick walk-through for the building and garden setting even if galleries aren't your thing.
+
+<!-- @vacationeer
+id: museo-bellas-artes
+type: attraction
+name: Museo de Bellas Artes
+description: Spain's second-best art gallery — El Greco, Goya, Velazquez. Always free
+price_eur: 0.0
+duration_minutes: 75
+location: 39.4793, -0.3695 | C/ de Sant Pius V, 9
+expected_score: 7.5
+tips: Worth a walk-through for the building and garden setting even if galleries aren't your thing
+url: null
+-->
+
 
 ### Centre del Carme (CCCC) — Always Free
 Contemporary art in a 13th-century convent. Go for the **beautiful medieval cloisters** more than the art.
@@ -295,6 +527,19 @@ Contemporary art in a 13th-century convent. Go for the **beautiful medieval cloi
 > Skip IVAM unless you specifically want modern art (6 EUR, free Sun or Wed 16:00-19:00).
 
 ---
+
+<!-- @vacationeer
+id: centre-del-carme
+type: attraction
+name: Centre del Carme (CCCC)
+description: Contemporary art in a 13th-century convent — go for the beautiful medieval cloisters
+price_eur: 0.0
+duration_minutes: 60
+location: 39.4785, -0.3791 | C/ del Museu, 2
+expected_score: 7.0
+url: null
+-->
+
 
 ## FREE WALKING TOURS
 
@@ -313,26 +558,106 @@ All tip-based (typically 5-10 EUR/person). Book 1-2 days ahead.
 ### Turia Gardens — FREE
 Spain's largest urban park: 9 km in a drained riverbed connecting Bioparc to City of Arts and Sciences. Perfect for cycling or walking between attractions. Includes **Gulliver Park** (giant slide playground — fun even for adults).
 
+<!-- @vacationeer
+id: turia-gardens
+type: attraction
+name: Turia Gardens
+description: Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside
+price_eur: 0.0
+duration_minutes: 120
+location: 39.478, -0.37 | Jardín del Turia
+expected_score: 8.0
+url: null
+-->
+
+
 ### Jardin Botanico — 4 EUR
 16th-century botanical garden. Tropical species, cacti, greenhouses. Peaceful retreat.
+
+<!-- @vacationeer
+id: jardin-botanico
+type: attraction
+name: Jardin Botanico
+description: 16th-century botanical garden with tropical species, cacti, and greenhouses — peaceful retreat
+price_eur: 4.0
+duration_minutes: 60
+location: 39.4732, -0.3856 | C/ de Quart, 80
+expected_score: 7.0
+url: null
+-->
+
 
 ### Viveros Gardens — FREE
 Large park with fountains next to Bellas Artes museum.
 
 ---
 
+<!-- @vacationeer
+id: viveros-gardens
+type: attraction
+name: Viveros Gardens
+description: Large park with fountains next to Bellas Artes museum — free and relaxing
+price_eur: 0.0
+duration_minutes: 45
+location: 39.481, -0.368 | C/ de Sant Pius V, s/n
+expected_score: 6.5
+url: null
+-->
+
+
 ## MARKETS
 
 ### Mercado Central — FREE entry
 One of Europe's largest and most beautiful food markets (Art Nouveau, 1928). 300+ stalls. **Go early (8-10am)**. Mon-Sat 7:30-15:00, closed Sundays. Great for cheap breakfast/picnic supplies.
 
+<!-- @vacationeer
+id: mercado-central
+type: attraction
+name: Mercado Central
+description: One of Europe's largest Art Nouveau food markets — 300+ stalls
+price_eur: 0.0
+duration_minutes: 60
+location: 39.4735, -0.3793 | Plaça de la Ciutat de Bruges
+expected_score: 9.5
+tips: Go early 8-10am. Mon-Sat 7:30-15:00, closed Sun
+url: null
+-->
+
+
 ### Mercado Colon — FREE entry
 Restored Modernist building turned upscale food court. Try **horchata and fartons** here.
+
+<!-- @vacationeer
+id: mercado-colon
+type: attraction
+name: Mercado Colon
+description: Restored Modernist building turned upscale food court — try horchata and fartons
+price_eur: 0.0
+duration_minutes: 45
+location: 39.4672, -0.3712 | C/ de Jorge Juan, 19
+expected_score: 7.5
+tips: Must try horchata and fartons here
+url: null
+-->
+
 
 ### Mercado de Ruzafa — FREE entry
 Local market in trendy Ruzafa. Less touristy. Explore the street art and tapas bars nearby.
 
 ---
+
+<!-- @vacationeer
+id: mercado-de-ruzafa
+type: attraction
+name: Mercado de Ruzafa
+description: Local market in trendy Ruzafa — less touristy, explore street art and tapas bars nearby
+price_eur: 0.0
+duration_minutes: 40
+location: 39.4618, -0.372 | C/ del Literat Azorin, 17
+expected_score: 7.0
+url: null
+-->
+
 
 ## CYCLING
 

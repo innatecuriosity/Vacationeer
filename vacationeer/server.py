@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json as _json
 import logging
+import os
 import re
 from datetime import date, time, timedelta
 from pathlib import Path
@@ -25,7 +27,6 @@ from vacationeer.models.trip import (
 )
 from vacationeer.storage.json_store import load_trip, save_trip
 from vacationeer.views.app_shell import generate_app
-from vacationeer.views.chat import render_chat
 from vacationeer.views.overview import render_overview
 from vacationeer.views.timeline import render_timeline
 
@@ -61,7 +62,7 @@ def _rebuild_all(trip: Trip, trip_path: Path, output_dir: Path) -> None:
     tab_contents = {
         "overview-content": render_overview(trip),
         "timeline-content": render_timeline(trip),
-        "chat-content": render_chat(trip),
+
     }
     generate_app(trip, map_filename, output_dir / f"{dest_slug}-app.html", tab_contents=tab_contents)
 
@@ -75,7 +76,7 @@ def _rebuild_app_only(trip: Trip, trip_path: Path, output_dir: Path) -> None:
     tab_contents = {
         "overview-content": render_overview(trip),
         "timeline-content": render_timeline(trip),
-        "chat-content": render_chat(trip),
+
     }
     generate_app(trip, map_filename, output_dir / f"{dest_slug}-app.html", tab_contents=tab_contents)
 
@@ -152,6 +153,48 @@ class ScheduleBody(BaseModel):
     start_time: Optional[str] = None  # "HH:MM" string
 
 
+class ChatMessage(BaseModel):
+    role: str  # "user" or "assistant"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    messages: list[ChatMessage]
+
+
+def _build_chat_system_prompt(trip: Trip) -> str:
+    """Build a system prompt that gives the AI context about the trip."""
+    attractions_summary = ", ".join(a.name for a in trip.attractions[:15])
+    if len(trip.attractions) > 15:
+        attractions_summary += f" (and {len(trip.attractions) - 15} more)"
+
+    day_trips_summary = ", ".join(dt.name for dt in trip.day_trips) if trip.day_trips else "none"
+
+    days_summary = ""
+    if trip.days:
+        days_summary = f"\n\nScheduled days ({len(trip.days)}):"
+        for d in trip.days[:10]:
+            acts = ", ".join(a.name for a in d.activities) if d.activities else "empty"
+            days_summary += f"\n- {d.date} ({d.label or 'no label'}): {acts}"
+
+    prefs = ""
+    if trip.preferences:
+        p = trip.preferences
+        prefs = f"\n\nPreferences: interests={p.interests}, avoid={p.avoid}, pace={p.pace}, daily_budget=€{p.daily_budget_eur or 'unset'}"
+
+    return f"""You are a helpful travel planning assistant for the trip "{trip.name}" to {trip.destination}.
+Trip dates: {trip.start_date} to {trip.end_date}, {trip.travelers} travelers, budget €{trip.budget_eur or 'unset'}.
+{prefs}
+
+Attractions ({len(trip.attractions)}): {attractions_summary}
+Day trips: {day_trips_summary}
+{days_summary}
+
+You can suggest plans, answer questions about the destination, and help organize the itinerary.
+Keep responses concise and practical. Use the traveler's context to personalize suggestions.
+If the user asks to add an attraction or make a change, describe what you'd recommend — they can use the app UI to make the actual changes."""
+
+
 def _parse_time(value: Optional[str]) -> Optional[time]:
     """Parse a 'HH:MM' string into a time object."""
     if not value:
@@ -174,6 +217,50 @@ def _parse_category(value: Optional[str]) -> Optional[Category]:
 # App factory
 # ---------------------------------------------------------------------------
 
+def _scan_trips(project_root: Path) -> list[dict]:
+    """Scan the trips/ directory and return metadata for each trip."""
+    import json as _json
+
+    trips_dir = project_root / "trips"
+    result = []
+    if not trips_dir.exists():
+        return result
+
+    for trip_dir in sorted(trips_dir.iterdir()):
+        if not trip_dir.is_dir():
+            continue
+        slug = trip_dir.name
+        entry: dict = {"slug": slug, "name": slug, "has_trip": False, "has_config": False}
+
+        trip_json = trip_dir / "trip.json"
+        config_json = trip_dir / "trip-config.json"
+
+        if trip_json.exists():
+            entry["has_trip"] = True
+            try:
+                data = _json.loads(trip_json.read_text(encoding="utf-8"))
+                entry["name"] = data.get("name", slug)
+                entry["destination"] = data.get("destination", "")
+                dest_slug = entry["destination"].lower().replace(" ", "-")
+                entry["app_url"] = f"/{dest_slug}-app.html"
+            except Exception:
+                pass
+        elif config_json.exists():
+            entry["has_config"] = True
+            try:
+                data = _json.loads(config_json.read_text(encoding="utf-8"))
+                entry["name"] = data.get("name", slug)
+                entry["destination"] = data.get("destination", "")
+            except Exception:
+                pass
+
+        data_dir = project_root / "data" / slug
+        entry["has_research"] = (data_dir / "attractions-and-activities.md").exists()
+
+        result.append(entry)
+    return result
+
+
 def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
     """Create and configure the FastAPI application."""
 
@@ -188,6 +275,9 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Infer project root from trip path: trips/<slug>/trip.json -> project root
+    project_root = trip_path.resolve().parent.parent.parent
+
     # In-memory trip state
     trip_state: dict[str, Trip] = {}
 
@@ -197,6 +287,109 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
 
     def _trip() -> Trip:
         return trip_state["trip"]
+
+    # ------------------------------------------------------------------
+    # Trip list endpoint (all trips)
+    # ------------------------------------------------------------------
+
+    @app.get("/api/trips")
+    def list_trips():
+        from vacationeer.pipeline.runner import get_job
+
+        current_slug = trip_path.resolve().parent.name
+        trips = _scan_trips(project_root)
+        for t in trips:
+            t["active"] = t["slug"] == current_slug
+            job = get_job(t["slug"])
+            if job:
+                t["pipeline"] = job.to_dict()
+        return trips
+
+    # ------------------------------------------------------------------
+    # Pipeline endpoints
+    # ------------------------------------------------------------------
+
+    class PipelineStart(BaseModel):
+        destination: str
+        name: Optional[str] = None
+        start_date: str
+        end_date: str
+        dates_approximate: bool = False
+        travelers: int = 2
+        budget_eur: Optional[float] = None
+        interests: list[str] = []
+        avoid: list[str] = []
+        pace: str = "moderate"
+        budget_per_day_eur: Optional[float] = None
+        context: Optional[str] = None
+        must_do: Optional[str] = None
+        accommodation_area: Optional[str] = None
+        arrival_method: Optional[str] = None
+        include_day_trips: bool = True
+        light: bool = True
+
+    @app.post("/api/pipeline/start", status_code=202)
+    def start_pipeline(body: PipelineStart):
+        from vacationeer.pipeline.runner import start_pipeline, get_job
+
+        # Build slug
+        import re as _re
+        city = body.destination.split(",")[0].strip().lower()
+        city_slug = _re.sub(r"[^a-z0-9]+", "-", city).strip("-")
+        year_match = _re.search(r"20\d{2}", body.start_date)
+        year = year_match.group() if year_match else "2026"
+        slug = f"{city_slug}-{year}"
+
+        # Check not already running
+        existing = get_job(slug)
+        if existing and existing.status in ("queued", "researching", "converting", "building"):
+            return {"slug": slug, "status": existing.status, "message": "Pipeline already running"}
+
+        config = {
+            "id": slug,
+            "name": body.name or f"{body.destination.split(',')[0].strip()} {year}",
+            "destination": body.destination,
+            "start_date": body.start_date,
+            "end_date": body.end_date,
+            "dates_approximate": body.dates_approximate,
+            "travelers": body.travelers,
+            "budget_eur": body.budget_eur,
+            "preferences": {
+                "interests": body.interests,
+                "avoid": body.avoid,
+                "pace": body.pace,
+                "budget_per_day_eur": body.budget_per_day_eur,
+            },
+            "context": body.context,
+            "must_do": body.must_do,
+            "accommodation_area": body.accommodation_area,
+            "arrival_method": body.arrival_method,
+            "include_day_trips": body.include_day_trips,
+        }
+
+        job = start_pipeline(config, project_root, light=body.light, output_dir=output_dir)
+        log.info("Started pipeline for %s", slug)
+        return {"slug": slug, "status": job.status}
+
+    @app.get("/api/pipeline/status/{slug}")
+    def pipeline_status(slug: str):
+        from vacationeer.pipeline.runner import get_job
+
+        job = get_job(slug)
+        if not job:
+            raise HTTPException(status_code=404, detail=f"No pipeline job for '{slug}'")
+        result = job.to_dict()
+        # If done, include the app URL
+        if job.status == "done":
+            dest = job.config.get("destination", slug)
+            dest_slug = dest.lower().replace(" ", "-").split(",")[0].strip()
+            result["app_url"] = f"/{dest_slug}-app.html"
+        return result
+
+    @app.get("/api/pipeline/jobs")
+    def pipeline_jobs():
+        from vacationeer.pipeline.runner import list_jobs
+        return list_jobs()
 
     # ------------------------------------------------------------------
     # Trip endpoints
@@ -651,6 +844,55 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         log.info("Init days created %d new days: %s", len(created), created)
         return {"created": created, "total_days": len(trip.days)}
+
+    # ------------------------------------------------------------------
+    # Chat endpoint
+    # ------------------------------------------------------------------
+
+    @app.post("/api/chat")
+    async def chat(request: Request):
+        trip = _trip()
+        raw = await request.json()
+        log.info("POST /api/chat")
+
+        try:
+            body = ChatRequest(**raw)
+        except Exception as exc:
+            raise HTTPException(status_code=422, detail=str(exc))
+
+        # Check for Anthropic API key
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise HTTPException(
+                status_code=503,
+                detail="Chat requires ANTHROPIC_API_KEY environment variable to be set."
+            )
+
+        try:
+            import anthropic
+        except ImportError:
+            raise HTTPException(
+                status_code=503,
+                detail="Chat requires the 'anthropic' package. Run: pip install anthropic"
+            )
+
+        system_prompt = _build_chat_system_prompt(trip)
+        api_messages = [{"role": m.role, "content": m.content} for m in body.messages]
+
+        try:
+            client = anthropic.Anthropic()
+            response = client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=1024,
+                system=system_prompt,
+                messages=api_messages,
+            )
+            content = response.content[0].text
+            log.info("Chat response: %s chars", len(content))
+            return {"role": "assistant", "content": content}
+        except Exception as exc:
+            log.error("Chat API error: %s", exc)
+            raise HTTPException(status_code=500, detail=f"AI error: {exc}")
 
     # ------------------------------------------------------------------
     # Static files (mounted last so API routes take priority)

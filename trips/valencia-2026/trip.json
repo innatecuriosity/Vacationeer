@@ -54,7 +54,7 @@
       },
       "category": "nature",
       "price_eur": 29.5,
-      "duration_minutes": 210,
+      "duration_minutes": 310,
       "tags": [
         "must-do",
         "half-day",
@@ -63,7 +63,7 @@
       "tips": "Start with savanna. Don't miss underwater hippo window",
       "url": "https://bioparcvalencia.es/en/",
       "expected_score": 8.0,
-      "user_score": null
+      "user_score": 10.0
     },
     {
       "id": "science-museum",
@@ -613,6 +613,24 @@
       "tips": "Check programme at cinesbabel.com. Perfect for a rainy evening",
       "url": "https://www.cinesbabel.com/",
       "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "flet",
+      "name": "flet",
+      "description": "we sleep here",
+      "location": {
+        "lat": 0.0,
+        "lng": -0.383757,
+        "address": null
+      },
+      "category": "landmark",
+      "price_eur": null,
+      "duration_minutes": null,
+      "tags": [],
+      "tips": null,
+      "url": null,
+      "expected_score": null,
       "user_score": null
     }
   ],

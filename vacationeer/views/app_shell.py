@@ -7,6 +7,80 @@ from pathlib import Path
 from vacationeer.models.trip import Category, Trip
 
 
+def _location_picker_xdata() -> str:
+    """Return Alpine.js x-data properties for the 3-mode location picker.
+
+    The calling modal's x-data must include form.lat, form.lng, form.address.
+    Merge this into the x-data object alongside the modal's own properties.
+    """
+    return """
+                locMode: 'gps',
+                pickerMap: null,
+                pickerMarker: null,
+                initPickerMap() {{
+                    var self = this;
+                    this.$nextTick(function() {{
+                        if (self.pickerMap) {{ self.pickerMap.invalidateSize(); return; }}
+                        var el = self.$refs.pickerMapEl;
+                        if (!el) return;
+                        self.pickerMap = L.map(el).setView([39.4699, -0.3763], 13);
+                        L.tileLayer('https://{{s}}.basemaps.cartocdn.com/voyager/{{z}}/{{x}}/{{y}}@2x.png', {{
+                            attribution: '&copy; OpenStreetMap'
+                        }}).addTo(self.pickerMap);
+                        self.pickerMap.on('click', function(e) {{
+                            self.form.lat = e.latlng.lat.toFixed(6);
+                            self.form.lng = e.latlng.lng.toFixed(6);
+                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);
+                            self.pickerMarker = L.marker(e.latlng).addTo(self.pickerMap);
+                        }});
+                    }});
+                }},"""
+
+
+def _location_picker_html(required: bool = True) -> str:
+    """Return the HTML for the 3-mode location picker (Address / GPS / Pick on Map).
+
+    Expects the Alpine scope to have locMode, pickerMap, pickerMarker, initPickerMap()
+    from _location_picker_xdata(), and form.lat, form.lng, form.address.
+    """
+    req = ' <span class="req">*</span>' if required else ""
+    return f"""
+                    <div class="form-group">
+                        <label>Location{req}</label>
+                        <div class="loc-tabs">
+                            <button type="button" class="loc-tab" :class="locMode === 'address' && 'active'" @click="locMode = 'address'">Address</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'gps' && 'active'" @click="locMode = 'gps'">GPS</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Pick on Map</button>
+                        </div>
+                    </div>
+                    <div class="form-group" x-show="locMode === 'address'">
+                        <input type="text" x-model="form.address" placeholder="Enter full address">
+                    </div>
+                    <div class="form-row" x-show="locMode === 'gps' || locMode === 'address'">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                        </div>
+                    </div>
+                    <div x-show="locMode === 'map'">
+                        <div class="loc-map-container" x-ref="pickerMapEl"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Lat</label>
+                                <input type="number" step="any" x-model="form.lat" readonly style="background:#f5f6f8;">
+                            </div>
+                            <div class="form-group">
+                                <label>Lng</label>
+                                <input type="number" step="any" x-model="form.lng" readonly style="background:#f5f6f8;">
+                            </div>
+                        </div>
+                    </div>"""
+
+
 def _json_serializer(obj: object) -> str:
     """Handle date/time serialization for JSON."""
     if isinstance(obj, date):
@@ -44,7 +118,6 @@ def generate_app(
 
     overview_inner = tab_contents.get("overview-content", "")
     timeline_inner = tab_contents.get("timeline-content", "")
-    chat_inner = tab_contents.get("chat-content", "")
 
     trip_json = json.dumps(
         trip.model_dump(mode="json"),
@@ -93,8 +166,8 @@ html, body {{
 
 /* ---- sidebar ---- */
 .sidebar {{
-    width: 250px;
-    min-width: 250px;
+    width: 340px;
+    min-width: 340px;
     background: #1a2332;
     color: #fff;
     display: flex;
@@ -120,6 +193,92 @@ html, body {{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}}
+
+/* ---- trip picker ---- */
+.trip-picker {{
+    position: relative;
+}}
+.trip-picker-btn {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+    margin-top: 6px;
+}}
+.trip-picker-btn:hover {{
+    background: rgba(255,255,255,0.14);
+}}
+.trip-picker-btn .tp-label {{
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}}
+.trip-picker-btn .tp-chevron {{
+    font-size: 10px;
+    opacity: 0.5;
+    transition: transform 0.2s;
+}}
+.trip-picker-dropdown {{
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #243040;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+}}
+.trip-picker-dropdown .tp-item {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.12s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+}}
+.trip-picker-dropdown .tp-item:hover {{
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}}
+.trip-picker-dropdown .tp-item.active {{
+    color: #4ea4f6;
+    font-weight: 600;
+}}
+.trip-picker-dropdown .tp-item .tp-status {{
+    font-size: 10px;
+    opacity: 0.5;
+    margin-left: auto;
+}}
+.trip-picker-dropdown .tp-divider {{
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 4px 0;
+}}
+.trip-picker-dropdown .tp-new {{
+    color: #4ea4f6;
+    font-weight: 500;
 }}
 
 .nav {{
@@ -246,7 +405,7 @@ html, body {{
     border: none;
 }}
 
-#tab-overview, #tab-timeline, #tab-chat {{
+#tab-overview, #tab-timeline {{
     padding: 24px 28px;
 }}
 .tab-placeholder {{
@@ -421,6 +580,119 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
     to {{ opacity: 1; transform: translateX(0); }}
 }}
 
+/* ---- sidebar chat ---- */
+.sidebar-chat {{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    min-height: 0;
+}}
+.sidebar-chat .chat-header {{
+    padding: 10px 18px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    opacity: 0.5;
+    flex-shrink: 0;
+}}
+.sidebar-chat .chat-messages {{
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+}}
+.sidebar-chat .chat-messages::-webkit-scrollbar {{
+    width: 4px;
+}}
+.sidebar-chat .chat-messages::-webkit-scrollbar-thumb {{
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+}}
+.chat-bubble {{
+    max-width: 90%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}}
+.chat-bubble.assistant {{
+    align-self: flex-start;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.9);
+    border-bottom-left-radius: 4px;
+}}
+.chat-bubble.user {{
+    align-self: flex-end;
+    background: #4ea4f6;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}}
+.chat-bubble.error {{
+    align-self: flex-start;
+    background: rgba(220,53,69,0.3);
+    color: #ffb3b3;
+    border-bottom-left-radius: 4px;
+    font-size: 12px;
+}}
+.chat-bubble .typing {{
+    display: inline-block;
+    animation: pulse-typing 1.2s infinite;
+}}
+@keyframes pulse-typing {{
+    0%, 100% {{ opacity: 0.4; }}
+    50% {{ opacity: 1; }}
+}}
+.sidebar-chat .chat-input {{
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}}
+.sidebar-chat .chat-input input {{
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 18px;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+}}
+.sidebar-chat .chat-input input::placeholder {{
+    color: rgba(255,255,255,0.35);
+}}
+.sidebar-chat .chat-input input:focus {{
+    border-color: #4ea4f6;
+    background: rgba(255,255,255,0.12);
+}}
+.sidebar-chat .chat-input button {{
+    padding: 8px 14px;
+    background: #4ea4f6;
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+}}
+.sidebar-chat .chat-input button:hover {{
+    background: #3b8de0;
+}}
+.sidebar-chat .chat-input button:disabled {{
+    opacity: 0.5;
+    cursor: not-allowed;
+}}
+
 /* ---- location picker ---- */
 .loc-tabs {{ display: flex; gap: 0; margin-bottom: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #d1d5db; }}
 .loc-tab {{ flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: 600; cursor: pointer; background: #f5f6f8; border: none; color: #5f6b7a; }}
@@ -435,8 +707,10 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
     }}
     .sidebar-header .brand,
     .sidebar-header .trip-name,
+    .trip-picker,
     .nav-btn .label,
-    .sidebar-footer {{
+    .sidebar-footer,
+    .sidebar-chat {{
         display: none;
     }}
     .sidebar-header {{
@@ -457,7 +731,7 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
     .header h1 {{
         font-size: 17px;
     }}
-    #tab-overview, #tab-timeline, #tab-chat {{
+    #tab-overview, #tab-timeline {{
         padding: 16px;
     }}
     .fab {{
@@ -482,6 +756,235 @@ function reloadMap() {{
         var iframe = document.querySelector('#tab-map iframe');
         if (iframe) iframe.src = iframe.src.split('?')[0] + '?t=' + Date.now();
     }}, 1500);
+}}
+
+/* Trip picker component */
+function tripPicker() {{
+    return {{
+        open: false,
+        trips: [],
+        currentName: '{_esc(trip.destination)}',
+        toggle() {{
+            if (!this.open) this.loadTrips();
+            this.open = !this.open;
+        }},
+        async loadTrips() {{
+            try {{
+                const resp = await fetch('/api/trips');
+                if (resp.ok) this.trips = await resp.json();
+            }} catch(e) {{
+                /* static mode, no server */
+                this.trips = [{{slug: '{_esc(trip.id)}', name: '{_esc(trip.destination)}', active: true, has_trip: true}}];
+            }}
+        }},
+        switchTrip(t) {{
+            this.open = false;
+            if (t.active) return;
+            if (t.app_url) {{
+                window.location.href = t.app_url;
+            }} else if (!t.has_trip) {{
+                window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'new-trip-guide'}}));
+            }}
+        }},
+        newTrip() {{
+            this.open = false;
+            window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'new-trip-guide'}}));
+        }}
+    }};
+}}
+
+/* New trip form component */
+function newTripForm() {{
+    return {{
+        phase: 'form',
+        pollInterval: null,
+        form: {{
+            destination: '',
+            name: '',
+            start_date: '',
+            end_date: '',
+            travelers: 2,
+            budget_eur: null,
+            interests_str: '',
+            pace: 'moderate',
+            include_day_trips: 'true',
+            must_do: '',
+            context: ''
+        }},
+        job: {{
+            slug: '',
+            status: 'queued',
+            step: '',
+            error: null,
+            attractions_count: 0,
+            day_trips_count: 0,
+            app_url: null
+        }},
+        async submit() {{
+            var dest = this.form.destination.trim();
+            if (!dest || !this.form.start_date || !this.form.end_date) return;
+
+            var interests = this.form.interests_str
+                ? this.form.interests_str.split(',').map(function(s) {{ return s.trim(); }}).filter(Boolean)
+                : [];
+            var payload = {{
+                destination: dest,
+                start_date: this.form.start_date,
+                end_date: this.form.end_date,
+                travelers: parseInt(this.form.travelers) || 2,
+                interests: interests,
+                pace: this.form.pace,
+                include_day_trips: this.form.include_day_trips === 'true'
+            }};
+            if (this.form.name) payload.name = this.form.name;
+            if (this.form.budget_eur) payload.budget_eur = parseFloat(this.form.budget_eur);
+            if (this.form.must_do) payload.must_do = this.form.must_do;
+            if (this.form.context) payload.context = this.form.context;
+
+            try {{
+                var resp = await fetch('/api/pipeline/start', {{
+                    method: 'POST',
+                    headers: {{ 'Content-Type': 'application/json' }},
+                    body: JSON.stringify(payload)
+                }});
+                if (!resp.ok) {{
+                    var err = await resp.json().catch(function() {{ return {{detail: 'Failed to start pipeline'}}; }});
+                    alert(err.detail || 'Failed to start pipeline');
+                    return;
+                }}
+                var data = await resp.json();
+                this.job.slug = data.slug;
+                this.job.status = data.status;
+                this.job.step = data.step || 'Starting...';
+                this.phase = 'progress';
+                this.startPolling();
+            }} catch (e) {{
+                alert('Network error: ' + e.message);
+            }}
+        }},
+        startPolling() {{
+            var self = this;
+            this.pollInterval = setInterval(async function() {{
+                try {{
+                    var resp = await fetch('/api/pipeline/status/' + self.job.slug);
+                    if (!resp.ok) return;
+                    var data = await resp.json();
+                    self.job.status = data.status;
+                    self.job.step = data.step;
+                    self.job.error = data.error;
+                    self.job.attractions_count = data.attractions_count || 0;
+                    self.job.day_trips_count = data.day_trips_count || 0;
+                    if (data.status === 'done') {{
+                        self.job.app_url = data.app_url || null;
+                        self.stopPolling();
+                    }} else if (data.status === 'error') {{
+                        self.stopPolling();
+                    }}
+                }} catch (e) {{
+                    /* ignore polling errors */
+                }}
+            }}, 3000);
+        }},
+        stopPolling() {{
+            if (this.pollInterval) {{
+                clearInterval(this.pollInterval);
+                this.pollInterval = null;
+            }}
+        }},
+        cleanup() {{
+            this.stopPolling();
+        }},
+        statusIcon() {{
+            var s = this.job.status;
+            if (s === 'error') return '⚠';
+            if (s === 'done') return '✓';
+            if (s === 'researching') return '🔍';
+            if (s === 'converting') return '⚙';
+            if (s === 'building') return '🏗';
+            return '⏳';
+        }},
+        progressPct() {{
+            var map = {{ queued: 5, researching: 25, converting: 55, building: 80, done: 100, error: 100 }};
+            return map[this.job.status] || 5;
+        }},
+        progressStepStyle(step) {{
+            var order = ['queued', 'researching', 'converting', 'building', 'done'];
+            var current = order.indexOf(this.job.status);
+            var target = order.indexOf(step);
+            if (this.job.status === 'error') return 'color:#dc2626';
+            if (target < current) return 'color:#059669;font-weight:600';
+            if (target === current) return 'color:#1a2332;font-weight:600';
+            return '';
+        }}
+    }};
+}}
+
+/* Sidebar chat component */
+function sidebarChat() {{
+    return {{
+        messages: [
+            {{ role: 'assistant', content: "Hi! I'm your travel assistant for {_esc(trip.destination)}. Ask me to suggest plans, add attractions, or help organize your trip!" }}
+        ],
+        input: '',
+        loading: false,
+        scrollToBottom() {{
+            var self = this;
+            this.$nextTick(function() {{
+                var el = self.$refs.chatMessages;
+                if (el) el.scrollTop = el.scrollHeight;
+            }});
+        }},
+        async send() {{
+            var text = this.input.trim();
+            if (!text || this.loading) return;
+            this.messages.push({{ role: 'user', content: text }});
+            this.input = '';
+            this.loading = true;
+            this.scrollToBottom();
+
+            try {{
+                var apiMessages = this.messages.filter(function(m) {{ return m.role === 'user' || m.role === 'assistant'; }}).map(function(m) {{
+                    return {{ role: m.role, content: m.content }};
+                }});
+                var resp = await fetch('/api/chat', {{
+                    method: 'POST',
+                    headers: {{ 'Content-Type': 'application/json' }},
+                    body: JSON.stringify({{ messages: apiMessages }})
+                }});
+                if (!resp.ok) {{
+                    var err = await resp.json().catch(function() {{ return {{detail: 'Chat unavailable'}}; }});
+                    this.messages.push({{ role: 'error', content: err.detail || 'Something went wrong' }});
+                }} else {{
+                    var data = await resp.json();
+                    this.messages.push({{ role: 'assistant', content: data.content }});
+                    if (data.actions && data.actions.length > 0) {{
+                        await this.executeActions(data.actions);
+                    }}
+                }}
+            }} catch (e) {{
+                this.messages.push({{ role: 'error', content: 'Network error: ' + e.message }});
+            }}
+            this.loading = false;
+            this.scrollToBottom();
+        }},
+        async executeActions(actions) {{
+            for (var action of actions) {{
+                try {{
+                    if (action.type === 'add_attraction') {{
+                        await $store.trip.addAttraction(action.data);
+                    }} else if (action.type === 'add_day_trip') {{
+                        await $store.trip.addDayTrip(action.data);
+                    }} else if (action.type === 'add_day') {{
+                        await $store.trip.addDay(action.data);
+                    }} else if (action.type === 'schedule') {{
+                        await $store.trip.scheduleAttraction(action.data);
+                    }}
+                }} catch (e) {{
+                    console.error('Action failed:', action, e);
+                }}
+            }}
+        }}
+    }};
 }}
 
 document.addEventListener('alpine:init', function() {{
@@ -654,14 +1157,47 @@ document.addEventListener('alpine:init', function() {{
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="brand">Vacationeer</div>
-            <div class="trip-name">{_esc(trip.destination)}</div>
+            <div class="trip-picker" x-data="tripPicker()">
+                <button class="trip-picker-btn" @click="toggle()" @click.outside="open = false">
+                    <span class="tp-label" x-text="currentName">{_esc(trip.destination)}</span>
+                    <span class="tp-chevron" :class="{{ 'open': open }}">&#9660;</span>
+                </button>
+                <div class="trip-picker-dropdown" x-show="open" x-cloak x-transition.opacity>
+                    <template x-for="t in trips" :key="t.slug">
+                        <button class="tp-item" :class="{{ 'active': t.active }}"
+                                @click="switchTrip(t)">
+                            <span x-text="t.name"></span>
+                            <span class="tp-status" x-text="t.pipeline && t.pipeline.status !== 'done' && t.pipeline.status !== 'error' ? '⏳ ' + t.pipeline.step : t.has_trip ? 'ready' : t.has_research ? 'research' : 'config'"></span>
+                        </button>
+                    </template>
+                    <div class="tp-divider"></div>
+                    <button class="tp-item tp-new" @click="newTrip()">
+                        + New trip
+                    </button>
+                </div>
+            </div>
         </div>
         <ul class="nav">
             <li><button class="nav-btn active" data-tab="tab-map"><span class="icon">\U0001f5fa</span><span class="label">Map</span></button></li>
             <li><button class="nav-btn" data-tab="tab-overview"><span class="icon">\U0001f4cb</span><span class="label">Overview</span></button></li>
             <li><button class="nav-btn" data-tab="tab-timeline"><span class="icon">\U0001f4c5</span><span class="label">Timeline</span></button></li>
-            <li><button class="nav-btn" data-tab="tab-chat"><span class="icon">\U0001f4ac</span><span class="label">Chat</span></button></li>
         </ul>
+        <div class="sidebar-chat" x-data="sidebarChat()">
+            <div class="chat-header">Assistant</div>
+            <div class="chat-messages" x-ref="chatMessages">
+                <template x-for="(msg, i) in messages" :key="i">
+                    <div class="chat-bubble" :class="msg.role" x-html="msg.html || msg.content"></div>
+                </template>
+                <template x-if="loading">
+                    <div class="chat-bubble assistant"><span class="typing">Thinking...</span></div>
+                </template>
+            </div>
+            <div class="chat-input">
+                <input type="text" x-model="input" placeholder="Ask the assistant..."
+                       @keydown.enter="send()" :disabled="loading" />
+                <button @click="send()" :disabled="loading || !input.trim()">Send</button>
+            </div>
+        </div>
         <div class="sidebar-footer">Vacationeer v0.1</div>
     </aside>
 
@@ -687,9 +1223,6 @@ document.addEventListener('alpine:init', function() {{
             </div>
             <div id="tab-timeline" class="tab-panel">
                 <div id="timeline-content">{timeline_inner if timeline_inner else '<div class="tab-placeholder">Timeline will appear here.</div>'}</div>
-            </div>
-            <div id="tab-chat" class="tab-panel">
-                <div id="chat-content">{chat_inner if chat_inner else '<div class="tab-placeholder">Chat will appear here.</div>'}</div>
             </div>
         </div>
     </div>
@@ -733,27 +1266,7 @@ document.addEventListener('alpine:init', function() {{
         <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
                 form: {{ name: '', description: '', category: 'landmark', lat: '', lng: '', address: '', price_eur: '', duration_minutes: '', tags: '', tips: '', url: '' }},
-                locMode: 'gps',
-                pickerMap: null,
-                pickerMarker: null,
-                initPickerMap() {{
-                    var self = this;
-                    this.$nextTick(function() {{
-                        if (self.pickerMap) {{ self.pickerMap.invalidateSize(); return; }}
-                        var el = self.$refs.pickerMapEl;
-                        if (!el) return;
-                        self.pickerMap = L.map(el).setView([39.4699, -0.3763], 13);
-                        L.tileLayer('https://{{s}}.basemaps.cartocdn.com/voyager/{{z}}/{{x}}/{{y}}@2x.png', {{
-                            attribution: '&copy; OpenStreetMap'
-                        }}).addTo(self.pickerMap);
-                        self.pickerMap.on('click', function(e) {{
-                            self.form.lat = e.latlng.lat.toFixed(6);
-                            self.form.lng = e.latlng.lng.toFixed(6);
-                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);
-                            self.pickerMarker = L.marker(e.latlng).addTo(self.pickerMap);
-                        }});
-                    }});
-                }},
+{_location_picker_xdata()}
                 async submit() {{
                     if (!this.form.name.trim()) return;
                     const data = {{
@@ -791,40 +1304,7 @@ document.addEventListener('alpine:init', function() {{
 {category_options}
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Location <span class="req">*</span></label>
-                        <div class="loc-tabs">
-                            <button type="button" class="loc-tab" :class="locMode === 'address' && 'active'" @click="locMode = 'address'">Address</button>
-                            <button type="button" class="loc-tab" :class="locMode === 'gps' && 'active'" @click="locMode = 'gps'">GPS</button>
-                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Pick on Map</button>
-                        </div>
-                    </div>
-                    <div class="form-group" x-show="locMode === 'address'">
-                        <input type="text" x-model="form.address" placeholder="Enter full address">
-                    </div>
-                    <div class="form-row" x-show="locMode === 'gps' || locMode === 'address'">
-                        <div class="form-group">
-                            <label>Latitude</label>
-                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
-                        </div>
-                        <div class="form-group">
-                            <label>Longitude</label>
-                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
-                        </div>
-                    </div>
-                    <div x-show="locMode === 'map'">
-                        <div class="loc-map-container" x-ref="pickerMapEl"></div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Lat</label>
-                                <input type="number" step="any" x-model="form.lat" readonly style="background:#f5f6f8;">
-                            </div>
-                            <div class="form-group">
-                                <label>Lng</label>
-                                <input type="number" step="any" x-model="form.lng" readonly style="background:#f5f6f8;">
-                            </div>
-                        </div>
-                    </div>
+{_location_picker_html(required=True)}
                     <div class="form-row">
                         <div class="form-group">
                             <label>Price (&euro;)</label>
@@ -975,6 +1455,7 @@ document.addEventListener('alpine:init', function() {{
         <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
                 form: {{ name: '', destination: '', description: '', lat: '', lng: '', address: '', total_price_eur: '', total_duration_minutes: '', tags: '', tips: '' }},
+{_location_picker_xdata()}
                 async submit() {{
                     if (!this.form.name.trim() || !this.form.destination.trim()) return;
                     if (!this.form.lat || !this.form.lng) return;
@@ -1010,20 +1491,7 @@ document.addEventListener('alpine:init', function() {{
                         <label>Description</label>
                         <textarea x-model="form.description" placeholder="Brief description"></textarea>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Latitude <span class="req">*</span></label>
-                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Longitude <span class="req">*</span></label>
-                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" x-model="form.address" placeholder="Street address">
-                    </div>
+{_location_picker_html(required=True)}
                     <div class="form-row">
                         <div class="form-group">
                             <label>Total Price (&euro;)</label>
@@ -1102,9 +1570,9 @@ document.addEventListener('alpine:init', function() {{
         <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
                 form: {{ name: '', address: '', checkin: '', checkout: '', lat: '', lng: '', total_price_eur: '', description: '', tags: '', tips: '', url: '' }},
+{_location_picker_xdata()}
                 async submit() {{
-                    if (!this.form.name.trim() || !this.form.address.trim()) return;
-                    if (!this.form.lat || !this.form.lng) return;
+                    if (!this.form.name.trim()) return;
                     var desc = this.form.description.trim() || '';
                     if (this.form.checkin && this.form.checkout) {{
                         desc = 'Check-in: ' + this.form.checkin + ' / Check-out: ' + this.form.checkout + (desc ? '\\n' + desc : '');
@@ -1137,10 +1605,6 @@ document.addEventListener('alpine:init', function() {{
                         <label>Name <span class="req">*</span></label>
                         <input type="text" x-model="form.name" placeholder="Hotel / Apartment name" required>
                     </div>
-                    <div class="form-group">
-                        <label>Address <span class="req">*</span></label>
-                        <input type="text" x-model="form.address" placeholder="Full address" required>
-                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Check-in Date</label>
@@ -1151,16 +1615,7 @@ document.addEventListener('alpine:init', function() {{
                             <input type="date" x-model="form.checkout">
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Latitude <span class="req">*</span></label>
-                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Longitude <span class="req">*</span></label>
-                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763" required>
-                        </div>
-                    </div>
+{_location_picker_html(required=True)}
                     <div class="form-group">
                         <label>Total Price (&euro;)</label>
                         <input type="number" step="0.01" x-model="form.total_price_eur" placeholder="0.00">
@@ -1195,7 +1650,8 @@ document.addEventListener('alpine:init', function() {{
     <template x-if="modal === 'add-transport'">
         <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
-                form: {{ name: '', mode: 'train', origin: '', destination: '', departure: '', arrival: '', lat: '', lng: '', price: '', booking_ref: '', notes: '' }},
+                form: {{ name: '', mode: 'train', origin: '', destination: '', departure: '', arrival: '', lat: '', lng: '', address: '', price: '', booking_ref: '', notes: '' }},
+{_location_picker_xdata()}
                 async submit() {{
                     if (!this.form.name.trim()) return;
                     var parts = [];
@@ -1215,7 +1671,7 @@ document.addEventListener('alpine:init', function() {{
                         location: {{
                             lat: parseFloat(this.form.lat) || 0,
                             lng: parseFloat(this.form.lng) || 0,
-                            address: this.form.origin.trim() || null
+                            address: this.form.address.trim() || this.form.origin.trim() || null
                         }},
                         price_eur: this.form.price ? parseFloat(this.form.price) : null,
                         tags: tags,
@@ -1263,16 +1719,7 @@ document.addEventListener('alpine:init', function() {{
                             <input type="datetime-local" x-model="form.arrival">
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Latitude</label>
-                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
-                        </div>
-                        <div class="form-group">
-                            <label>Longitude</label>
-                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
-                        </div>
-                    </div>
+{_location_picker_html(required=False)}
                     <div class="form-group">
                         <label>Price (&euro;)</label>
                         <input type="number" step="0.01" x-model="form.price" placeholder="0.00">
@@ -1291,6 +1738,135 @@ document.addEventListener('alpine:init', function() {{
                         <button class="btn btn-primary" @click="submit()">Add Transport</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- New Trip Guide Modal -->
+    <template x-if="modal === 'new-trip-guide'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" style="max-width:560px" x-data="newTripForm()">
+                <div class="modal-header">
+                    <h2 x-text="phase === 'form' ? 'Create a New Trip' : 'Creating Trip...'"></h2>
+                    <button class="modal-close" @click="cleanup(); window.dispatchEvent(new CustomEvent('close-modal'))">&times;</button>
+                </div>
+
+                <!-- Form phase -->
+                <template x-if="phase === 'form'">
+                    <div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Destination <span class="req">*</span></label>
+                                <input type="text" x-model="form.destination" placeholder="e.g. Rome, Italy" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Trip Name</label>
+                                <input type="text" x-model="form.name" :placeholder="form.destination ? form.destination.split(',')[0].trim() + ' 2026' : 'Auto-generated'">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Start Date <span class="req">*</span></label>
+                                    <input type="date" x-model="form.start_date">
+                                </div>
+                                <div class="form-group">
+                                    <label>End Date <span class="req">*</span></label>
+                                    <input type="date" x-model="form.end_date">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Travelers</label>
+                                    <input type="number" x-model="form.travelers" min="1" max="20">
+                                </div>
+                                <div class="form-group">
+                                    <label>Budget (EUR)</label>
+                                    <input type="number" x-model="form.budget_eur" placeholder="Optional" step="100">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Interests</label>
+                                <input type="text" x-model="form.interests_str" placeholder="history, food, art, nature...">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Pace</label>
+                                    <select x-model="form.pace">
+                                        <option value="relaxed">Relaxed</option>
+                                        <option value="moderate" selected>Moderate</option>
+                                        <option value="fast">Fast</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Day Trips</label>
+                                    <select x-model="form.include_day_trips">
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Must-do</label>
+                                <input type="text" x-model="form.must_do" placeholder="e.g. Colosseum, authentic carbonara">
+                            </div>
+                            <div class="form-group">
+                                <label>Context</label>
+                                <input type="text" x-model="form.context" placeholder="e.g. anniversary trip, with kids">
+                            </div>
+                            <p style="margin-top:8px;font-size:12px;color:#888">
+                                AI will research your destination in the background. You can keep browsing.
+                            </p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                            <button class="btn btn-primary" @click="submit()" :disabled="!form.destination || !form.start_date || !form.end_date">
+                                Start Research
+                            </button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Progress phase -->
+                <template x-if="phase === 'progress'">
+                    <div class="modal-body" style="padding:24px">
+                        <div style="text-align:center;margin-bottom:20px">
+                            <div style="font-size:32px;margin-bottom:8px" x-text="statusIcon()"></div>
+                            <div style="font-size:15px;font-weight:600;color:#1a2332" x-text="job.step || 'Starting...'"></div>
+                            <div style="font-size:13px;color:#888;margin-top:4px" x-text="job.slug"></div>
+                        </div>
+                        <div style="background:#f5f6f8;border-radius:8px;overflow:hidden;height:6px;margin-bottom:16px">
+                            <div style="height:100%;border-radius:8px;transition:width 0.5s ease"
+                                 :style="'width:' + progressPct() + '%; background:' + (job.status === 'error' ? '#dc2626' : job.status === 'done' ? '#059669' : '#4ea4f6')">
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;color:#888">
+                            <span :class="{{ 'font-weight:600;color:#1a2332': job.status === 'researching' }}"
+                                  :style="progressStepStyle('researching')">Research</span>
+                            <span :style="progressStepStyle('converting')">Convert</span>
+                            <span :style="progressStepStyle('building')">Build</span>
+                            <span :style="progressStepStyle('done')">Done</span>
+                        </div>
+                        <template x-if="job.status === 'error'">
+                            <div style="margin-top:16px;padding:12px;background:#fef2f2;border-radius:8px;color:#dc2626;font-size:13px">
+                                <strong>Error:</strong> <span x-text="job.error"></span>
+                            </div>
+                        </template>
+                        <template x-if="job.status === 'done'">
+                            <div style="margin-top:16px;padding:12px;background:#f0fdf4;border-radius:8px;color:#059669;font-size:13px">
+                                Trip ready! <span x-text="job.attractions_count"></span> attractions, <span x-text="job.day_trips_count"></span> day trips.
+                            </div>
+                        </template>
+                        <div class="modal-actions" style="margin-top:16px">
+                            <button class="btn btn-cancel" @click="cleanup(); window.dispatchEvent(new CustomEvent('close-modal'))">
+                                <span x-text="job.status === 'done' || job.status === 'error' ? 'Close' : 'Dismiss (keeps running)'"></span>
+                            </button>
+                            <template x-if="job.status === 'done' && job.app_url">
+                                <button class="btn btn-primary" @click="window.location.href = job.app_url">
+                                    Open Trip
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
     </template>

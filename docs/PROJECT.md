@@ -28,7 +28,7 @@ Vacationeer (like a musketeer).
 ```
 VacationeerPoc/
 ├── vacationeer/
-│   ├── __main__.py          # CLI: map, info, build, serve + scheduling commands
+│   ├── __main__.py          # CLI: all commands (build, plan, pipeline, sync)
 │   ├── models/
 │   │   ├── __init__.py      # Exports all models
 │   │   └── trip.py          # Pydantic models (see Core Entities below)
@@ -37,6 +37,18 @@ VacationeerPoc/
 │   │   └── json_store.py    # JsonTripStore implementation
 │   ├── planning/
 │   │   └── scheduler.py     # Pure scheduling functions (init_days, schedule, etc.)
+│   ├── pipeline/             # New trip creation pipeline
+│   │   ├── ai_provider.py   # AIProvider ABC + 3 implementations (cascade)
+│   │   ├── questionnaire.py # Interactive Click-based trip setup
+│   │   ├── templates.py     # Research + conversion prompt templates
+│   │   ├── research.py      # AI-driven destination research → 3 MD files
+│   │   ├── converter.py     # AI-driven MD → trip.json conversion
+│   │   └── runner.py        # Background pipeline runner (daemon threads + job tracking)
+│   ├── sync/                 # MD ↔ JSON sync (marker-based)
+│   │   ├── markers.py       # @vacationeer marker block format
+│   │   ├── md_parser.py     # Extract structured data from MD markers
+│   │   ├── md_writer.py     # Inject/update markers in MD files
+│   │   └── sync_engine.py   # Compare MD vs JSON, produce diffs
 │   ├── maps/
 │   │   └── generator.py     # Folium map generation
 │   └── views/
@@ -47,13 +59,15 @@ VacationeerPoc/
 │       └── chat.py          # Chat interface tab
 ├── trips/
 │   └── valencia-2026/
-│       └── trip.json        # Sample trip data (29 attractions + 3 day trips)
+│       ├── trip-config.json  # Pipeline questionnaire output
+│       └── trip.json         # Trip data (29 attractions + 3 day trips)
 ├── data/
-│   └── valencia-2026/       # Source markdown files
+│   └── valencia-2026/       # Source markdown research files
 ├── docs/
 │   ├── PROJECT.md           # This file
 │   └── timeline-architecture.md
-└── output/                  # Generated HTML files
+├── .active-trip              # Currently selected trip slug
+└── output/                   # Generated HTML files
 ```
 
 ---
@@ -107,6 +121,37 @@ train, bus, car, walk, boat, metro
 
 ## CLI Commands
 
+### Trip Management
+```bash
+python -m vacationeer trips                # List all trips, show active (*) and status
+python -m vacationeer use <slug>           # Set active trip (e.g. 'valencia-2026')
+```
+
+The active trip is stored in `.active-trip`. Pipeline commands (`gen-research`, `import-trip`) default to the active trip's config when no path is given.
+
+### Pipeline — New Trip Creation
+```bash
+python -m vacationeer new-trip                              # Interactive questionnaire → trip-config.json
+python -m vacationeer gen-research [config.json]            # AI generates 3 MD research files (default: --light)
+python -m vacationeer gen-research --no-light [config.json] # Full research (more attractions, detailed)
+python -m vacationeer import-trip [config.json]             # AI converts MD files → trip.json
+python -m vacationeer import-trip [config.json] --json-input <file>  # Validate + save pre-made JSON
+```
+
+**AI provider cascade** (automatic): Claude Code CLI → Anthropic API → manual prompt file.
+Override with `--provider claude-code|api|manual`.
+
+**Light mode** (`--light`, default ON): Produces ~5-6 attractions + 2 day trips for quick testing.
+Use `--no-light` for comprehensive research.
+
+### Sync — MD ↔ JSON
+```bash
+python -m vacationeer inject-markers <trip.json>  # One-time: add @vacationeer markers to MD files
+python -m vacationeer sync-status <trip.json>     # Show diffs between MD markers and JSON
+python -m vacationeer sync-to-md <trip.json>      # JSON → MD: update markers from JSON values
+python -m vacationeer sync-from-md <trip.json>    # MD → JSON: update JSON from marker values
+```
+
 ### Build & Serve
 ```bash
 python -m vacationeer map <trip.json>      # Generate map HTML only
@@ -145,6 +190,8 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Dark navy (#1a2332) sidebar with Map/Overview/Timeline/Chat tabs
   - Responsive (collapses to icons on mobile)
   - Trip header with metadata
+  - Trip picker dropdown (switch between trips, shows pipeline status for in-progress trips)
+  - New Trip modal with form + real-time progress tracking (Alpine.js)
 - [x] **Overview tab** — Attractions grouped by category:
   - Colored left border per category
   - Expandable cards (click to reveal full details)
@@ -159,6 +206,23 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Disabled input bar
 - [x] **Sample data** — Valencia 2026 trip with 29 attractions + 3 day trips (with sub-attractions and travel segments)
 - [x] **CLI** — map, info, build, serve + scheduling commands (init-days, schedule, schedule-day-trip, unschedule, backlog, swap-days, move-activity)
+- [x] **Trip management** — `trips` (list with status), `use` (set active trip), `.active-trip` file
+- [x] **Pipeline** — New trip creation flow:
+  - Interactive questionnaire (`new-trip`) → `trip-config.json`
+  - AI research generation (`gen-research`) → 3 MD files (attractions, day trips, good-to-know)
+  - AI-driven MD → JSON conversion (`import-trip`) → `trip.json`
+  - Light mode (default) for fast testing, `--no-light` for full research
+  - Background execution via daemon threads — user can browse other trips while AI works
+  - Frontend form (`newTripForm()` Alpine.js) with progress polling (3s interval)
+  - REST API: `POST /api/pipeline/start`, `GET /api/pipeline/status/{slug}`, `GET /api/pipeline/jobs`
+- [x] **AI provider abstraction** — `AIProvider` ABC with cascade:
+  - `ClaudeCodeProvider` — invokes `claude` CLI subprocess (preferred, uses logged-in session)
+  - `ClaudeAPIProvider` — uses `anthropic` SDK (needs `ANTHROPIC_API_KEY`)
+  - `ManualProvider` — writes prompt files for user to paste into Claude
+- [x] **MD ↔ JSON sync** — Bidirectional sync via `@vacationeer` marker blocks:
+  - `inject-markers` — one-time injection of structured data blocks into MD files
+  - `sync-status` — dry-run diff between MD markers and JSON
+  - `sync-to-md` / `sync-from-md` — apply changes in either direction
 
 ### Planned — Timeline (see docs/timeline-architecture.md)
 - [ ] Proportional time-axis (1 min = 1.5px, variable-height blocks)
@@ -232,15 +296,25 @@ day_trip:      #1E8449
 
 ## Working with This Project
 
-### Quick start
+### Quick start — existing trip
 ```bash
 cd VacationeerPoc
 pip install pydantic folium click fastapi uvicorn
+python -m vacationeer use valencia-2026
 python -m vacationeer serve trips/valencia-2026/trip.json
 ```
 
+### Quick start — new trip
+```bash
+python -m vacationeer new-trip              # Answer questionnaire, auto-sets active trip
+python -m vacationeer gen-research          # AI generates research (light mode by default)
+# Review/edit the MD files in data/<slug>/
+python -m vacationeer import-trip           # AI converts MD → trip.json
+python -m vacationeer serve trips/<slug>/trip.json
+```
+
 ### Adding attractions
-Edit `trips/valencia-2026/trip.json` — add entries to the `attractions` array following the existing format. All fields except `id`, `name`, `location`, and `category` are optional.
+Edit `trips/<slug>/trip.json` — add entries to the `attractions` array following the existing format. All fields except `id`, `name`, `location`, and `category` are optional.
 
 ### Adding day trips
 Add entries to the `day_trips` array. A day trip needs: `id`, `name`, `destination`, `location`, and at least one sub-attraction. Optionally add `outbound`/`return_trip` TravelSegments with transport details.
@@ -279,12 +353,22 @@ All generated activities carry `day_trip_id` so they can be traced back to the s
 
 ---
 
+### Pipeline module
+The `pipeline/` module handles new trip creation. The AI provider abstraction (`ai_provider.py`) defines a cascade: Claude Code CLI → Anthropic API → manual prompt file. All AI-dependent steps (research generation, MD→JSON conversion) go through this interface. The `--light` flag (default ON) prefixes the research prompt with instructions to produce minimal output for faster iteration.
+
+Background execution is handled by `pipeline/runner.py`: `start_pipeline()` launches a daemon thread that runs research → conversion → HTML build, tracking progress in a `PipelineJob` dataclass. The server exposes this via REST endpoints (`/api/pipeline/start`, `/api/pipeline/status/{slug}`, `/api/pipeline/jobs`). The frontend `newTripForm()` Alpine.js component polls status every 3 seconds and renders a progress bar with step labels. Users can dismiss the modal and continue browsing — the pipeline keeps running.
+
+### Sync module
+The `sync/` module enables bidirectional sync between MD research files and `trip.json`. It uses `@vacationeer` marker blocks (HTML comments with key-value data) injected below attraction headings in MD files. The sync engine compares marker values against JSON fields and can apply updates in either direction.
+
 ### For agents working on this project
 - Read this file first for context
 - Read `docs/timeline-architecture.md` for timeline-specific plans
 - Models are in `vacationeer/models/trip.py` — always check current schema
 - Storage abstraction: `storage/base.py` (Protocol) + `storage/json_store.py` (implementation)
 - Planning logic: `planning/scheduler.py` — pure functions, no side effects
+- Pipeline: `pipeline/` — AI provider cascade, questionnaire, research, conversion
+- Sync: `sync/` — MD ↔ JSON bidirectional sync via marker blocks
 - Views generate HTML strings — all CSS/JS is inline (no external deps)
 - Map uses Folium — tiles must work without Referer header (no OSM tiles)
 - Color theme: navy #1a2332 + white, category colors listed above

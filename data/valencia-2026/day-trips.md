@@ -126,6 +126,18 @@ Spain's **first building ever declared a National Monument** (1896), making it o
 
 > **Note:** Opening hours can change -- verify before your trip at the Sagunto Tourist Office or [Sagunto Tourism website](https://www.aytosagunto.es).
 
+<!-- @vacationeer
+id: sagunto-roman-theatre
+type: attraction
+name: Roman Theatre (Teatro Romano)
+description: 1st-century AD theatre carved into hillside, seats 4,000. Spain's first National Monument (1896)
+price_eur: 0.0
+duration_minutes: 40
+location: 39.681, -0.264 | Calle del Castillo, Sagunto
+url: null
+-->
+
+
 ### 3.2 Sagunto Castle (Castillo de Sagunto) -- The Hilltop Fortress
 
 A sprawling fortress complex stretching nearly **1 km along the hilltop ridge** above the town. Declared a National Monument in 1931.
@@ -152,6 +164,18 @@ A sprawling fortress complex stretching nearly **1 km along the hilltop ridge** 
 
 > **Viewpoint tip:** The views from the castle ramparts are the best in the entire area. On a clear late March day, you can see all the way to Valencia and beyond. Bring water for the climb.
 
+<!-- @vacationeer
+id: sagunto-castle
+type: attraction
+name: Sagunto Castle
+description: Nearly 1 km hilltop fortress spanning 2,000+ years — Iberian, Roman, Moorish, and medieval layers
+price_eur: 0.0
+duration_minutes: 90
+location: 39.682, -0.263 | Castillo de Sagunto
+url: null
+-->
+
+
 ### 3.3 Jewish Quarter (Juderia)
 
 One of the best-preserved medieval Jewish quarters in the Valencia region.
@@ -166,6 +190,18 @@ One of the best-preserved medieval Jewish quarters in the Valencia region.
 | **Admission** | Free (open streets) |
 | **Access** | Enter through the Portalet de la Juderia on Calle del Castillo |
 | **Time needed** | 20-30 minutes of wandering |
+
+<!-- @vacationeer
+id: sagunto-jewish-quarter
+type: attraction
+name: Jewish Quarter (Juderia)
+description: Medieval Jewish quarter with narrow streets, one of the few maintained under Moorish rule
+price_eur: 0.0
+duration_minutes: 30
+location: 39.6795, -0.2655 | Barrio Judio, Sagunto
+url: null
+-->
+
 
 ### 3.4 Temple of Diana Remains (Restos del Templo de Diana)
 
@@ -412,6 +448,32 @@ This is one of the most **budget-friendly day trips** from Valencia. The major a
 
 # Day Trip: Albufera Natural Park + El Palmar
 
+<!-- @vacationeer
+id: albufera-day-trip
+type: day_trip
+name: Albufera + El Palmar Day Trip
+destination: Albufera / El Palmar
+description: Freshwater lagoon nature park and birthplace of paella — sunset boat rides through rice paddies
+location: 39.333, -0.353 | Parc Natural de l'Albufera
+total_price_eur: 23.0
+total_duration_minutes: 300
+expected_score: 8.5
+tips: Eat authentic paella in El Palmar. Sunset boat ride is the highlight
+-->
+
+<!-- @vacationeer
+id: albufera-nature-walk
+type: attraction
+name: Albufera Nature Park Walk
+description: Walking trails through wetlands — birdwatching, rice fields, lagoon views
+price_eur: 0.0
+duration_minutes: 60
+location: 39.337, -0.355 | Parc Natural de l'Albufera
+url: null
+-->
+
+
+
 ## What is Albufera?
 
 Albufera Natural Park (Parc Natural de l'Albufera) is Spain's largest freshwater lagoon, located just 10-15 km south of Valencia city center. Spanning over 21,000 hectares, it is one of the most important wetlands in the entire Mediterranean basin, designated as a Ramsar site and an EU Special Protection Area for birds.
@@ -606,6 +668,18 @@ An all-in-one tourist package departing from central Valencia.
 
 **Good for:** People short on time who want a quick taste. BUT -- you only get 30 min on the boat, no time in El Palmar for paella, and you cannot extend your stay without extra fees. For a couple who loves nature, the DIY bus approach gives much more freedom.
 
+<!-- @vacationeer
+id: albufera-boat-ride
+type: attraction
+name: Albufera Sunset Boat Ride
+description: Traditional wooden boat ride through the lagoon and rice paddies at sunset
+price_eur: 5.0
+duration_minutes: 45
+location: 39.334, -0.352 | Embarcadero Albufera
+url: null
+-->
+
+
 ### Cycling from Valencia
 
 - **Distance:** ~20-24 km one way to El Palmar (flat, mostly bike lanes)
@@ -625,6 +699,18 @@ An all-in-one tourist package departing from central Valencia.
 ## Where to Eat in El Palmar
 
 El Palmar is the birthplace of paella and has 20+ restaurants in a tiny village. Lunch is the main meal (13:00-16:00). Paella is traditionally a lunchtime dish.
+
+<!-- @vacationeer
+id: albufera-paella-lunch
+type: attraction
+name: Authentic Paella Lunch in El Palmar
+description: Eat paella at its birthplace — El Palmar restaurants serve the real deal
+price_eur: 15.0
+duration_minutes: 90
+location: 39.315, -0.342 | El Palmar village
+url: null
+-->
+
 
 ### Top Restaurants
 
@@ -716,6 +802,34 @@ El Palmar is the birthplace of paella and has 20+ restaurants in a tiny village.
 | 17:30-18:00 | Back in Valencia |
 
 ---
+
+<!-- @vacationeer
+id: sagunto-day-trip
+type: day_trip
+name: Sagunto Day Trip
+destination: Sagunto
+description: Roman theatre, hilltop castle with panoramic views, Jewish quarter — 30 min by train from Valencia
+location: 39.68, -0.265 | Sagunto, Valencia province
+total_price_eur: 7.4
+total_duration_minutes: 360
+expected_score: 8.0
+tips: Best value day trip — castle and theatre are free. Closed Mondays
+-->
+
+<!-- @vacationeer
+id: xativa-day-trip
+type: day_trip
+name: Xativa Day Trip
+destination: Xativa
+description: Impressive hilltop castle, Borgia family history, medieval old town — 50 min by train
+location: 38.99, -0.5185 | Xativa, Valencia province
+total_price_eur: 19.0
+total_duration_minutes: 420
+expected_score: 8.0
+tips: Closed Mondays. The castle views are among the best in the region
+-->
+
+
 
 ## Nearby Combinations
 
@@ -1236,6 +1350,16 @@ If you arrive early or have time waiting for the bus, walk 15 minutes from Beter
 - **Stay on marked trails:** The park has well-signposted routes; going off-trail risks erosion and getting lost
 - **Wild boar:** Present but shy. They avoid hikers. If you see one, give it space
 
+<!-- @vacationeer
+id: flet
+type: attraction
+name: flet
+description: we sleep here
+location: 0.0, -0.383757
+url: null
+-->
+
+
 ### Accessibility
 
 - **Free entry:** The natural park has no entrance fee
@@ -1368,6 +1492,18 @@ The spectacular double castle stretching along a mountain ridge above the city i
 
 ---
 
+<!-- @vacationeer
+id: xativa-castle
+type: attraction
+name: Xativa Castle
+description: Double-walled hilltop fortress with spectacular views — one of the best castles in the Valencia region
+price_eur: 6.0
+duration_minutes: 120
+location: 38.992, -0.52 | Castillo de Xativa
+url: null
+-->
+
+
 ### 3.2 Ermita de Sant Feliu (San Felix Church) -- pre-Romanesque gem
 
 Located at the foot of the castle hill, this is the **oldest church in the Kingdom of Valencia**, built around 1265 on the site of a Roman temple, then Visigothic church, then mosque.
@@ -1421,6 +1557,20 @@ Housed in the **Casa de l'Ensenyanca** building, this museum holds one of the mo
 
 ---
 
+<!-- @vacationeer
+id: museo-bellas-artes
+type: attraction
+name: Museo de Bellas Artes
+description: Spain's second-best art gallery — El Greco, Goya, Velazquez. Always free
+price_eur: 0.0
+duration_minutes: 75
+location: 39.4793, -0.3695 | C/ de Sant Pius V, 9
+expected_score: 7.5
+tips: Worth a walk-through for the building and garden setting even if galleries aren't your thing
+url: null
+-->
+
+
 ### 3.5 Museo Arqueologico de l'Almodi (Archaeological Museum)
 
 Located in the **former wheat market** (l'Almodi), a beautiful historic building.
@@ -1435,6 +1585,19 @@ Located in the **former wheat market** (l'Almodi), a beautiful historic building
 | **Admission** | Included in the EUR 6 castle ticket |
 
 ---
+
+<!-- @vacationeer
+id: almoina
+type: attraction
+name: L'Almoina Archaeological Centre
+description: 2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic
+price_eur: 2.0
+duration_minutes: 50
+location: 39.4756, -0.3748 | Plaça de l'Almoina, s/n
+expected_score: 9.0
+url: null
+-->
+
 
 ### 3.6 Royal Hospital (Hospital Reial)
 
@@ -1516,6 +1679,20 @@ A "Fountains Route" is a pleasant walking activity linking several of these.
 - **Reservations:** Call 96 227 05 25
 - **Location:** City centre
 - **TripAdvisor:** Highly rated
+
+<!-- @vacationeer
+id: cines-babel
+type: attraction
+name: Cines Babel
+description: Independent cinema showing films in original language — vintage charm, curated programme
+price_eur: 8.0
+duration_minutes: 120
+location: 39.468, -0.371 | C/ de Vicente Sancho Tello, 10
+expected_score: 6.0
+tips: Check programme at cinesbabel.com. Perfect for a rainy evening
+url: https://www.cinesbabel.com/
+-->
+
 
 ### El Tunel
 - **Cuisine:** Traditional Valencian, known for *fideua* (noodle paella)
@@ -1796,6 +1973,19 @@ The central square of the medieval quarter. Surrounded by historic buildings, th
 - **Price:** FREE
 
 ---
+
+<!-- @vacationeer
+id: plaza-de-la-virgen
+type: attraction
+name: Plaza de la Virgen
+description: Historic heart of old town — Roman forum site, Turia fountain, surrounded by Cathedral and Basilica
+price_eur: 0.0
+duration_minutes: 30
+location: 39.4756, -0.3758 | Plaça de la Mare de Deu
+expected_score: 7.5
+url: null
+-->
+
 
 ### Suggested Walking Route (3-4 hours for sites, full day with lunch + wine)
 
@@ -2557,6 +2747,18 @@ A distinctive facade covered with thousands of seashells, creating a glittering 
 - **Porta de Sant Pere** (15th century) -- the main entrance to the old town from the harbor side
 - **Portal Fosc** (16th century) -- the "Dark Gate" at the opposite end
 - Three churches within the walls: **Santa Maria** (with tower), **La Ermitana**, and **Santa Ana** hermitage
+
+<!-- @vacationeer
+id: xativa-old-town
+type: attraction
+name: Xativa Old Town & Borgia Sites
+description: Medieval streets, Borgia family connections, Collegiate Basilica, Almodi museum
+price_eur: 0.0
+duration_minutes: 90
+location: 38.99, -0.518 | Centro Historico, Xativa
+url: null
+-->
+
 
 #### Museum of the Sea (Museu de la Mar)
 
