@@ -31,21 +31,32 @@ class ClaudeCodeProvider(AIProvider):
     def is_available(self) -> bool:
         return shutil.which("claude") is not None
 
-    def complete(self, prompt: str, *, system: str | None = None) -> str:
+    def complete(
+        self, prompt: str, *, system: str | None = None, cwd: str | Path | None = None
+    ) -> str:
+        import tempfile
+
         claude_bin = shutil.which("claude") or "claude"
         cmd = [claude_bin, "--print", "--output-format", "text"]
-        if system:
-            cmd += ["--system-prompt", system]
-        # Pass prompt via stdin to avoid shell quoting issues on Windows
         use_shell = platform.system() == "Windows"
+
+        # Default to temp dir so Claude doesn't pick up project coding context
+        work_dir = str(cwd) if cwd else tempfile.gettempdir()
+
+        # Prepend system prompt to stdin to avoid Windows CLI arg length/escaping issues
+        full_input = prompt
+        if system:
+            full_input = f"<instructions>\n{system}\n</instructions>\n\n{prompt}"
+
         result = subprocess.run(
             cmd,
-            input=prompt,
+            input=full_input,
             capture_output=True,
             text=True,
             encoding="utf-8",
             timeout=600,
             shell=use_shell,
+            cwd=work_dir,
         )
         if result.returncode != 0:
             raise RuntimeError(

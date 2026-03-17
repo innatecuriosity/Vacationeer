@@ -157,6 +157,7 @@ def generate_app(
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
 *, *::before, *::after {{
@@ -164,6 +165,7 @@ def generate_app(
     padding: 0;
     box-sizing: border-box;
 }}
+[x-cloak] {{ display: none !important; }}
 html, body {{
     height: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -245,7 +247,11 @@ html, body {{
     opacity: 0.5;
     transition: transform 0.2s;
 }}
-.trip-picker-dropdown {{
+.trip-picker-btn .tp-chevron.open {{
+    transform: rotate(180deg);
+}}
+.tp-dropdown {{
+    display: none;
     position: absolute;
     top: calc(100% + 4px);
     left: 0;
@@ -258,7 +264,10 @@ html, body {{
     max-height: 300px;
     overflow-y: auto;
 }}
-.trip-picker-dropdown .tp-item {{
+.tp-dropdown.open {{
+    display: block;
+}}
+.tp-dropdown .tp-item {{
     display: flex;
     align-items: center;
     gap: 8px;
@@ -273,20 +282,20 @@ html, body {{
     text-align: left;
     font-family: inherit;
 }}
-.trip-picker-dropdown .tp-item:hover {{
+.tp-dropdown .tp-item:hover {{
     background: rgba(255,255,255,0.1);
     color: #fff;
 }}
-.trip-picker-dropdown .tp-item.active {{
+.tp-dropdown .tp-item.active {{
     color: #4ea4f6;
     font-weight: 600;
 }}
-.trip-picker-dropdown .tp-item .tp-status {{
+.tp-dropdown .tp-item .tp-status {{
     font-size: 10px;
     opacity: 0.5;
     margin-left: auto;
 }}
-.trip-picker-dropdown .tp-item .tp-status.tp-loading {{
+.tp-dropdown .tp-item .tp-status.tp-loading {{
     opacity: 1;
     color: #4ea4f6;
     animation: tp-pulse 1.5s ease-in-out infinite;
@@ -295,11 +304,11 @@ html, body {{
     0%, 100% {{ opacity: 1; }}
     50% {{ opacity: 0.4; }}
 }}
-.trip-picker-dropdown .tp-divider {{
+.tp-dropdown .tp-divider {{
     border-top: 1px solid rgba(255,255,255,0.08);
     margin: 4px 0;
 }}
-.trip-picker-dropdown .tp-new {{
+.tp-dropdown .tp-new {{
     color: #4ea4f6;
     font-weight: 500;
 }}
@@ -642,7 +651,13 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
     font-size: 13px;
     line-height: 1.5;
     word-wrap: break-word;
+}}
+.chat-bubble.user {{
     white-space: pre-wrap;
+    align-self: flex-end;
+    background: #4ea4f6;
+    color: #fff;
+    border-bottom-right-radius: 4px;
 }}
 .chat-bubble.assistant {{
     align-self: flex-start;
@@ -650,12 +665,12 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
     color: rgba(255,255,255,0.9);
     border-bottom-left-radius: 4px;
 }}
-.chat-bubble.user {{
-    align-self: flex-end;
-    background: #4ea4f6;
-    color: #fff;
-    border-bottom-right-radius: 4px;
-}}
+.chat-bubble.assistant p {{ margin: 0 0 8px 0; }}
+.chat-bubble.assistant p:last-child {{ margin-bottom: 0; }}
+.chat-bubble.assistant ul, .chat-bubble.assistant ol {{ margin: 4px 0; padding-left: 20px; }}
+.chat-bubble.assistant li {{ margin: 2px 0; }}
+.chat-bubble.assistant code {{ background: rgba(255,255,255,0.1); padding: 1px 4px; border-radius: 3px; font-size: 12px; }}
+.chat-bubble.assistant strong {{ color: #fff; }}
 .chat-bubble.error {{
     align-self: flex-start;
     background: rgba(220,53,69,0.3);
@@ -851,98 +866,114 @@ window.addEventListener('message', function(e) {{
     }}
 }});
 
-/* Pipeline progress banner — polls /api/pipeline/status and auto-reloads when done */
-function pipelineBanner() {{
-    return {{
-        active: false,
-        step: '',
-        status: '',
-        pct: 0,
-        _interval: null,
-        init() {{
-            var self = this;
-            var slug = (window.__TRIP_DATA__ && window.__TRIP_DATA__.id) || '';
-            if (!slug) return;
-            // Check if pipeline is running for this trip
-            fetch('/api/pipeline/status/' + slug).then(function(r) {{
-                if (!r.ok) return;
-                return r.json();
-            }}).then(function(d) {{
-                if (!d || d.status === 'done' || d.status === 'error') return;
-                self.active = true;
-                self.status = d.status;
-                self.step = d.step || 'Starting...';
-                self.pct = self._statusPct(d.status);
-                self._startPolling(slug);
-            }}).catch(function() {{}});
-        }},
-        _statusPct(s) {{
-            var map = {{queued:5, researching:25, converting:55, building:80, done:100, error:100}};
-            return map[s] || 10;
-        }},
-        _startPolling(slug) {{
-            var self = this;
-            this._interval = setInterval(function() {{
-                fetch('/api/pipeline/status/' + slug).then(function(r) {{
-                    if (!r.ok) {{ self._stop(); return; }}
-                    return r.json();
-                }}).then(function(d) {{
-                    if (!d) return;
-                    self.status = d.status;
-                    self.step = d.step || '';
-                    self.pct = self._statusPct(d.status);
-                    if (d.status === 'done') {{
-                        self.step = 'Trip ready! Reloading...';
-                        self.pct = 100;
-                        self._stop();
-                        setTimeout(function() {{ window.location.reload(); }}, 1000);
-                    }} else if (d.status === 'error') {{
-                        self.step = 'Error: ' + (d.error || 'Unknown error');
-                        self._stop();
-                    }}
-                }}).catch(function() {{}});
-            }}, 3000);
-        }},
-        _stop() {{
-            if (this._interval) {{ clearInterval(this._interval); this._interval = null; }}
-        }}
-    }};
-}}
+/* Trip picker — plain JS, no Alpine for open/close */
+(function() {{
+    var tripSlug = '{esc(trip.id)}';
+    var pipelineInterval = null;
 
-/* Trip picker component */
-function tripPicker() {{
-    return {{
-        open: false,
-        trips: [],
-        currentName: '{esc(trip.destination)}',
-        toggle() {{
-            if (!this.open) this.loadTrips();
-            this.open = !this.open;
-        }},
-        async loadTrips() {{
-            try {{
-                const resp = await fetch('/api/trips');
-                if (resp.ok) this.trips = await resp.json();
-            }} catch(e) {{
-                /* static mode, no server */
-                this.trips = [{{slug: '{esc(trip.id)}', name: '{esc(trip.destination)}', active: true, has_trip: true}}];
+    function initTripPicker() {{
+        var btn = document.getElementById('tp-btn');
+        var dd = document.getElementById('tp-dropdown');
+        var chevron = btn && btn.querySelector('.tp-chevron');
+        if (!btn || !dd) return;
+
+        btn.addEventListener('click', function(e) {{
+            e.stopPropagation();
+            var isOpen = dd.classList.contains('open');
+            if (isOpen) {{
+                dd.classList.remove('open');
+                if (chevron) chevron.classList.remove('open');
+            }} else {{
+                loadTrips();
+                dd.classList.add('open');
+                if (chevron) chevron.classList.add('open');
             }}
-        }},
-        switchTrip(t) {{
-            this.open = false;
-            if (t.active) return;
-            if (t.app_url) {{
-                window.location.href = t.app_url;
-            }} else if (!t.has_trip) {{
-                window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'new-trip-guide'}}));
+        }});
+
+        document.addEventListener('click', function(e) {{
+            if (!dd.contains(e.target) && e.target !== btn) {{
+                dd.classList.remove('open');
+                if (chevron) chevron.classList.remove('open');
             }}
-        }},
-        newTrip() {{
-            this.open = false;
-            window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'new-trip-guide'}}));
-        }}
-    }};
-}}
+        }});
+
+        document.addEventListener('keydown', function(e) {{
+            if (e.key === 'Escape') {{
+                dd.classList.remove('open');
+                if (chevron) chevron.classList.remove('open');
+            }}
+        }});
+    }}
+
+    function loadTrips() {{
+        var list = document.getElementById('tp-list');
+        if (!list) return;
+        fetch('/api/trips').then(function(r) {{
+            return r.ok ? r.json() : [];
+        }}).then(function(trips) {{
+            list.innerHTML = '';
+            trips.forEach(function(t) {{
+                var b = document.createElement('button');
+                b.className = 'tp-item' + (t.active ? ' active' : '');
+                var name = document.createElement('span');
+                name.textContent = t.name || t.slug;
+                b.appendChild(name);
+                var status = document.createElement('span');
+                status.className = 'tp-status';
+                if (t.pipeline && t.pipeline.status !== 'done' && t.pipeline.status !== 'error') {{
+                    status.className += ' tp-loading';
+                    status.textContent = t.pipeline.step || 'working...';
+                }} else {{
+                    status.textContent = t.has_trip ? '' : 'config';
+                }}
+                b.appendChild(status);
+                b.addEventListener('click', function() {{
+                    document.getElementById('tp-dropdown').classList.remove('open');
+                    if (t.active) return;
+                    if (t.app_url) window.location.href = t.app_url;
+                }});
+                list.appendChild(b);
+            }});
+        }}).catch(function() {{}});
+    }}
+
+    // Pipeline progress polling for current trip
+    function checkPipeline() {{
+        var banner = document.getElementById('pipeline-banner');
+        if (!banner) return;
+        fetch('/api/pipeline/status/' + tripSlug).then(function(r) {{
+            return r.ok ? r.json() : null;
+        }}).then(function(d) {{
+            if (!d || d.status === 'done' || d.status === 'error') {{
+                if (d && d.status === 'done' && banner.style.display !== 'none') {{
+                    banner.querySelector('.pp-step').textContent = 'Ready! Reloading...';
+                    setTimeout(function() {{ window.location.reload(); }}, 1000);
+                }}
+                if (pipelineInterval) {{ clearInterval(pipelineInterval); pipelineInterval = null; }}
+                if (d && d.status === 'error') {{
+                    banner.style.display = 'block';
+                    banner.querySelector('.pp-step').textContent = 'Error: ' + (d.error || 'Unknown');
+                    banner.querySelector('.pp-bar').style.width = '100%';
+                    banner.querySelector('.pp-bar').style.background = '#e74c3c';
+                }}
+                return;
+            }}
+            banner.style.display = 'block';
+            banner.querySelector('.pp-step').textContent = d.step || 'Working...';
+            var pctMap = {{queued:5, researching:25, converting:55, building:80}};
+            var pct = pctMap[d.status] || 10;
+            banner.querySelector('.pp-bar').style.width = pct + '%';
+            if (!pipelineInterval) {{
+                pipelineInterval = setInterval(function() {{ checkPipeline(); }}, 3000);
+            }}
+        }}).catch(function() {{}});
+    }}
+
+    document.addEventListener('DOMContentLoaded', function() {{
+        initTripPicker();
+        checkPipeline();
+    }});
+}})()
 
 /* New trip form component */
 function newTripForm() {{
@@ -1076,7 +1107,7 @@ function newTripForm() {{
 /* Sidebar chat component */
 function sidebarChat() {{
     var STORAGE_KEY = 'vacationeer_chat';
-    var defaultMsg = {{ role: 'assistant', content: "Hi! I'm your travel assistant for {esc(trip.destination)}. Ask me to add attractions, schedule your days, or answer questions about the trip!" }};
+    var defaultMsg = {{ role: 'assistant', content: "Hi! Type /help for commands, or ask me anything about {esc(trip.destination)}." }};
     var saved = [];
     try {{ saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }} catch(e) {{}}
     if (!saved.length) saved = [defaultMsg];
@@ -1099,17 +1130,146 @@ function sidebarChat() {{
             this.messages = [defaultMsg];
             this.persist();
         }},
+        renderMd(text) {{
+            if (typeof marked !== 'undefined' && marked.parse) {{
+                return marked.parse(text || '', {{ breaks: true }});
+            }}
+            return (text || '').replace(/\\n/g, '<br>');
+        }},
         init() {{
             this.scrollToBottom();
+        }},
+        handleSkill(text) {{
+            // Return {{handled: true, response: '...'}} or {{handled: false}}
+            var parts = text.split(/\s+/);
+            var cmd = parts[0].toLowerCase();
+            var args = parts.slice(1).join(' ').trim();
+            var store = Alpine.store('trip');
+
+            if (cmd === '/help' || cmd === '/?') {{
+                return {{handled: true, response:
+                    'Available commands:\\n' +
+                    '/add <name> - Add attraction (opens add form)\\n' +
+                    '/schedule <id> <date> [time] - Schedule attraction to a day\\n' +
+                    '/day <date> [label] - Create a new day\\n' +
+                    '/list - List all attractions with IDs\\n' +
+                    '/unscheduled - Show unscheduled attractions\\n' +
+                    '/days - Show scheduled days\\n' +
+                    'Or just type a question for the AI assistant.'
+                }};
+            }}
+
+            if (cmd === '/list') {{
+                var attrs = (store.attractions || []);
+                if (!attrs.length) return {{handled: true, response: 'No attractions yet.'}};
+                var lines = attrs.map(function(a) {{
+                    var meta = [];
+                    if (a.category) meta.push(a.category);
+                    if (a.price_eur != null) meta.push(a.price_eur === 0 ? 'Free' : a.price_eur + ' EUR');
+                    if (a.duration_minutes) meta.push(a.duration_minutes + 'min');
+                    return a.id + ' - ' + a.name + (meta.length ? ' (' + meta.join(', ') + ')' : '');
+                }});
+                return {{handled: true, response: 'Attractions (' + attrs.length + '):\\n' + lines.join('\\n')}};
+            }}
+
+            if (cmd === '/unscheduled') {{
+                var scheduled = {{}};
+                (store.days || []).forEach(function(d) {{
+                    (d.activities || []).forEach(function(a) {{
+                        if (a.attraction_id) scheduled[a.attraction_id] = true;
+                    }});
+                }});
+                var unsch = (store.attractions || []).filter(function(a) {{ return !scheduled[a.id]; }});
+                if (!unsch.length) return {{handled: true, response: 'All attractions are scheduled!'}};
+                var lines = unsch.map(function(a) {{ return a.id + ' - ' + a.name; }});
+                return {{handled: true, response: 'Unscheduled (' + unsch.length + '):\\n' + lines.join('\\n')}};
+            }}
+
+            if (cmd === '/days') {{
+                var days = (store.days || []);
+                if (!days.length) return {{handled: true, response: 'No days created yet. Use /day YYYY-MM-DD to create one.'}};
+                var lines = days.map(function(d) {{
+                    var acts = (d.activities || []).map(function(a) {{ return (a.start_time || '?') + ' ' + a.name; }});
+                    return d.date + (d.label ? ' (' + d.label + ')' : '') + ': ' + (acts.length ? acts.join(', ') : 'empty');
+                }});
+                return {{handled: true, response: 'Days (' + days.length + '):\\n' + lines.join('\\n')}};
+            }}
+
+            if (cmd === '/add') {{
+                if (!args) return {{handled: true, response: 'Usage: /add <place name>\\nI will search for info and add it automatically.'}};
+                // AI-powered: send to /api/chat/add which researches and returns structured data
+                return {{handled: true, asyncAction: 'add', query: args}};
+            }}
+
+            if (cmd === '/schedule') {{
+                // /schedule attraction-id 2026-03-22 10:00
+                var sParts = args.split(/\s+/);
+                if (sParts.length < 2) return {{handled: true, response: 'Usage: /schedule <attraction-id> <YYYY-MM-DD> [HH:MM]'}};
+                var attrId = sParts[0], date = sParts[1], time = sParts[2] || null;
+                return {{handled: true, action: 'schedule', data: {{attraction_id: attrId, date: date, start_time: time}}}};
+            }}
+
+            if (cmd === '/day') {{
+                if (!args) return {{handled: true, response: 'Usage: /day <YYYY-MM-DD> [label]'}};
+                var dParts = args.split(/\s+/);
+                var date = dParts[0], label = dParts.slice(1).join(' ') || '';
+                return {{handled: true, action: 'add_day', data: {{date: date, label: label}}}};
+            }}
+
+            return {{handled: false}};
         }},
         async send() {{
             var text = this.input.trim();
             if (!text || this.loading) return;
             this.messages.push({{ role: 'user', content: text }});
             this.input = '';
-            this.loading = true;
             this.persist();
             this.scrollToBottom();
+
+            // Check for /commands first
+            if (text.startsWith('/')) {{
+                var skill = this.handleSkill(text);
+                if (skill.handled) {{
+                    if (skill.asyncAction === 'add') {{
+                        // AI-powered add: research + add
+                        this.messages.push({{ role: 'assistant', content: 'Researching "' + skill.query + '"...' }});
+                        this.loading = true;
+                        this.persist();
+                        this.scrollToBottom();
+                        try {{
+                            var resp = await fetch('/api/chat/add', {{
+                                method: 'POST',
+                                headers: {{ 'Content-Type': 'application/json' }},
+                                body: JSON.stringify({{ query: skill.query }})
+                            }});
+                            var data = await resp.json();
+                            if (resp.ok && data.attraction) {{
+                                await Alpine.store('trip').addAttraction(data.attraction);
+                                this.messages.push({{ role: 'assistant', content: 'Added "' + data.attraction.name + '"' + (data.summary ? '\\n\\n' + data.summary : '') }});
+                            }} else {{
+                                this.messages.push({{ role: 'error', content: data.detail || 'Failed to add attraction' }});
+                            }}
+                        }} catch (e) {{
+                            this.messages.push({{ role: 'error', content: 'Error: ' + e.message }});
+                        }}
+                        this.loading = false;
+                        this.persist();
+                        this.scrollToBottom();
+                        return;
+                    }} else if (skill.action) {{
+                        var result = await this.executeActions([{{type: skill.action, data: skill.data}}]);
+                        this.messages.push({{ role: 'assistant', content: result || 'Done.' }});
+                    }} else {{
+                        this.messages.push({{ role: 'assistant', content: skill.response }});
+                    }}
+                    this.persist();
+                    this.scrollToBottom();
+                    return;
+                }}
+            }}
+
+            this.loading = true;
+            this.persist();
 
             try {{
                 var apiMessages = this.messages.filter(function(m) {{ return m.role === 'user' || m.role === 'assistant'; }}).map(function(m) {{
@@ -1126,11 +1286,11 @@ function sidebarChat() {{
                 }} else {{
                     var data = await resp.json();
                     this.messages.push({{ role: 'assistant', content: data.content }});
-                    if (data.actions && data.actions.length > 0) {{
-                        var result = await this.executeActions(data.actions);
-                        if (result) {{
-                            this.messages.push({{ role: 'assistant', content: result }});
-                        }}
+                    if (data.action_results && data.action_results.length > 0) {{
+                        this.messages.push({{ role: 'assistant', content: data.action_results.join('\\n') }});
+                    }}
+                    if (data.trip_changed) {{
+                        await Alpine.store('trip').reload();
                     }}
                 }}
             }} catch (e) {{
@@ -1141,21 +1301,22 @@ function sidebarChat() {{
             this.scrollToBottom();
         }},
         async executeActions(actions) {{
+            var store = Alpine.store('trip');
             var results = [];
             for (var action of actions) {{
                 try {{
                     if (action.type === 'add_attraction') {{
-                        await $store.trip.addAttraction(action.data);
+                        await store.addAttraction(action.data);
                         results.push('Added: ' + (action.data.name || 'attraction'));
                     }} else if (action.type === 'add_day_trip') {{
-                        await $store.trip.addDayTrip(action.data);
+                        await store.addDayTrip(action.data);
                         results.push('Added day trip: ' + (action.data.name || ''));
                     }} else if (action.type === 'add_day') {{
-                        await $store.trip.addDay(action.data);
+                        await store.addDay(action.data);
                         results.push('Created day: ' + (action.data.date || ''));
                     }} else if (action.type === 'schedule') {{
                         var d = action.data;
-                        await $store.trip.scheduleAttraction(d.attraction_id, d.date, d.start_time);
+                        await store.scheduleAttraction(d.attraction_id, d.date, d.start_time);
                         results.push('Scheduled: ' + d.attraction_id + ' on ' + d.date);
                     }}
                 }} catch (e) {{
@@ -1163,7 +1324,7 @@ function sidebarChat() {{
                     results.push('Failed: ' + (action.data.name || action.type) + ' - ' + e.message);
                 }}
             }}
-            return results.length ? '\u2705 ' + results.join('\n\u2705 ') : '';
+            return results.length ? results.join('\\n') : '';
         }}
     }};
 }}
@@ -1553,26 +1714,20 @@ document.addEventListener('alpine:init', function() {{
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="brand">Vacationeer</div>
-            <div class="trip-picker" x-data="tripPicker()">
-                <button class="trip-picker-btn" @click="toggle()" @click.outside="open = false">
-                    <span class="tp-label" x-text="currentName">{esc(trip.destination)}</span>
-                    <span class="tp-chevron" :class="{{ 'open': open }}">&#9660;</span>
+            <div class="trip-picker">
+                <button class="trip-picker-btn" id="tp-btn">
+                    <span class="tp-label">{esc(trip.destination)}</span>
+                    <span class="tp-chevron">&#9660;</span>
                 </button>
-                <div class="trip-picker-dropdown" x-show="open" x-cloak x-transition.opacity>
-                    <template x-for="t in trips" :key="t.slug">
-                        <button class="tp-item" :class="{{ 'active': t.active }}"
-                                @click="switchTrip(t)">
-                            <span x-text="t.name"></span>
-                            <span class="tp-status" :class="t.pipeline && t.pipeline.status !== 'done' && t.pipeline.status !== 'error' ? 'tp-loading' : ''" x-text="t.pipeline && t.pipeline.status !== 'done' && t.pipeline.status !== 'error' ? '\u23f3 ' + t.pipeline.step : t.has_trip ? 'ready' : t.has_research ? 'research' : 'config'"></span>
-                        </button>
-                    </template>
+                <div class="tp-dropdown" id="tp-dropdown">
+                    <div id="tp-list"></div>
                     <div class="tp-divider"></div>
-                    <button class="tp-item tp-new" @click="newTrip()">
+                    <button class="tp-item tp-new" onclick="document.getElementById('tp-dropdown').classList.remove('open'); window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'new-trip-guide'}}));">
                         + New trip
                     </button>
                     <div class="tp-divider"></div>
                     <div style="display:flex;gap:4px;padding:6px 12px;">
-                        <button onclick="Alpine.store('trip').exportTrip()"
+                        <button onclick="Alpine.store('trip').exportTrip(); document.getElementById('tp-dropdown').classList.remove('open');"
                                 style="flex:1;padding:5px 0;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border-radius:5px;cursor:pointer;font-size:10px;font-family:inherit;"
                                 title="Download trip as JSON">\u2B07 Export</button>
                         <label style="flex:1;padding:5px 0;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border-radius:5px;cursor:pointer;font-size:10px;text-align:center;font-family:inherit;"
@@ -1596,7 +1751,7 @@ document.addEventListener('alpine:init', function() {{
             </div>
             <div class="chat-messages" x-ref="chatMessages">
                 <template x-for="(msg, i) in messages" :key="i">
-                    <div class="chat-bubble" :class="msg.role" x-html="msg.html || msg.content"></div>
+                    <div class="chat-bubble" :class="msg.role" x-html="msg.role === 'user' ? msg.content : renderMd(msg.content)"></div>
                 </template>
                 <template x-if="loading">
                     <div class="chat-bubble assistant"><span class="typing">Thinking...</span></div>
@@ -1624,29 +1779,17 @@ document.addEventListener('alpine:init', function() {{
             </div>
         </header>
         <div class="content">
-            <!-- Pipeline progress banner (auto-hidden when no pipeline is running) -->
-            <div id="pipeline-banner" x-data="pipelineBanner()" x-show="active"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-end="opacity-0"
-                 style="display:none;background:linear-gradient(135deg,#1a2332,#2c3e50);color:#fff;padding:14px 24px;
-                        font-size:13px;font-family:system-ui,sans-serif;z-index:10;position:relative;">
-                <div style="display:flex;align-items:center;gap:12px;justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <span class="pipeline-spinner" style="display:inline-block;width:18px;height:18px;
-                              border:2px solid rgba(255,255,255,0.3);border-top:2px solid #fff;border-radius:50%;
-                              animation:spin 1s linear infinite;flex-shrink:0;"></span>
-                        <span x-text="step || 'Starting...'"></span>
-                    </div>
-                    <span style="opacity:0.7;font-size:12px;" x-text="pct + '%'"></span>
+            <!-- Pipeline progress banner (hidden by default, shown by JS when pipeline is active) -->
+            <div id="pipeline-banner" style="display:none;background:linear-gradient(135deg,#1a2332,#2c3e50);color:#fff;padding:14px 24px;font-size:13px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top:2px solid #fff;border-radius:50%;animation:pp-spin 1s linear infinite;"></span>
+                    <span class="pp-step">Working...</span>
                 </div>
                 <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;">
-                    <div style="height:100%;background:#27AE60;border-radius:2px;transition:width 0.5s ease;"
-                         :style="'width:' + pct + '%'"></div>
+                    <div class="pp-bar" style="height:100%;width:0%;background:#27AE60;border-radius:2px;transition:width 0.5s ease;"></div>
                 </div>
             </div>
-            <style>
-                @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
-            </style>
+            <style>@keyframes pp-spin {{ to {{ transform: rotate(360deg); }} }}</style>
             <div id="tab-map" class="tab-panel active">
                 <iframe src="{esc(map_filename)}"></iframe>
             </div>

@@ -158,80 +158,168 @@ class ChatRequest(BaseModel):
 
 
 def _build_chat_system_prompt(trip: Trip) -> str:
-    """Build a system prompt that gives the AI context about the trip."""
-    attractions_summary = ""
-    for a in trip.attractions:
-        parts = [a.name, f"id={a.id}", f"cat={a.category.value}"]
-        if a.price_eur is not None:
-            parts.append(f"€{a.price_eur:.0f}")
-        if a.duration_minutes:
-            parts.append(f"{a.duration_minutes}min")
-        attractions_summary += "\n- " + ", ".join(parts)
+    """Short system prompt with tool descriptions. Data fetched on demand."""
+    return (
+        f'Travel assistant for "{trip.name}" to {trip.destination}. '
+        f'{trip.start_date} to {trip.end_date}, {trip.travelers} travelers.\n'
+        f'Be very concise — short sentences, no filler. Use markdown for lists.\n\n'
+        f'You have tools. To use one, put the tag on its own line in your response.\n'
+        f'DATA TOOLS (read-only, you get data back and then answer):\n'
+        f'<<GET_ATTRACTIONS>> — list all attractions\n'
+        f'<<GET_SCHEDULE>> — day-by-day schedule\n'
+        f'<<GET_DAY_TRIPS>> — day trips with sub-attractions\n'
+        f'<<GET_UNSCHEDULED>> — unscheduled attractions\n\n'
+        f'ACTION TOOLS (modify the trip — include your text response too):\n'
+        f'<<SCHEDULE:attraction name:YYYY-MM-DD:HH:MM>> — schedule an attraction to a day\n'
+        f'<<UNSCHEDULE:attraction name:YYYY-MM-DD>> — remove from a day\n'
+        f'Example: <<SCHEDULE:Bioparc:2026-03-24:10:00>>\n\n'
+        f'After using a data tool, answer concisely. Action tools are executed automatically.'
+    )
 
-    day_trips_summary = ", ".join(dt.name for dt in trip.day_trips) if trip.day_trips else "none"
 
-    days_summary = ""
-    if trip.days:
-        days_summary = f"\n\nScheduled days ({len(trip.days)}):"
-        for d in trip.days:
-            acts = ", ".join(f"{a.name} ({a.start_time or '?'})" for a in d.activities) if d.activities else "empty"
-            days_summary += f"\n- {d.date} ({d.label or 'no label'}): {acts}"
+def _resolve_tool_call(tag: str, trip: Trip) -> str | None:
+    """Resolve a data tool tag into trip data text."""
+    if tag == "GET_ATTRACTIONS":
+        lines = []
+        for a in trip.attractions:
+            parts = [a.name, a.category.value]
+            if a.price_eur is not None:
+                parts.append(f"EUR {a.price_eur}")
+            if a.duration_minutes:
+                parts.append(f"{a.duration_minutes}min")
+            if a.user_score is not None:
+                parts.append(f"rated {a.user_score}/10")
+            if a.tags:
+                parts.append(f"tags: {', '.join(a.tags)}")
+            lines.append(" | ".join(parts))
+        return f"Attractions ({len(trip.attractions)}):\n" + "\n".join(lines)
 
-    unscheduled = []
-    scheduled_ids = set()
-    if trip.days:
-        for d in trip.days:
-            for act in d.activities:
+    if tag == "GET_SCHEDULE":
+        lines = []
+        for day in trip.days:
+            acts = ", ".join(
+                f"{a.name} ({a.start_time.strftime('%H:%M') if a.start_time else '?'})"
+                for a in day.activities
+            ) if day.activities else "empty"
+            label = f" ({day.label})" if day.label else ""
+            lines.append(f"{day.date}{label}: {acts}")
+        return "Schedule:\n" + "\n".join(lines) if lines else "No days scheduled yet."
+
+    if tag == "GET_DAY_TRIPS":
+        lines = []
+        for dt in trip.day_trips:
+            subs = ", ".join(s.name for s in dt.sub_attractions)
+            parts = [dt.name, f"to {dt.destination}"]
+            if dt.total_price_eur is not None:
+                parts.append(f"EUR {dt.total_price_eur}")
+            if dt.total_duration_minutes:
+                parts.append(f"{dt.total_duration_minutes}min")
+            if subs:
+                parts.append(f"includes: {subs}")
+            if dt.tips:
+                parts.append(f"tips: {dt.tips}")
+            lines.append(" | ".join(parts))
+        return f"Day trips ({len(trip.day_trips)}):\n" + "\n".join(lines) if lines else "No day trips."
+
+    if tag == "GET_UNSCHEDULED":
+        scheduled_ids = set()
+        for day in trip.days:
+            for act in day.activities:
                 if act.attraction_id:
                     scheduled_ids.add(act.attraction_id)
+        unscheduled = [a.name for a in trip.attractions if a.id not in scheduled_ids]
+        return f"Unscheduled ({len(unscheduled)}):\n" + "\n".join(unscheduled) if unscheduled else "All attractions are scheduled."
+
+    return None
+
+
+def _find_attraction_by_name(trip: Trip, name: str) -> Attraction | None:
+    """Fuzzy-match an attraction by name (case-insensitive substring)."""
+    name_lower = name.lower().strip()
+    # Exact match first
     for a in trip.attractions:
-        if a.id not in scheduled_ids:
-            unscheduled.append(a.name)
+        if a.name.lower() == name_lower:
+            return a
+    # Substring match
+    for a in trip.attractions:
+        if name_lower in a.name.lower() or a.name.lower() in name_lower:
+            return a
+    return None
 
-    prefs = ""
-    if trip.preferences:
-        p = trip.preferences
-        prefs = f"\n\nPreferences: interests={p.interests}, avoid={p.avoid}, pace={p.pace}, daily_budget=€{p.budget_per_day_eur or 'unset'}"
 
-    categories = ", ".join(f"{c.value}" for c in Category)
+def _execute_action_tag(tag_content: str, trip: Trip, trip_path: Path, output_dir: Path) -> str | None:
+    """Execute an action tag and return a status message."""
+    # Split carefully: ACTION:name:YYYY-MM-DD:HH:MM
+    # Name may contain colons (unlikely), time is HH:MM (two parts)
+    parts = tag_content.split(":")
+    action = parts[0]
 
-    return f"""You are a travel planning assistant for "{trip.name}" to {trip.destination}.
-Trip dates: {trip.start_date} to {trip.end_date}, {trip.travelers} travelers, budget €{trip.budget_eur or 'unset'}.
-{prefs}
+    if action == "SCHEDULE" and len(parts) >= 3:
+        attr_name = parts[1].strip()
+        date_str = parts[2].strip()
+        # Time is HH:MM which splits into two parts
+        time_str = f"{parts[3]}:{parts[4]}" if len(parts) > 4 else (parts[3].strip() if len(parts) > 3 else None)
+        attraction = _find_attraction_by_name(trip, attr_name)
+        if not attraction:
+            return f"Could not find attraction '{attr_name}'"
+        try:
+            from datetime import date as _date, time as _time
+            d = _date.fromisoformat(date_str)
+            # Find or create day
+            day = None
+            for existing in trip.days:
+                if existing.date == d:
+                    day = existing
+                    break
+            if day is None:
+                day = Day(date=d)
+                trip.days.append(day)
+                trip.days.sort(key=lambda x: x.date)
+            # Check not already scheduled there
+            for act in day.activities:
+                if act.attraction_id == attraction.id:
+                    return f"'{attraction.name}' is already on {date_str}"
+            start = None
+            if time_str:
+                h, m = time_str.split(":")
+                start = _time(int(h), int(m))
+            activity = Activity(
+                attraction_id=attraction.id,
+                name=attraction.name,
+                start_time=start,
+                duration_minutes=attraction.duration_minutes,
+                price_eur=attraction.price_eur,
+                category=attraction.category,
+            )
+            day.activities.append(activity)
+            save_trip(trip, trip_path)
+            _rebuild_all(trip, trip_path, output_dir)
+            return f"Scheduled '{attraction.name}' on {date_str}" + (f" at {time_str}" if time_str else "")
+        except Exception as e:
+            return f"Failed to schedule: {e}"
 
-Attractions ({len(trip.attractions)}):{attractions_summary}
-Day trips: {day_trips_summary}
-{days_summary}
+    if action == "UNSCHEDULE" and len(parts) >= 3:
+        attr_name = parts[1].strip()
+        date_str = parts[2].strip()
+        attraction = _find_attraction_by_name(trip, attr_name)
+        if not attraction:
+            return f"Could not find attraction '{attr_name}'"
+        try:
+            from datetime import date as _date
+            d = _date.fromisoformat(date_str)
+            for day in trip.days:
+                if day.date == d:
+                    before = len(day.activities)
+                    day.activities = [a for a in day.activities if a.attraction_id != attraction.id]
+                    if len(day.activities) < before:
+                        save_trip(trip, trip_path)
+                        _rebuild_all(trip, trip_path, output_dir)
+                        return f"Removed '{attraction.name}' from {date_str}"
+            return f"'{attraction.name}' not found on {date_str}"
+        except Exception as e:
+            return f"Failed to unschedule: {e}"
 
-Unscheduled attractions: {', '.join(unscheduled) if unscheduled else 'all scheduled'}
-
-AVAILABLE CATEGORIES: {categories}
-
-You have TOOLS to modify the trip. When the user asks you to add, schedule, or change something, include an ```actions block at the end of your response with a JSON array. The app will execute these automatically.
-
-Available actions:
-1. add_attraction: Add a new place. You MUST look up real coordinates for the location.
-   {{"type":"add_attraction","data":{{"name":"...","description":"...","category":"landmark|food|museum|park|beach|nightlife|shopping|infrastructure|sport","lat":39.1234,"lng":-0.1234,"price_eur":0,"duration_minutes":60,"tags":["..."],"tips":"..."}}}}
-
-2. schedule: Schedule an existing attraction to a day. Use the attraction's id.
-   {{"type":"schedule","data":{{"attraction_id":"...","date":"YYYY-MM-DD","start_time":"HH:MM"}}}}
-
-3. add_day: Create a new day in the itinerary.
-   {{"type":"add_day","data":{{"date":"YYYY-MM-DD","label":"..."}}}}
-
-Example — user says "add the main train station":
-Your response text... explaining what you added.
-
-```actions
-[{{"type":"add_attraction","data":{{"name":"Estación del Norte","description":"Valencia's stunning Art Nouveau main train station","category":"infrastructure","lat":39.4661,"lng":-0.3773,"price_eur":0,"duration_minutes":30,"tags":["architecture","transport"],"tips":"Check out the ornate ceramic tile decorations in the main hall"}}}}]
-```
-
-Rules:
-- Always include real, accurate GPS coordinates (lat/lng) for Valencia area attractions
-- Keep responses concise — 2-3 sentences max, then actions
-- When scheduling, pick sensible times (morning starts ~9:00-10:00, lunch ~13:00-14:00, afternoon ~16:00-17:00)
-- Use UTF-8 text, no escaped unicode
-- If the user asks a question (not an action), just answer normally without an actions block"""
+    return None
 
 
 def _format_chat_messages(messages: list) -> str:
@@ -1016,6 +1104,63 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
     # Chat endpoint
     # ------------------------------------------------------------------
 
+    @app.post("/api/chat/add")
+    async def chat_add(request: Request):
+        """AI-powered attraction research: search web, return structured attraction data."""
+        from vacationeer.pipeline.ai_provider import get_provider
+
+        trip = _trip()
+        raw = await request.json()
+        query = raw.get("query", "").strip()
+        if not query:
+            raise HTTPException(status_code=422, detail="query is required")
+
+        log.info("POST /api/chat/add query=%s", query)
+
+        try:
+            provider = get_provider()
+        except RuntimeError as exc:
+            raise HTTPException(status_code=503, detail=str(exc))
+
+        categories = ", ".join(c.value for c in Category)
+        prompt = (
+            f'Research "{query}" in {trip.destination} and return ONLY valid JSON (no markdown, no explanation) '
+            f'with this exact structure:\n'
+            f'{{"name":"...","description":"2-3 sentences","category":"one of: {categories}",'
+            f'"lat":0.0,"lng":0.0,"price_eur":0,"duration_minutes":60,'
+            f'"tags":["..."],"tips":"practical visitor tip","url":"official website if known"}}\n\n'
+            f'Requirements:\n'
+            f'- Use real, accurate GPS coordinates for {trip.destination}\n'
+            f'- price_eur: entrance fee in EUR (0 if free)\n'
+            f'- duration_minutes: realistic visit time\n'
+            f'- description: what makes it worth visiting\n'
+            f'- tips: practical advice (best time, how to get there, what to skip)\n'
+            f'- Return ONLY the JSON object, nothing else'
+        )
+
+        try:
+            content = provider.complete(prompt)
+            # Extract JSON from response (may have markdown wrapping)
+            text = content.strip()
+            if text.startswith("```"):
+                text = re.sub(r'^```\w*\n?', '', text)
+                text = re.sub(r'\n?```$', '', text)
+            attraction = _json.loads(text)
+            # Build a summary from the data
+            summary = ""
+            if attraction.get("description"):
+                summary = attraction["description"]
+            if attraction.get("tips"):
+                summary += "\n\nTip: " + attraction["tips"]
+            log.info("chat/add: parsed attraction %s", attraction.get("name"))
+            return {"attraction": attraction, "summary": summary}
+        except (_json.JSONDecodeError, ValueError) as e:
+            log.error("chat/add: failed to parse AI response: %s\nRaw: %s", e, content[:500])
+            return {"detail": f"Could not parse attraction data. AI returned: {content[:200]}"}
+        except Exception as exc:
+            log.error("chat/add error: %s", exc)
+            raise HTTPException(status_code=500, detail=f"AI error: {exc}")
+
     @app.post("/api/chat")
     async def chat(request: Request):
         from vacationeer.pipeline.ai_provider import get_provider
@@ -1035,37 +1180,67 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
             raise HTTPException(status_code=503, detail=str(exc))
 
         system_prompt = _build_chat_system_prompt(trip)
+        data_tag_re = re.compile(r'<<(GET_ATTRACTIONS|GET_SCHEDULE|GET_DAY_TRIPS|GET_UNSCHEDULED)>>')
+        action_tag_re = re.compile(r'<<(SCHEDULE|UNSCHEDULE):([^>]+)>>')
 
-        try:
+        def _call_provider(messages_for_api, extra_context: str | None = None):
             if provider.name == "api":
-                # Native multi-turn via Anthropic SDK
                 import anthropic
                 client = anthropic.Anthropic()
-                api_messages = [{"role": m.role, "content": m.content} for m in body.messages]
-                response = client.messages.create(
+                api_msgs = [{"role": m.role, "content": m.content} for m in messages_for_api]
+                if extra_context:
+                    api_msgs.append({"role": "user", "content": extra_context})
+                resp = client.messages.create(
                     model="claude-sonnet-4-20250514",
                     max_tokens=1024,
                     system=system_prompt,
-                    messages=api_messages,
+                    messages=api_msgs,
                 )
-                content = response.content[0].text
+                return resp.content[0].text
             else:
-                # Stateless provider (e.g. Claude Code CLI)
-                prompt = _format_chat_messages(body.messages)
-                content = provider.complete(prompt, system=system_prompt)
+                prompt = _format_chat_messages(messages_for_api)
+                if extra_context:
+                    prompt += f"\n\nSystem data:\n{extra_context}"
+                return provider.complete(prompt, system=system_prompt)
 
-            log.info("Chat response via %s: %s chars", provider.name, len(content.strip()))
-            # Parse actions from ```actions blocks
-            actions = []
-            text = content.strip()
-            actions_match = re.search(r'```actions\s*\n(.*?)\n```', text, re.DOTALL)
-            if actions_match:
-                try:
-                    actions = _json.loads(actions_match.group(1))
-                    text = text[:actions_match.start()].strip()
-                except (_json.JSONDecodeError, ValueError) as e:
-                    log.warning("Failed to parse chat actions: %s", e)
-            return {"role": "assistant", "content": text, "actions": actions}
+        try:
+            content = _call_provider(body.messages)
+
+            # Data tool loop: if AI requests data, resolve and re-send (max 2 rounds)
+            for _ in range(2):
+                match = data_tag_re.search(content.strip())
+                if not match:
+                    break
+                tag = match.group(1)
+                log.info("Chat data tool: %s", tag)
+                data = _resolve_tool_call(tag, trip)
+                if data:
+                    content = _call_provider(body.messages, extra_context=f"[{tag}]\n{data}")
+                else:
+                    break
+
+            # Action tags: execute and strip from response, track if trip changed
+            action_results = []
+            trip_changed = False
+            for m in action_tag_re.finditer(content):
+                tag_content = m.group(1) + ":" + m.group(2)
+                log.info("Chat action: %s", tag_content)
+                result = _execute_action_tag(tag_content, trip, trip_path, output_dir)
+                if result:
+                    action_results.append(result)
+                    if "Scheduled" in result or "Removed" in result:
+                        trip_changed = True
+
+            # Strip action tags from the text shown to user
+            clean_content = action_tag_re.sub('', content).strip()
+
+            log.info("Chat response via %s: %s chars, %d actions", provider.name, len(clean_content), len(action_results))
+            resp_data: dict = {"role": "assistant", "content": clean_content}
+            if action_results:
+                resp_data["action_results"] = action_results
+            if trip_changed:
+                resp_data["trip_changed"] = True
+            return resp_data
         except Exception as exc:
             log.error("Chat error (%s): %s", provider.name, exc)
             raise HTTPException(status_code=500, detail=f"AI error: {exc}")

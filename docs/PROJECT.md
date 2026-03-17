@@ -228,13 +228,15 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Alpine.js `kanbanTimeline()` component reads from `$store.trip`, syncs via API after each drag
   - Responsive: pool stacks on top, columns stack vertically on mobile
 - [x] **Sidebar chat** — Always-visible AI assistant panel in sidebar:
-  - Dark-themed message bubbles (assistant / user / error states)
+  - Dark-themed message bubbles with **markdown rendering** (via marked.js)
   - Connected via `POST /api/chat` using AI provider cascade (Claude Code CLI → Anthropic API)
   - No API key needed when Claude Code CLI is installed locally
-  - System prompt includes full trip context (all attractions with IDs, days, preferences, unscheduled list)
-  - **Tool use**: AI returns structured `actions` blocks (JSON) that the frontend auto-executes
-  - Supported actions: `add_attraction`, `schedule`, `add_day`, `add_day_trip`
-  - Action feedback: confirmation messages shown after execution
+  - **Slim system prompt** with on-demand data access via tool-use loop
+  - **Data tools**: AI requests trip data via tags (`<<GET_ATTRACTIONS>>`, `<<GET_SCHEDULE>>`, `<<GET_DAY_TRIPS>>`, `<<GET_UNSCHEDULED>>`), server resolves and re-sends (max 2 rounds)
+  - **Action tools**: AI executes trip modifications via tags (`<<SCHEDULE:name:date:time>>`, `<<UNSCHEDULE:name:date>>`), server resolves names to IDs, executes, and returns `trip_changed` flag
+  - Frontend auto-reloads store when `trip_changed: true` — timeline/map update immediately
+  - **Client-side skills**: `/add`, `/list`, `/unscheduled`, `/days`, `/schedule`, `/day`, `/help`
+  - `/add <name>` uses dedicated `POST /api/chat/add` endpoint for AI-powered attraction research
   - Chat history persists across refreshes via `localStorage`
   - Clear chat button in header
   - Alpine.js `sidebarChat()` component with message history, persistence, and auto-scroll
@@ -287,10 +289,13 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 
 ### Planned — Chat / AI
 - [x] Connect chat to AI provider cascade (sidebar panel, `POST /api/chat`, CLI preferred)
-- [x] Tool use: AI returns `actions` JSON blocks, server parses them, frontend executes (add_attraction, schedule, add_day)
-- [x] "Add attraction" via chat (AI provides name, coordinates, category, price, duration, tags, tips)
-- [x] "Schedule attraction" via chat (AI picks date + time)
+- [x] Tool-use loop: AI requests data via `<<GET_*>>` tags, server resolves and re-sends; AI executes actions via `<<SCHEDULE:..>>` / `<<UNSCHEDULE:..>>` tags, server resolves names→IDs and modifies trip
+- [x] "Add attraction" via `/add` chat skill (AI researches via `POST /api/chat/add`, returns structured JSON with coordinates, price, duration, tips)
+- [x] "Schedule attraction" via chat — AI outputs action tag, server executes, frontend reloads
+- [x] "Unschedule attraction" via chat action tag
 - [x] Chat persistence via localStorage (survives page refreshes)
+- [x] Markdown rendering in chat (marked.js)
+- [x] Client-side skills: `/list`, `/unscheduled`, `/days`, `/schedule`, `/day`, `/help`
 - [ ] AI-suggested day plans based on preferences + proximity
 - [ ] "Reorganize day" via chat
 - [ ] Streaming responses (SSE) for better UX
@@ -415,13 +420,21 @@ The `pipeline/` module handles new trip creation. The AI provider abstraction (`
 Background execution is handled by `pipeline/runner.py`: `start_pipeline()` first creates a **skeleton trip** synchronously (empty trip.json + placeholder map + app HTML via `_build_skeleton()`), then launches a daemon thread that runs research → conversion → HTML build, tracking progress in a `PipelineJob` dataclass. This means the trip is navigable immediately — the user can browse the empty trip page while AI works in the background. The server exposes pipeline status via REST endpoints (`/api/pipeline/start`, `/api/pipeline/status/{slug}`, `/api/pipeline/jobs`). The frontend auto-navigates to the new trip after creation. A `pipelineBanner()` Alpine component on the trip page polls status every 3 seconds and auto-reloads when the pipeline completes. The trip picker shows a pulsing indicator for in-progress trips.
 
 ### Sidebar chat
-The chat assistant lives in the sidebar (always visible alongside map/overview/timeline). The Alpine.js `sidebarChat()` component sends messages to `POST /api/chat`, which uses the AI provider cascade (`get_provider()` from `pipeline/ai_provider.py`): Claude Code CLI first, then Anthropic API, with system prompt containing full trip context (all attractions with IDs, scheduled days, preferences, unscheduled list, available categories).
+The chat assistant lives in the sidebar (always visible alongside map/overview/timeline). The Alpine.js `sidebarChat()` component sends messages to `POST /api/chat`, which uses the AI provider cascade (`get_provider()` from `pipeline/ai_provider.py`): Claude Code CLI first, then Anthropic API.
 
-**Tool use**: The system prompt teaches the AI to return ````actions` blocks (JSON arrays) at the end of responses. The server (`re.search` on the response) extracts these, returns them alongside the text content. The frontend `executeActions()` method processes each action (calls `$store.trip.addAttraction()`, `scheduleAttraction()`, etc.) and shows confirmation messages. Supported actions: `add_attraction`, `schedule`, `add_day`, `add_day_trip`.
+**System prompt**: Slim — only trip basics (name, dates, travelers) + tool descriptions. Trip data (attractions, schedule, day trips) is NOT embedded; the AI requests it on demand via data tool tags.
+
+**Data tools (read-only)**: The AI outputs `<<GET_ATTRACTIONS>>`, `<<GET_SCHEDULE>>`, `<<GET_DAY_TRIPS>>`, or `<<GET_UNSCHEDULED>>` tags. The server detects these, resolves them into formatted trip data, and re-sends the full conversation with the data appended (max 2 rounds). This avoids bloating the system prompt while giving the AI access to all trip information.
+
+**Action tools (modify trip)**: The AI outputs `<<SCHEDULE:name:YYYY-MM-DD:HH:MM>>` or `<<UNSCHEDULE:name:YYYY-MM-DD>>` tags. The server fuzzy-matches attraction names to IDs (`_find_attraction_by_name()`), executes the action (create/modify Day, add/remove Activity), saves trip, rebuilds HTML. Action tags are stripped from the response text. The server returns `trip_changed: true` so the frontend can reload the store.
+
+**Client-side skills**: Chat input starting with `/` is handled client-side without AI. Skills: `/add <name>` (AI research + add via `POST /api/chat/add`), `/list`, `/unscheduled`, `/days`, `/schedule <id> <date> [time]`, `/day <date> [label]`, `/help`.
+
+**Markdown**: Assistant messages are rendered via marked.js (`renderMd()` method). User messages stay plain text.
 
 **Persistence**: Chat messages persist to `localStorage` (key: `vacationeer_chat`). A "Clear" button resets to the default greeting. Messages survive page refreshes and `$store.trip.reload()` calls after actions.
 
-**Windows compatibility**: `ClaudeCodeProvider` uses `shell=True` on Windows (npm installs `.cmd` wrappers), resolves the binary via `shutil.which()`, passes prompts via stdin (avoids shell quoting issues), and forces `encoding="utf-8"` to handle non-ASCII characters.
+**Windows compatibility**: `ClaudeCodeProvider` uses `shell=True` on Windows (npm installs `.cmd` wrappers), resolves the binary via `shutil.which()`. System prompt is prepended to stdin inside `<instructions>` tags (avoids Windows CLI argument length/escaping issues with `--system-prompt` flag). Forces `encoding="utf-8"` for non-ASCII characters.
 
 **Layout**: Export/Import buttons are in the trip picker dropdown (not sidebar bottom). Nav tabs use `flex-shrink: 0` so chat fills all remaining sidebar space.
 
@@ -459,8 +472,10 @@ Tests live in `tests/` and use pytest. Run with `python -m pytest tests/ -v`. Cu
 - Pipeline: `pipeline/` — AI provider cascade, questionnaire, research, conversion
 - Sync: `sync/` — MD ↔ JSON bidirectional sync via marker blocks
 - Views generate HTML strings — all CSS/JS is inline (CDN deps: Alpine.js, Leaflet, SortableJS)
-- Chat is in the sidebar (not a tab) — `sidebarChat()` Alpine component, `POST /api/chat` backend, AI returns `actions` JSON blocks parsed by server
-- Chat actions format: ````actions\n[{"type":"add_attraction","data":{...}}]\n``` — server extracts via regex, frontend executes via `$store.trip` methods
+- Chat is in the sidebar (not a tab) — `sidebarChat()` Alpine component, `POST /api/chat` backend
+- Chat tool-use: AI outputs `<<GET_*>>` for data, `<<SCHEDULE:..>>` / `<<UNSCHEDULE:..>>` for actions — server resolves tags and re-sends or executes
+- Chat uses marked.js for markdown rendering; system prompt delivered via stdin `<instructions>` tags (not `--system-prompt` CLI flag)
+- In plain JS functions (not Alpine templates), use `Alpine.store('trip')` not `$store.trip`
 - Map uses Folium — tiles must work without Referer header (no OSM tiles)
 - Map CSS: inject via `folium.Element` into `get_root().html`, NOT via `MacroElement` (Jinja2 header macro doesn't render reliably)
 - Color theme: navy #1a2332 + white, category colors in `theme.py`
