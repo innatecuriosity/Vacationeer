@@ -179,8 +179,7 @@ def render_overview(trip: Trip) -> str:
 
   <!-- ===== Attraction cards ===== -->
   <template x-for="attraction in filtered()" :key="attraction.id">
-    <div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12);margin-bottom:20px;border:1px solid #e8ecf1;"
-         :style="'border-left:5px solid ' + catColor(attraction.category)">
+    <div :style="'background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.10);margin-bottom:20px;border:1px solid #d1d5db;border-left:6px solid ' + catColor(attraction.category)">
 
       <!-- ===== Collapsed card header ===== -->
       <div x-show="editing !== attraction.id"

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import folium
 from branca.element import MacroElement
+from folium.plugins import MarkerCluster
 from jinja2 import Template
 
 from vacationeer.models.trip import Attraction, Category, Trip
@@ -102,8 +103,23 @@ def _tooltip_html(a: Attraction) -> str:
     )
 
 
+def _marker_html(emoji: str, name: str) -> str:
+    """Emoji icon with name label below — single DivIcon, no overlap."""
+    return (
+        f'<div style="display:flex;flex-direction:column;align-items:center;pointer-events:auto;">'
+        f'<div style="font-size:22px;line-height:1;'
+        f'filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">{emoji}</div>'
+        f'<div style="font-family:\'{FONT_STACK_MAP}\';font-size:9px;font-weight:600;'
+        f'color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;'
+        f'white-space:nowrap;line-height:1.1;margin-top:1px;'
+        f'text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;'
+        f'">{name}</div>'
+        f'</div>'
+    )
+
+
 class _ControlStyle(MacroElement):
-    """Custom CSS to style the Leaflet layer control as a unified legend+toggle card."""
+    """Custom CSS to style the Leaflet layer control and MarkerCluster."""
 
     _template = Template("""
 {% macro header(this, kwargs) %}
@@ -138,6 +154,34 @@ class _ControlStyle(MacroElement):
         width: 36px !important;
         height: 36px !important;
     }
+    /* MarkerCluster custom styling */
+    .marker-cluster {
+        background: rgba(255,255,255,0.85) !important;
+        border: 2px solid #1a2332 !important;
+        border-radius: 50% !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .marker-cluster div {
+        background: #1a2332 !important;
+        color: #fff !important;
+        font-weight: 700;
+        font-size: 13px;
+        border-radius: 50%;
+        width: 30px !important;
+        height: 30px !important;
+        margin: 3px !important;
+        line-height: 30px !important;
+        text-align: center;
+    }
+    .marker-cluster-small {
+        background: rgba(255,255,255,0.85) !important;
+    }
+    .marker-cluster-medium {
+        background: rgba(255,255,255,0.85) !important;
+    }
+    .marker-cluster-large {
+        background: rgba(255,255,255,0.85) !important;
+    }
 </style>
 {% endmacro %}
 """)
@@ -168,6 +212,16 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         tiles="CartoDB Voyager",
     )
 
+    # MarkerCluster groups nearby markers when zoomed out
+    cluster = MarkerCluster(
+        options={
+            "maxClusterRadius": 40,
+            "spiderfyOnMaxZoom": True,
+            "disableClusteringAtZoom": 15,
+            "showCoverageOnHover": False,
+        },
+    )
+
     # Create a feature group per category — ALL categories, even if empty
     groups: dict[Category, folium.FeatureGroup] = {}
     for cat in Category:
@@ -175,62 +229,40 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         fg = folium.FeatureGroup(name=f"{info.html_icon} {info.label}")
         groups[cat] = fg
 
-    # Labels group (toggleable)
-    labels_group = folium.FeatureGroup(name="Labels", show=True)
-
     for attraction in trip.attractions:
         info = get_category_info(attraction.category)
 
         popup_html = _popup_html(attraction)
         tooltip_html = _tooltip_html(attraction)
 
-        # ALL categories use emoji DivIcon markers
+        # Combined emoji + label in a single DivIcon (label sits below emoji)
         marker = folium.Marker(
             location=[attraction.location.lat, attraction.location.lng],
             icon=folium.DivIcon(
-                html=(
-                    f'<div style="font-size:22px;text-align:center;line-height:1;'
-                    f'filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">'
-                    f'{info.emoji}</div>'
-                ),
-                icon_size=(28, 28),
-                icon_anchor=(14, 14),
+                html=_marker_html(info.emoji, attraction.name),
+                icon_size=(80, 40),
+                icon_anchor=(40, 14),
             ),
             tooltip=folium.Tooltip(tooltip_html, sticky=False),
             popup=folium.Popup(popup_html, max_width=320),
         )
         marker.add_to(groups[attraction.category])
 
-        # Text label via DivIcon
-        label_html = (
-            f'<div style="'
-            f'font-family:\'{FONT_STACK_MAP}\';'
-            f'font-size:10px;font-weight:600;color:#222;'
-            f'text-shadow:0 0 3px #fff, 0 0 3px #fff, 1px 1px 2px #fff, -1px -1px 2px #fff;'
-            f'max-width:100px;word-wrap:break-word;line-height:1.2;'
-            f'pointer-events:none;white-space:normal;'
-            f'">{attraction.name}</div>'
-        )
-        label_marker = folium.Marker(
-            location=[attraction.location.lat, attraction.location.lng],
-            icon=folium.DivIcon(
-                html=label_html,
-                icon_size=(100, 30),
-                icon_anchor=(-10, 10),
-            ),
-        )
-        label_marker.add_to(labels_group)
-
-    # Add ALL groups to map (even empty ones show in layer control)
+    # Add ALL groups to the cluster (even empty ones go directly to map for layer control)
     for cat, fg in groups.items():
-        fg.add_to(m)
+        if any(True for _ in fg._children.values()):
+            # Groups with markers go through the cluster
+            fg.add_to(cluster)
+        else:
+            # Empty groups go directly to map so they appear in layer control
+            fg.add_to(m)
 
-    labels_group.add_to(m)
+    cluster.add_to(m)
 
-    # Unified layer control (top-right, acts as both legend and toggle)
+    # Unified layer control (top-right)
     folium.LayerControl(collapsed=False, position='topright').add_to(m)
 
-    # Custom CSS to style the layer control as a nice card
+    # Custom CSS
     _ControlStyle().add_to(m)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
