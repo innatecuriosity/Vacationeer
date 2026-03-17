@@ -68,6 +68,8 @@ def generate_app(
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{_esc(trip.name)} - Vacationeer</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
 *, *::before, *::after {{
@@ -419,6 +421,12 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
     to {{ opacity: 1; transform: translateX(0); }}
 }}
 
+/* ---- location picker ---- */
+.loc-tabs {{ display: flex; gap: 0; margin-bottom: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #d1d5db; }}
+.loc-tab {{ flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: 600; cursor: pointer; background: #f5f6f8; border: none; color: #5f6b7a; }}
+.loc-tab.active {{ background: #1a2332; color: #fff; }}
+.loc-map-container {{ height: 200px; border-radius: 6px; border: 1px solid #d1d5db; overflow: hidden; margin-bottom: 8px; }}
+
 /* ---- responsive ---- */
 @media (max-width: 768px) {{
     .sidebar {{
@@ -469,6 +477,13 @@ window.__TRIP_DATA__ = {trip_json};
 </script>
 
 <script>
+function reloadMap() {{
+    setTimeout(function() {{
+        var iframe = document.querySelector('#tab-map iframe');
+        if (iframe) iframe.src = iframe.src.split('?')[0] + '?t=' + Date.now();
+    }}, 1500);
+}}
+
 document.addEventListener('alpine:init', function() {{
     function toast(type, message) {{
         window.dispatchEvent(new CustomEvent('toast', {{detail: {{type: type, message: message}}}}));
@@ -500,6 +515,7 @@ document.addEventListener('alpine:init', function() {{
                 const a = await resp.json();
                 this.attractions.push(a);
                 window.dispatchEvent(new CustomEvent('toast', {{detail: {{type: 'success', message: 'Attraction added'}}}}));
+                reloadMap();
             }} else {{
                 window.dispatchEvent(new CustomEvent('toast', {{detail: {{type: 'error', message: 'Failed to add attraction'}}}}));
             }}
@@ -517,6 +533,7 @@ document.addEventListener('alpine:init', function() {{
                 const idx = this.attractions.findIndex(function(a) {{ return a.id === id; }});
                 if (idx >= 0) this.attractions[idx] = updated;
                 window.dispatchEvent(new CustomEvent('toast', {{detail: {{type: 'success', message: 'Attraction updated'}}}}));
+                reloadMap();
             }} else {{
                 window.dispatchEvent(new CustomEvent('toast', {{detail: {{type: 'error', message: 'Failed to update attraction'}}}}));
             }}
@@ -530,6 +547,7 @@ document.addEventListener('alpine:init', function() {{
             if (resp.ok) {{
                 this.attractions = this.attractions.filter(function(a) {{ return a.id !== id; }});
                 window.dispatchEvent(new CustomEvent('toast', {{detail: {{type: 'success', message: 'Attraction deleted'}}}}));
+                reloadMap();
             }} else {{
                 window.dispatchEvent(new CustomEvent('toast', {{detail: {{type: 'error', message: 'Failed to delete attraction'}}}}));
             }}
@@ -545,6 +563,7 @@ document.addEventListener('alpine:init', function() {{
             if (resp.ok) {{
                 const idx = this.attractions.findIndex(function(a) {{ return a.id === id; }});
                 if (idx >= 0) this.attractions[idx].user_score = score;
+                reloadMap();
             }}
         }},
 
@@ -564,28 +583,28 @@ document.addEventListener('alpine:init', function() {{
 
         async addDayTrip(data) {{
             const resp = await fetch('/api/day-trips', {{ method: 'POST', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(data) }});
-            if (resp.ok) {{ const dt = await resp.json(); this.day_trips.push(dt); toast('success', 'Day trip added'); }}
+            if (resp.ok) {{ const dt = await resp.json(); this.day_trips.push(dt); toast('success', 'Day trip added'); reloadMap(); }}
             else {{ toast('error', 'Failed to add day trip'); }}
             return resp;
         }},
 
         async updateDayTrip(id, data) {{
             const resp = await fetch('/api/day-trips/' + id, {{ method: 'PATCH', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(data) }});
-            if (resp.ok) {{ const updated = await resp.json(); const idx = this.day_trips.findIndex(function(d) {{ return d.id === id; }}); if (idx >= 0) this.day_trips[idx] = updated; toast('success', 'Day trip updated'); }}
+            if (resp.ok) {{ const updated = await resp.json(); const idx = this.day_trips.findIndex(function(d) {{ return d.id === id; }}); if (idx >= 0) this.day_trips[idx] = updated; toast('success', 'Day trip updated'); reloadMap(); }}
             else {{ toast('error', 'Failed to update day trip'); }}
             return resp;
         }},
 
         async deleteDayTrip(id) {{
             const resp = await fetch('/api/day-trips/' + id, {{ method: 'DELETE' }});
-            if (resp.ok) {{ this.day_trips = this.day_trips.filter(function(d) {{ return d.id !== id; }}); toast('success', 'Day trip deleted'); }}
+            if (resp.ok) {{ this.day_trips = this.day_trips.filter(function(d) {{ return d.id !== id; }}); toast('success', 'Day trip deleted'); reloadMap(); }}
             else {{ toast('error', 'Failed to delete day trip'); }}
             return resp;
         }},
 
         async setDayTripScore(id, score) {{
             const resp = await fetch('/api/day-trips/' + id + '/score', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify({{score: score}}) }});
-            if (resp.ok) {{ const idx = this.day_trips.findIndex(function(d) {{ return d.id === id; }}); if (idx >= 0) this.day_trips[idx].user_score = score; }}
+            if (resp.ok) {{ const idx = this.day_trips.findIndex(function(d) {{ return d.id === id; }}); if (idx >= 0) this.day_trips[idx].user_score = score; reloadMap(); }}
         }},
 
         async addDay(data) {{
@@ -684,6 +703,12 @@ document.addEventListener('alpine:init', function() {{
         <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-attraction'}}))">
             <span>\U0001f3db</span> Attraction
         </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-accommodation'}}))">
+            <span>\U0001f3e8</span> Accommodation
+        </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-transport'}}))">
+            <span>\U0001f68c</span> Transport
+        </button>
         <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-day-trip'}}))">
             <span>\U0001f682</span> Day Trip
         </button>
@@ -705,9 +730,30 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Add Attraction Modal -->
     <template x-if="modal === 'add-attraction'">
-        <div class="modal-backdrop" @click.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
                 form: {{ name: '', description: '', category: 'landmark', lat: '', lng: '', address: '', price_eur: '', duration_minutes: '', tags: '', tips: '', url: '' }},
+                locMode: 'gps',
+                pickerMap: null,
+                pickerMarker: null,
+                initPickerMap() {{
+                    var self = this;
+                    this.$nextTick(function() {{
+                        if (self.pickerMap) {{ self.pickerMap.invalidateSize(); return; }}
+                        var el = self.$refs.pickerMapEl;
+                        if (!el) return;
+                        self.pickerMap = L.map(el).setView([39.4699, -0.3763], 13);
+                        L.tileLayer('https://{{s}}.basemaps.cartocdn.com/voyager/{{z}}/{{x}}/{{y}}@2x.png', {{
+                            attribution: '&copy; OpenStreetMap'
+                        }}).addTo(self.pickerMap);
+                        self.pickerMap.on('click', function(e) {{
+                            self.form.lat = e.latlng.lat.toFixed(6);
+                            self.form.lng = e.latlng.lng.toFixed(6);
+                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);
+                            self.pickerMarker = L.marker(e.latlng).addTo(self.pickerMap);
+                        }});
+                    }});
+                }},
                 async submit() {{
                     if (!this.form.name.trim()) return;
                     const data = {{
@@ -745,19 +791,39 @@ document.addEventListener('alpine:init', function() {{
 {category_options}
                         </select>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Latitude <span class="req">*</span></label>
-                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Longitude <span class="req">*</span></label>
-                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763" required>
+                    <div class="form-group">
+                        <label>Location <span class="req">*</span></label>
+                        <div class="loc-tabs">
+                            <button type="button" class="loc-tab" :class="locMode === 'address' && 'active'" @click="locMode = 'address'">Address</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'gps' && 'active'" @click="locMode = 'gps'">GPS</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Pick on Map</button>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" x-model="form.address" placeholder="Street address">
+                    <div class="form-group" x-show="locMode === 'address'">
+                        <input type="text" x-model="form.address" placeholder="Enter full address">
+                    </div>
+                    <div class="form-row" x-show="locMode === 'gps' || locMode === 'address'">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                        </div>
+                    </div>
+                    <div x-show="locMode === 'map'">
+                        <div class="loc-map-container" x-ref="pickerMapEl"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Lat</label>
+                                <input type="number" step="any" x-model="form.lat" readonly style="background:#f5f6f8;">
+                            </div>
+                            <div class="form-group">
+                                <label>Lng</label>
+                                <input type="number" step="any" x-model="form.lng" readonly style="background:#f5f6f8;">
+                            </div>
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
@@ -793,7 +859,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Edit Trip Modal -->
     <template x-if="modal === 'edit-trip'">
-        <div class="modal-backdrop" @click.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
                 form: {{
                     name: $store.trip.name,
@@ -856,7 +922,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Edit Preferences Modal -->
     <template x-if="modal === 'edit-preferences'">
-        <div class="modal-backdrop" @click.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
                 form: {{
                     interests: ($store.trip.preferences && $store.trip.preferences.interests) ? $store.trip.preferences.interests.join(', ') : '',
@@ -906,7 +972,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Add Day Trip Modal -->
     <template x-if="modal === 'add-day-trip'">
-        <div class="modal-backdrop" @click.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
                 form: {{ name: '', destination: '', description: '', lat: '', lng: '', address: '', total_price_eur: '', total_duration_minutes: '', tags: '', tips: '' }},
                 async submit() {{
@@ -988,7 +1054,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Add Day Modal -->
     <template x-if="modal === 'add-day'">
-        <div class="modal-backdrop" @click.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
                 form: {{ date: '', label: '', start_time: '', notes: '' }},
                 async submit() {{
@@ -1025,6 +1091,204 @@ document.addEventListener('alpine:init', function() {{
                     <div class="modal-actions">
                         <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
                         <button class="btn btn-primary" @click="submit()">Add Day</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Accommodation Modal -->
+    <template x-if="modal === 'add-accommodation'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{{
+                form: {{ name: '', address: '', checkin: '', checkout: '', lat: '', lng: '', total_price_eur: '', description: '', tags: '', tips: '', url: '' }},
+                async submit() {{
+                    if (!this.form.name.trim() || !this.form.address.trim()) return;
+                    if (!this.form.lat || !this.form.lng) return;
+                    var desc = this.form.description.trim() || '';
+                    if (this.form.checkin && this.form.checkout) {{
+                        desc = 'Check-in: ' + this.form.checkin + ' / Check-out: ' + this.form.checkout + (desc ? '\\n' + desc : '');
+                    }} else if (this.form.checkin) {{
+                        desc = 'Check-in: ' + this.form.checkin + (desc ? '\\n' + desc : '');
+                    }} else if (this.form.checkout) {{
+                        desc = 'Check-out: ' + this.form.checkout + (desc ? '\\n' + desc : '');
+                    }}
+                    const data = {{
+                        name: this.form.name.trim(),
+                        description: desc || null,
+                        category: 'accommodation',
+                        location: {{
+                            lat: parseFloat(this.form.lat) || 0,
+                            lng: parseFloat(this.form.lng) || 0,
+                            address: this.form.address.trim() || null
+                        }},
+                        price_eur: this.form.total_price_eur ? parseFloat(this.form.total_price_eur) : null,
+                        tags: this.form.tags ? this.form.tags.split(',').map(function(t) {{ return t.trim(); }}).filter(Boolean) : [],
+                        tips: this.form.tips.trim() || null,
+                        url: this.form.url.trim() || null
+                    }};
+                    const resp = await $store.trip.addAttraction(data);
+                    if (resp.ok) {{ reloadMap(); window.dispatchEvent(new CustomEvent('close-modal')); }}
+                }}
+            }}">
+                <div class="modal-header" style="background:#922B21;">\U0001f3e8 Add Accommodation</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" placeholder="Hotel / Apartment name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address <span class="req">*</span></label>
+                        <input type="text" x-model="form.address" placeholder="Full address" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Check-in Date</label>
+                            <input type="date" x-model="form.checkin">
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out Date</label>
+                            <input type="date" x-model="form.checkout">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Latitude <span class="req">*</span></label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude <span class="req">*</span></label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Price (&euro;)</label>
+                        <input type="number" step="0.01" x-model="form.total_price_eur" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea x-model="form.description" placeholder="Notes about the accommodation"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags (comma-separated)</label>
+                        <input type="text" x-model="form.tags" placeholder="hotel, pool, central">
+                    </div>
+                    <div class="form-group">
+                        <label>Tips</label>
+                        <textarea x-model="form.tips" placeholder="Useful tips"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input type="url" x-model="form.url" placeholder="https://...">
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Add Accommodation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Transport Modal -->
+    <template x-if="modal === 'add-transport'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" x-data="{{
+                form: {{ name: '', mode: 'train', origin: '', destination: '', departure: '', arrival: '', lat: '', lng: '', price: '', booking_ref: '', notes: '' }},
+                async submit() {{
+                    if (!this.form.name.trim()) return;
+                    var parts = [];
+                    if (this.form.mode) parts.push('Mode: ' + this.form.mode);
+                    if (this.form.origin.trim() && this.form.destination.trim()) parts.push(this.form.origin.trim() + ' \u2192 ' + this.form.destination.trim());
+                    else if (this.form.origin.trim()) parts.push('From: ' + this.form.origin.trim());
+                    else if (this.form.destination.trim()) parts.push('To: ' + this.form.destination.trim());
+                    if (this.form.departure) parts.push('Departs: ' + this.form.departure);
+                    if (this.form.arrival) parts.push('Arrives: ' + this.form.arrival);
+                    if (this.form.booking_ref.trim()) parts.push('Booking: ' + this.form.booking_ref.trim());
+                    if (this.form.notes.trim()) parts.push(this.form.notes.trim());
+                    var tags = [this.form.mode];
+                    const data = {{
+                        name: this.form.name.trim(),
+                        description: parts.join('\\n') || null,
+                        category: 'transport',
+                        location: {{
+                            lat: parseFloat(this.form.lat) || 0,
+                            lng: parseFloat(this.form.lng) || 0,
+                            address: this.form.origin.trim() || null
+                        }},
+                        price_eur: this.form.price ? parseFloat(this.form.price) : null,
+                        tags: tags,
+                        tips: null,
+                        url: null
+                    }};
+                    const resp = await $store.trip.addAttraction(data);
+                    if (resp.ok) {{ reloadMap(); window.dispatchEvent(new CustomEvent('close-modal')); }}
+                }}
+            }}">
+                <div class="modal-header" style="background:#7F8C8D;">\U0001f68c Add Transport</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" placeholder="e.g. Train to Barcelona" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mode</label>
+                        <select x-model="form.mode">
+                            <option value="train">Train</option>
+                            <option value="bus">Bus</option>
+                            <option value="metro">Metro</option>
+                            <option value="car">Car</option>
+                            <option value="boat">Boat</option>
+                            <option value="walk">Walk</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Origin</label>
+                            <input type="text" x-model="form.origin" placeholder="Departure location">
+                        </div>
+                        <div class="form-group">
+                            <label>Destination</label>
+                            <input type="text" x-model="form.destination" placeholder="Arrival location">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Departure Time</label>
+                            <input type="datetime-local" x-model="form.departure">
+                        </div>
+                        <div class="form-group">
+                            <label>Arrival Time</label>
+                            <input type="datetime-local" x-model="form.arrival">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (&euro;)</label>
+                        <input type="number" step="0.01" x-model="form.price" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Booking Reference</label>
+                        <input type="text" x-model="form.booking_ref" placeholder="Confirmation code">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea x-model="form.notes" placeholder="Additional notes"></textarea>
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Add Transport</button>
                     </div>
                 </div>
             </div>

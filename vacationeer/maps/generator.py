@@ -102,6 +102,20 @@ def _popup_html(a: Attraction) -> str:
     return html
 
 
+def _tooltip_html(a: Attraction) -> str:
+    """Build a short hover tooltip for an attraction."""
+    _, hex_color, _, _ = CATEGORY_STYLE.get(
+        a.category, ("gray", "#7F8C8D", "info-sign", "\u2139")
+    )
+    category_label = a.category.value.replace("_", " ").title()
+    return (
+        f'<div style="font-family:\'Segoe UI\',Roboto,Arial,sans-serif;font-size:11px;line-height:1.4;">'
+        f'<b>{a.name}</b><br>'
+        f'<span style="color:{hex_color};font-weight:600;">{category_label}</span>'
+        f'</div>'
+    )
+
+
 class _Legend(MacroElement):
     """A custom legend overlay for the bottom-left corner of the map."""
 
@@ -160,19 +174,32 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         )
 
         popup_html = _popup_html(attraction)
+        tooltip_html = _tooltip_html(attraction)
 
-        # Use CircleMarker for smaller, cleaner pins
-        circle = folium.CircleMarker(
-            location=[attraction.location.lat, attraction.location.lng],
-            radius=8,
-            color=hex_color,
-            weight=2,
-            fill=True,
-            fill_color=hex_color,
-            fill_opacity=0.75,
-            tooltip=folium.Tooltip(popup_html, sticky=True),
-        )
-        circle.add_to(groups[attraction.category])
+        if attraction.category == Category.ACCOMMODATION:
+            marker = folium.Marker(
+                location=[attraction.location.lat, attraction.location.lng],
+                icon=folium.DivIcon(
+                    html='<div style="font-size:24px;text-align:center;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">\U0001f3e0</div>',
+                    icon_size=(30, 30),
+                    icon_anchor=(15, 15),
+                ),
+                tooltip=folium.Tooltip(tooltip_html, sticky=False),
+                popup=folium.Popup(popup_html, max_width=320),
+            )
+        else:
+            marker = folium.CircleMarker(
+                location=[attraction.location.lat, attraction.location.lng],
+                radius=8,
+                color=hex_color,
+                weight=2,
+                fill=True,
+                fill_color=hex_color,
+                fill_opacity=0.75,
+                tooltip=folium.Tooltip(tooltip_html, sticky=False),
+                popup=folium.Popup(popup_html, max_width=320),
+            )
+        marker.add_to(groups[attraction.category])
 
         # Text label via DivIcon, offset to the right of the pin
         label_html = (
