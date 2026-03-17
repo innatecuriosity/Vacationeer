@@ -355,11 +355,13 @@ html, body {{
     background: #d1d5db;
 }}
 
+/* ---- required field marker ---- */
+label .req {{ color: #e74c3c; font-weight: bold; }}
+.form-hint {{ font-size: 12px; color: #999; margin-top: 8px; }}
+
 /* ---- fab ---- */
+.fab-container {{ position: fixed; bottom: 30px; right: 30px; z-index: 1000; }}
 .fab {{
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
     width: 56px;
     height: 56px;
     border-radius: 50%;
@@ -379,6 +381,10 @@ html, body {{
     background: #2a3a4e;
     transform: scale(1.08);
 }}
+.fab-active {{ transform: rotate(45deg); }}
+.fab-menu {{ position: absolute; bottom: 60px; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); overflow: hidden; min-width: 160px; }}
+.fab-menu button {{ display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 16px; border: none; background: white; cursor: pointer; font-size: 14px; }}
+.fab-menu button:hover {{ background: #f5f6f8; }}
 
 /* ---- toasts ---- */
 .toast-container {{
@@ -464,6 +470,10 @@ window.__TRIP_DATA__ = {trip_json};
 
 <script>
 document.addEventListener('alpine:init', function() {{
+    function toast(type, message) {{
+        window.dispatchEvent(new CustomEvent('toast', {{detail: {{type: type, message: message}}}}));
+    }}
+
     Alpine.store('trip', Object.assign({{}}, window.__TRIP_DATA__, {{
 
         async save(field, value) {{
@@ -552,6 +562,66 @@ document.addEventListener('alpine:init', function() {{
             }}
         }},
 
+        async addDayTrip(data) {{
+            const resp = await fetch('/api/day-trips', {{ method: 'POST', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(data) }});
+            if (resp.ok) {{ const dt = await resp.json(); this.day_trips.push(dt); toast('success', 'Day trip added'); }}
+            else {{ toast('error', 'Failed to add day trip'); }}
+            return resp;
+        }},
+
+        async updateDayTrip(id, data) {{
+            const resp = await fetch('/api/day-trips/' + id, {{ method: 'PATCH', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(data) }});
+            if (resp.ok) {{ const updated = await resp.json(); const idx = this.day_trips.findIndex(function(d) {{ return d.id === id; }}); if (idx >= 0) this.day_trips[idx] = updated; toast('success', 'Day trip updated'); }}
+            else {{ toast('error', 'Failed to update day trip'); }}
+            return resp;
+        }},
+
+        async deleteDayTrip(id) {{
+            const resp = await fetch('/api/day-trips/' + id, {{ method: 'DELETE' }});
+            if (resp.ok) {{ this.day_trips = this.day_trips.filter(function(d) {{ return d.id !== id; }}); toast('success', 'Day trip deleted'); }}
+            else {{ toast('error', 'Failed to delete day trip'); }}
+            return resp;
+        }},
+
+        async setDayTripScore(id, score) {{
+            const resp = await fetch('/api/day-trips/' + id + '/score', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify({{score: score}}) }});
+            if (resp.ok) {{ const idx = this.day_trips.findIndex(function(d) {{ return d.id === id; }}); if (idx >= 0) this.day_trips[idx].user_score = score; }}
+        }},
+
+        async addDay(data) {{
+            const resp = await fetch('/api/days', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(data) }});
+            if (resp.ok) {{ const d = await resp.json(); this.days.push(d); this.days.sort(function(a, b) {{ return a.date.localeCompare(b.date); }}); toast('success', 'Day added'); }}
+            else {{ toast('error', 'Failed to add day'); }}
+            return resp;
+        }},
+
+        async initDays() {{
+            const resp = await fetch('/api/init-days', {{ method: 'POST' }});
+            if (resp.ok) {{ await this.reload(); toast('success', 'Days initialized'); }}
+            else {{ toast('error', 'Failed to initialize days'); }}
+        }},
+
+        async addActivity(dayDate, data) {{
+            const resp = await fetch('/api/days/' + dayDate + '/activities', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(data) }});
+            if (resp.ok) {{ await this.reload(); toast('success', 'Activity added'); }}
+            else {{ toast('error', 'Failed to add activity'); }}
+            return resp;
+        }},
+
+        async deleteActivity(dayDate, activityId) {{
+            const resp = await fetch('/api/days/' + dayDate + '/activities/' + activityId, {{ method: 'DELETE' }});
+            if (resp.ok) {{ await this.reload(); toast('success', 'Activity removed'); }}
+            else {{ toast('error', 'Failed to remove activity'); }}
+        }},
+
+        async scheduleAttraction(attractionId, date, startTime) {{
+            const body = {{ attraction_id: attractionId, date: date }};
+            if (startTime) body.start_time = startTime;
+            const resp = await fetch('/api/schedule', {{ method: 'POST', headers: {{'Content-Type':'application/json'}}, body: JSON.stringify(body) }});
+            if (resp.ok) {{ await this.reload(); toast('success', 'Attraction scheduled'); }}
+            else {{ toast('error', 'Failed to schedule'); }}
+        }},
+
         async reload() {{
             const resp = await fetch('/api/trip');
             if (resp.ok) {{ Object.assign(this, await resp.json()); }}
@@ -608,7 +678,20 @@ document.addEventListener('alpine:init', function() {{
 </div>
 
 <!-- Floating add button -->
-<button class="fab" onclick="window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-attraction'}}))" title="Add attraction">+</button>
+<div class="fab-container" x-data="{{ open: false }}">
+    <button class="fab" @click="open = !open" :class="open && 'fab-active'" title="Add...">+</button>
+    <div class="fab-menu" x-show="open" @click.outside="open = false" x-transition>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-attraction'}}))">
+            <span>\U0001f3db</span> Attraction
+        </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-day-trip'}}))">
+            <span>\U0001f682</span> Day Trip
+        </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-day'}}))">
+            <span>\U0001f4c5</span> Day
+        </button>
+    </div>
+</div>
 
 <!-- Toast notifications -->
 <div class="toast-container" x-data="{{ toasts: [] }}" @toast.window="toasts.push($event.detail); setTimeout(function() {{ toasts.shift() }}, 3000)">
@@ -649,7 +732,7 @@ document.addEventListener('alpine:init', function() {{
                 <div class="modal-header">Add Attraction</div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Name *</label>
+                        <label>Name <span class="req">*</span></label>
                         <input type="text" x-model="form.name" placeholder="Attraction name" required>
                     </div>
                     <div class="form-group">
@@ -664,12 +747,12 @@ document.addEventListener('alpine:init', function() {{
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Latitude</label>
-                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                            <label>Latitude <span class="req">*</span></label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699" required>
                         </div>
                         <div class="form-group">
-                            <label>Longitude</label>
-                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                            <label>Longitude <span class="req">*</span></label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -698,6 +781,7 @@ document.addEventListener('alpine:init', function() {{
                         <label>URL</label>
                         <input type="url" x-model="form.url" placeholder="https://...">
                     </div>
+                    <p class="form-hint">* Required fields</p>
                     <div class="modal-actions">
                         <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
                         <button class="btn btn-primary" @click="submit()">Add Attraction</button>
@@ -733,33 +817,34 @@ document.addEventListener('alpine:init', function() {{
                 <div class="modal-header">Edit Trip</div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Trip Name</label>
-                        <input type="text" x-model="form.name">
+                        <label>Trip Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" required>
                     </div>
                     <div class="form-group">
-                        <label>Destination</label>
-                        <input type="text" x-model="form.destination">
+                        <label>Destination <span class="req">*</span></label>
+                        <input type="text" x-model="form.destination" required>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Start Date</label>
-                            <input type="date" x-model="form.start_date">
+                            <label>Start Date <span class="req">*</span></label>
+                            <input type="date" x-model="form.start_date" required>
                         </div>
                         <div class="form-group">
-                            <label>End Date</label>
-                            <input type="date" x-model="form.end_date">
+                            <label>End Date <span class="req">*</span></label>
+                            <input type="date" x-model="form.end_date" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Travelers</label>
-                            <input type="number" min="1" x-model="form.travelers">
+                            <label>Travelers <span class="req">*</span></label>
+                            <input type="number" min="1" x-model="form.travelers" required>
                         </div>
                         <div class="form-group">
                             <label>Total Budget (&euro;)</label>
                             <input type="number" step="0.01" x-model="form.budget_eur" placeholder="Optional">
                         </div>
                     </div>
+                    <p class="form-hint">* Required fields</p>
                     <div class="modal-actions">
                         <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
                         <button class="btn btn-primary" @click="submit()">Save Changes</button>
@@ -813,6 +898,133 @@ document.addEventListener('alpine:init', function() {{
                     <div class="modal-actions">
                         <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
                         <button class="btn btn-primary" @click="submit()">Save Preferences</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Day Trip Modal -->
+    <template x-if="modal === 'add-day-trip'">
+        <div class="modal-backdrop" @click.self="modal = null">
+            <div class="modal" x-data="{{
+                form: {{ name: '', destination: '', description: '', lat: '', lng: '', address: '', total_price_eur: '', total_duration_minutes: '', tags: '', tips: '' }},
+                async submit() {{
+                    if (!this.form.name.trim() || !this.form.destination.trim()) return;
+                    if (!this.form.lat || !this.form.lng) return;
+                    const data = {{
+                        name: this.form.name.trim(),
+                        destination: this.form.destination.trim(),
+                        description: this.form.description.trim() || null,
+                        location: {{
+                            lat: parseFloat(this.form.lat) || 0,
+                            lng: parseFloat(this.form.lng) || 0,
+                            address: this.form.address.trim() || null
+                        }},
+                        total_price_eur: this.form.total_price_eur ? parseFloat(this.form.total_price_eur) : null,
+                        total_duration_minutes: this.form.total_duration_minutes ? parseInt(this.form.total_duration_minutes) : null,
+                        tags: this.form.tags ? this.form.tags.split(',').map(function(t) {{ return t.trim(); }}).filter(Boolean) : [],
+                        tips: this.form.tips.trim() || null
+                    }};
+                    const resp = await $store.trip.addDayTrip(data);
+                    if (resp.ok) window.dispatchEvent(new CustomEvent('close-modal'));
+                }}
+            }}">
+                <div class="modal-header">Add Day Trip</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name <span class="req">*</span></label>
+                        <input type="text" x-model="form.name" placeholder="Day trip name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Destination <span class="req">*</span></label>
+                        <input type="text" x-model="form.destination" placeholder="Where to?" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea x-model="form.description" placeholder="Brief description"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Latitude <span class="req">*</span></label>
+                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude <span class="req">*</span></label>
+                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" x-model="form.address" placeholder="Street address">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Price (&euro;)</label>
+                            <input type="number" step="0.01" x-model="form.total_price_eur" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Duration (min)</label>
+                            <input type="number" x-model="form.total_duration_minutes" placeholder="60">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags (comma-separated)</label>
+                        <input type="text" x-model="form.tags" placeholder="beach, nature, hiking">
+                    </div>
+                    <div class="form-group">
+                        <label>Tips</label>
+                        <textarea x-model="form.tips" placeholder="Travel tips or notes"></textarea>
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Add Day Trip</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add Day Modal -->
+    <template x-if="modal === 'add-day'">
+        <div class="modal-backdrop" @click.self="modal = null">
+            <div class="modal" x-data="{{
+                form: {{ date: '', label: '', start_time: '', notes: '' }},
+                async submit() {{
+                    if (!this.form.date) return;
+                    const data = {{
+                        date: this.form.date,
+                        label: this.form.label.trim() || null,
+                        start_time: this.form.start_time || null,
+                        notes: this.form.notes.trim() || null
+                    }};
+                    const resp = await $store.trip.addDay(data);
+                    if (resp.ok) window.dispatchEvent(new CustomEvent('close-modal'));
+                }}
+            }}">
+                <div class="modal-header">Add Day</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Date <span class="req">*</span></label>
+                        <input type="date" x-model="form.date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Label</label>
+                        <input type="text" x-model="form.label" placeholder="e.g. Old Town Day">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" x-model="form.start_time">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea x-model="form.notes" placeholder="Notes for this day"></textarea>
+                    </div>
+                    <p class="form-hint">* Required fields</p>
+                    <div class="modal-actions">
+                        <button class="btn btn-cancel" @click="window.dispatchEvent(new CustomEvent('close-modal'))">Cancel</button>
+                        <button class="btn btn-primary" @click="submit()">Add Day</button>
                     </div>
                 </div>
             </div>
