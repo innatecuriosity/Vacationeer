@@ -494,6 +494,7 @@ Auto-dismisses after 3 seconds. No manual close needed (user can ignore).
 | `accommodation` | `#922B21` |
 | `shopping`      | `#2E86C1` |
 | `day_trip`      | `#1E8449` |
+| `infrastructure`| `#34495E` |
 
 ### CSS conventions
 
@@ -553,20 +554,41 @@ No changes to the current architecture are needed. The FastAPI server already wo
 ### API contract (quick ref)
 
 ```
-GET    /api/trip                      Full trip JSON
-PATCH  /api/trip                      Update metadata (name, destination, dates, travelers, budget_eur)
-GET    /api/trip/preferences          Get preferences
-PUT    /api/trip/preferences          Replace preferences
-GET    /api/attractions               List attractions
-POST   /api/attractions               Add attraction (required: name, location, category)
-GET    /api/attractions/{id}          Get one attraction
-PATCH  /api/attractions/{id}          Partial update (dict, not model)
-DELETE /api/attractions/{id}          Delete attraction
-POST   /api/attractions/{id}/score    Set user_score (body: {score: float})
-GET    /api/days                      List days (sorted by date)
-POST   /api/days                      Add day (required: date)
-PATCH  /api/days/{date}               Update day (label, notes, activities)
-DELETE /api/days/{date}               Delete day
+GET    /api/trip                              Full trip JSON
+PATCH  /api/trip                              Update metadata (name, destination, dates, travelers, budget_eur)
+POST   /api/init-days                         Create empty days for entire trip date range
+GET    /api/trip/preferences                  Get preferences
+PUT    /api/trip/preferences                  Replace preferences
+GET    /api/attractions                       List attractions
+POST   /api/attractions                       Add attraction (required: name, location, category)
+GET    /api/attractions/{id}                  Get one attraction
+PATCH  /api/attractions/{id}                  Partial update (dict, not model)
+DELETE /api/attractions/{id}                  Delete attraction
+POST   /api/attractions/{id}/score            Set user_score (body: {score: float})
+GET    /api/days                              List days (sorted by date)
+POST   /api/days                              Add day (required: date)
+GET    /api/days/{date}                       Get one day
+PATCH  /api/days/{date}                       Update day (label, notes, start_time)
+DELETE /api/days/{date}                       Delete day
+POST   /api/days/{date}/activities            Add activity to a day
+PATCH  /api/days/{date}/activities/{id}       Update activity
+DELETE /api/days/{date}/activities/{id}       Delete activity
+PUT    /api/days/{date}/activities/reorder    Reorder activities (body: {activity_ids: [...]})
+POST   /api/schedule                          Schedule attraction to day (body: {attraction_id, date, start_time?})
+POST   /api/days/swap                         Swap activities between two days (body: {date1, date2})
+POST   /api/activities/move                   Move activity to different day (body: {activity_id, target_date})
+GET    /api/day-trips                         List day trips
+POST   /api/day-trips                         Add day trip
+GET    /api/day-trips/{id}                    Get one day trip
+PATCH  /api/day-trips/{id}                    Update day trip
+DELETE /api/day-trips/{id}                    Delete day trip
+POST   /api/day-trips/{id}/score              Set day trip user_score
+POST   /api/days/{date}/ai-plan               AI-generate activities for a day
+POST   /api/chat                              Multi-turn chat with trip context
+GET    /api/trips                             List all trips (with pipeline status)
+POST   /api/pipeline/start                    Start research pipeline for new trip
+GET    /api/pipeline/status/{slug}            Get pipeline job status
+GET    /api/pipeline/jobs                     List all pipeline jobs
 ```
 
 All writes save to `trip.json` and trigger background HTML rebuild.
@@ -579,6 +601,12 @@ $store.trip.updateAttraction(id, data) PATCH /api/attractions/{id}
 $store.trip.deleteAttraction(id)       DELETE /api/attractions/{id}
 $store.trip.setScore(id, score)        POST /api/attractions/{id}/score
 $store.trip.updatePreferences(prefs)   PUT /api/trip/preferences
+$store.trip.addDay(data)               POST /api/days
+$store.trip.addDayTrip(data)           POST /api/day-trips
+$store.trip.updateDayTrip(id, data)    PATCH /api/day-trips/{id}
+$store.trip.scheduleAttraction(id, date, time)  POST /api/schedule
+$store.trip.moveActivity(id, date)     POST /api/activities/move
+$store.trip.reorderActivities(date, ids)  PUT /api/days/{date}/activities/reorder
 $store.trip.reload()                   GET /api/trip (full refresh)
 ```
 

@@ -193,11 +193,14 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [x] **Planning module** — `planning/scheduler.py` with pure functions: init_days, schedule, schedule_day_trip, unschedule, get_unscheduled, swap_days, move_activity
 - [x] **Map** — Interactive Folium map with:
   - CartoDB Voyager tiles (works offline/local)
-  - Emoji icons for landmark (🏛), accommodation (🏠), infrastructure (✈); circle markers for others
+  - Emoji DivIcons for ALL categories (landmark 🏛, museum 🖼, nature 🌳, food 🍽, entertainment 🎭, transport 🚌, accommodation 🏨, shopping 🛍, day_trip 🌍, infrastructure ✈)
+  - Name labels below each emoji (toggleable via Labels checkbox control)
+  - MarkerCluster for decluttering at low zoom (custom styled, dissolves at zoom 15+)
   - Outlier-filtered centering (ignores 0,0 and far-flung points via median filter)
-  - Hover tooltips (name + category) + click-to-lock popups (rich card with links)
-  - Category legend
-  - Layer control for filtering by category
+  - Rich hover tooltips (name, category, description preview, duration/price/score)
+  - Inline popup editing: clickable star rating (1-10), edit duration/price, save via API
+  - Map ↔ app sync: popup edits trigger store reload via postMessage
+  - Layer control for filtering by category (all categories listed, even if empty)
   - Auto-refresh after mutations (cache-busting iframe reload)
 - [x] **App shell** — Single HTML page with:
   - Dark navy (#1a2332) sidebar (340px) with Map/Overview/Timeline tabs
@@ -206,13 +209,14 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Trip header with metadata
   - Trip picker dropdown (switch between trips, shows pipeline status for in-progress trips)
   - New Trip modal with form + real-time progress tracking (Alpine.js)
-  - 3-mode location picker (Address / GPS / Pick on Map with Leaflet mini-map) in all location modals
-- [x] **Overview tab** — Attractions grouped by category:
-  - Colored left border per category, visually separated cards with stronger shadows
-  - Expandable cards (click to reveal full details)
+  - 3-mode location picker (Address / GPS / Pick on Map with Leaflet mini-map using CartoDB Voyager tiles) in all location modals
+- [x] **Overview tab** — Attractions sorted by category (default):
+  - Rounded rectangle cards (8px radius, 1px border, 6px colored left border per category)
+  - Two-row collapsed header: name + description preview + chevron; category pill + score bar + duration + price
+  - Expandable cards (click to reveal full details, inline editing, star rating)
   - Score bars (green 8+, yellow 6-8, red <6)
   - Tags as pills, tips box, URL buttons
-  - Conditional image display (only shows if `image_url` exists, no placeholder)
+  - Search and filter by category, sort by name/category/score/price
 - [x] **Timeline tab** — Split-panel drag-and-drop scheduler:
   - Day tab bar for switching between days
   - Left panel: day's scheduled activities (sortable, reorderable)
@@ -263,7 +267,8 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [x] Modal resilience (`@mousedown.self` prevents close on paste/drag)
 - [x] Drag-and-drop reordering of activities within a day (SortableJS)
 - [x] Drag attractions from unscheduled pool into days
-- [ ] Click-to-edit time/duration/notes
+- [x] Inline editing in map popups (duration, price, star rating)
+- [ ] Click-to-edit time/duration/notes in timeline
 
 ### Planned — Chat / AI
 - [x] Connect chat to AI provider cascade (sidebar panel, `POST /api/chat`, CLI preferred)
@@ -277,7 +282,7 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 - [ ] Map filtering by score range
 - [ ] Map filtering by user_score vs expected_score
 - [ ] Auto-compute expected_score from preferences (keyword matching)
-- [ ] User score input UI (star rating or slider)
+- [x] User score input UI (clickable 1-10 star rating in map popup)
 
 ### Planned — Data & Content
 - [ ] Attraction image scraping (from URLs or search)
