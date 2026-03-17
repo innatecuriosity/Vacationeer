@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json as _json
 import logging
+import re
 from datetime import date, time, timedelta
 from pathlib import Path
 from typing import Optional
@@ -158,35 +159,79 @@ class ChatRequest(BaseModel):
 
 def _build_chat_system_prompt(trip: Trip) -> str:
     """Build a system prompt that gives the AI context about the trip."""
-    attractions_summary = ", ".join(a.name for a in trip.attractions[:15])
-    if len(trip.attractions) > 15:
-        attractions_summary += f" (and {len(trip.attractions) - 15} more)"
+    attractions_summary = ""
+    for a in trip.attractions:
+        parts = [a.name, f"id={a.id}", f"cat={a.category.value}"]
+        if a.price_eur is not None:
+            parts.append(f"€{a.price_eur:.0f}")
+        if a.duration_minutes:
+            parts.append(f"{a.duration_minutes}min")
+        attractions_summary += "\n- " + ", ".join(parts)
 
     day_trips_summary = ", ".join(dt.name for dt in trip.day_trips) if trip.day_trips else "none"
 
     days_summary = ""
     if trip.days:
         days_summary = f"\n\nScheduled days ({len(trip.days)}):"
-        for d in trip.days[:10]:
-            acts = ", ".join(a.name for a in d.activities) if d.activities else "empty"
+        for d in trip.days:
+            acts = ", ".join(f"{a.name} ({a.start_time or '?'})" for a in d.activities) if d.activities else "empty"
             days_summary += f"\n- {d.date} ({d.label or 'no label'}): {acts}"
+
+    unscheduled = []
+    scheduled_ids = set()
+    if trip.days:
+        for d in trip.days:
+            for act in d.activities:
+                if act.attraction_id:
+                    scheduled_ids.add(act.attraction_id)
+    for a in trip.attractions:
+        if a.id not in scheduled_ids:
+            unscheduled.append(a.name)
 
     prefs = ""
     if trip.preferences:
         p = trip.preferences
-        prefs = f"\n\nPreferences: interests={p.interests}, avoid={p.avoid}, pace={p.pace}, daily_budget=€{p.daily_budget_eur or 'unset'}"
+        prefs = f"\n\nPreferences: interests={p.interests}, avoid={p.avoid}, pace={p.pace}, daily_budget=€{p.budget_per_day_eur or 'unset'}"
 
-    return f"""You are a helpful travel planning assistant for the trip "{trip.name}" to {trip.destination}.
+    categories = ", ".join(f"{c.value}" for c in Category)
+
+    return f"""You are a travel planning assistant for "{trip.name}" to {trip.destination}.
 Trip dates: {trip.start_date} to {trip.end_date}, {trip.travelers} travelers, budget €{trip.budget_eur or 'unset'}.
 {prefs}
 
-Attractions ({len(trip.attractions)}): {attractions_summary}
+Attractions ({len(trip.attractions)}):{attractions_summary}
 Day trips: {day_trips_summary}
 {days_summary}
 
-You can suggest plans, answer questions about the destination, and help organize the itinerary.
-Keep responses concise and practical. Use the traveler's context to personalize suggestions.
-If the user asks to add an attraction or make a change, describe what you'd recommend — they can use the app UI to make the actual changes."""
+Unscheduled attractions: {', '.join(unscheduled) if unscheduled else 'all scheduled'}
+
+AVAILABLE CATEGORIES: {categories}
+
+You have TOOLS to modify the trip. When the user asks you to add, schedule, or change something, include an ```actions block at the end of your response with a JSON array. The app will execute these automatically.
+
+Available actions:
+1. add_attraction: Add a new place. You MUST look up real coordinates for the location.
+   {{"type":"add_attraction","data":{{"name":"...","description":"...","category":"landmark|food|museum|park|beach|nightlife|shopping|infrastructure|sport","lat":39.1234,"lng":-0.1234,"price_eur":0,"duration_minutes":60,"tags":["..."],"tips":"..."}}}}
+
+2. schedule: Schedule an existing attraction to a day. Use the attraction's id.
+   {{"type":"schedule","data":{{"attraction_id":"...","date":"YYYY-MM-DD","start_time":"HH:MM"}}}}
+
+3. add_day: Create a new day in the itinerary.
+   {{"type":"add_day","data":{{"date":"YYYY-MM-DD","label":"..."}}}}
+
+Example — user says "add the main train station":
+Your response text... explaining what you added.
+
+```actions
+[{{"type":"add_attraction","data":{{"name":"Estación del Norte","description":"Valencia's stunning Art Nouveau main train station","category":"infrastructure","lat":39.4661,"lng":-0.3773,"price_eur":0,"duration_minutes":30,"tags":["architecture","transport"],"tips":"Check out the ornate ceramic tile decorations in the main hall"}}}}]
+```
+
+Rules:
+- Always include real, accurate GPS coordinates (lat/lng) for Valencia area attractions
+- Keep responses concise — 2-3 sentences max, then actions
+- When scheduling, pick sensible times (morning starts ~9:00-10:00, lunch ~13:00-14:00, afternoon ~16:00-17:00)
+- Use UTF-8 text, no escaped unicode
+- If the user asks a question (not an action), just answer normally without an actions block"""
 
 
 def _format_chat_messages(messages: list) -> str:
@@ -1010,7 +1055,17 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
                 content = provider.complete(prompt, system=system_prompt)
 
             log.info("Chat response via %s: %s chars", provider.name, len(content.strip()))
-            return {"role": "assistant", "content": content.strip()}
+            # Parse actions from ```actions blocks
+            actions = []
+            text = content.strip()
+            actions_match = re.search(r'```actions\s*\n(.*?)\n```', text, re.DOTALL)
+            if actions_match:
+                try:
+                    actions = _json.loads(actions_match.group(1))
+                    text = text[:actions_match.start()].strip()
+                except (_json.JSONDecodeError, ValueError) as e:
+                    log.warning("Failed to parse chat actions: %s", e)
+            return {"role": "assistant", "content": text, "actions": actions}
         except Exception as exc:
             log.error("Chat error (%s): %s", provider.name, exc)
             raise HTTPException(status_code=500, detail=f"AI error: {exc}")

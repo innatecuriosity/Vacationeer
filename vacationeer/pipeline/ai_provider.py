@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import platform
 import shutil
 import subprocess
 from abc import ABC, abstractmethod
@@ -31,15 +32,20 @@ class ClaudeCodeProvider(AIProvider):
         return shutil.which("claude") is not None
 
     def complete(self, prompt: str, *, system: str | None = None) -> str:
-        cmd = ["claude", "--print", "--output-format", "text"]
+        claude_bin = shutil.which("claude") or "claude"
+        cmd = [claude_bin, "--print", "--output-format", "text"]
         if system:
             cmd += ["--system-prompt", system]
-        cmd += ["--", prompt]
+        # Pass prompt via stdin to avoid shell quoting issues on Windows
+        use_shell = platform.system() == "Windows"
         result = subprocess.run(
             cmd,
+            input=prompt,
             capture_output=True,
             text=True,
+            encoding="utf-8",
             timeout=600,
+            shell=use_shell,
         )
         if result.returncode != 0:
             raise RuntimeError(

@@ -163,6 +163,79 @@ def _run_pipeline(job: PipelineJob, project_root: Path, light: bool, output_dir:
         log.error("Pipeline [%s]: error — %s\n%s", slug, e, traceback.format_exc())
 
 
+def _build_skeleton(config: dict, trips_dir: Path, output_dir: Path | None) -> None:
+    """Create a skeleton trip.json + empty app HTML so the trip is immediately navigable."""
+    from vacationeer.models.trip import Preferences, Trip
+    from vacationeer.storage.json_store import save_trip
+
+    slug = config["id"]
+    trip_json_path = trips_dir / "trip.json"
+
+    # Build minimal Trip from config
+    prefs_data = config.get("preferences", {})
+    skeleton = Trip(
+        id=slug,
+        name=config.get("name", config.get("destination", slug)),
+        destination=config["destination"],
+        start_date=config["start_date"],
+        end_date=config["end_date"],
+        travelers=config.get("travelers", 2),
+        budget_eur=config.get("budget_eur"),
+        preferences=Preferences(**prefs_data) if prefs_data else None,
+        attractions=[],
+        day_trips=[],
+        days=[],
+    )
+    save_trip(skeleton, trip_json_path)
+    log.info("Pipeline [%s]: skeleton trip.json saved", slug)
+
+    # Build empty app HTML (so the trip page is immediately accessible)
+    if output_dir:
+        try:
+            from vacationeer.views.app_shell import generate_app
+            from vacationeer.views.overview import render_overview
+            from vacationeer.views.timeline import render_timeline
+
+            output_dir.mkdir(parents=True, exist_ok=True)
+            dest_slug = skeleton.destination.lower().replace(" ", "-")
+            map_filename = f"{dest_slug}-map.html"
+
+            # Placeholder map (no attractions yet — generate_map raises on empty)
+            placeholder_map = f"""<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+<style>html,body{{width:100%;height:100%;margin:0;padding:0;}}
+#map{{position:absolute;top:0;bottom:0;left:0;right:0;}}
+.loading-overlay{{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+z-index:1000;background:rgba(255,255,255,0.95);padding:20px 32px;border-radius:12px;
+box-shadow:0 4px 20px rgba(0,0,0,.15);font-family:system-ui,sans-serif;text-align:center;}}
+.loading-overlay .spinner{{width:32px;height:32px;border:3px solid #e0e0e0;
+border-top:3px solid #1a2332;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px;}}
+@keyframes spin{{to{{transform:rotate(360deg);}}}}
+</style></head><body>
+<div id="map"></div>
+<div class="loading-overlay"><div class="spinner"></div>Researching attractions...</div>
+<script>var m=L.map('map').setView([39.47,-0.38],13);
+L.tileLayer('https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}{{r}}.png',
+{{subdomains:'abcd',maxZoom:20}}).addTo(m);
+</script></body></html>"""
+            (output_dir / map_filename).write_text(placeholder_map, encoding="utf-8")
+
+            tab_contents = {
+                "overview-content": render_overview(skeleton),
+                "timeline-content": render_timeline(skeleton),
+            }
+            generate_app(
+                skeleton, map_filename,
+                output_dir / f"{dest_slug}-app.html",
+                tab_contents=tab_contents,
+            )
+            log.info("Pipeline [%s]: skeleton app HTML built", slug)
+        except Exception as e:
+            log.warning("Pipeline [%s]: skeleton HTML build failed (non-fatal): %s", slug, e)
+
+
 def start_pipeline(
     config: dict,
     project_root: Path,
@@ -178,6 +251,9 @@ def start_pipeline(
     trips_dir.mkdir(parents=True, exist_ok=True)
     config_path = trips_dir / "trip-config.json"
     config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # Create skeleton trip + app HTML immediately (so trip is navigable right away)
+    _build_skeleton(config, trips_dir, output_dir)
 
     job = PipelineJob(
         slug=slug,

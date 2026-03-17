@@ -231,8 +231,13 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Dark-themed message bubbles (assistant / user / error states)
   - Connected via `POST /api/chat` using AI provider cascade (Claude Code CLI → Anthropic API)
   - No API key needed when Claude Code CLI is installed locally
-  - System prompt includes trip context (attractions, days, preferences)
-  - Alpine.js `sidebarChat()` component with message history and auto-scroll
+  - System prompt includes full trip context (all attractions with IDs, days, preferences, unscheduled list)
+  - **Tool use**: AI returns structured `actions` blocks (JSON) that the frontend auto-executes
+  - Supported actions: `add_attraction`, `schedule`, `add_day`, `add_day_trip`
+  - Action feedback: confirmation messages shown after execution
+  - Chat history persists across refreshes via `localStorage`
+  - Clear chat button in header
+  - Alpine.js `sidebarChat()` component with message history, persistence, and auto-scroll
 - [x] **Sample data** — Valencia 2026 trip with 29 attractions + 3 day trips (with sub-attractions and travel segments)
 - [x] **CLI** — map, info, build, serve + scheduling commands (init-days, schedule, schedule-day-trip, unschedule, backlog, swap-days, move-activity)
 - [x] **Trip management** — `trips` (list with status), `use` (set active trip), `.active-trip` file
@@ -245,7 +250,7 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Frontend form (`newTripForm()` Alpine.js) with progress polling (3s interval)
   - REST API: `POST /api/pipeline/start`, `GET /api/pipeline/status/{slug}`, `GET /api/pipeline/jobs`
 - [x] **AI provider abstraction** — `AIProvider` ABC with cascade:
-  - `ClaudeCodeProvider` — invokes `claude` CLI subprocess (preferred, uses logged-in session)
+  - `ClaudeCodeProvider` — invokes `claude` CLI subprocess (preferred, uses logged-in session); Windows-compatible (shell=True + shutil.which + UTF-8 encoding + stdin prompt)
   - `ClaudeAPIProvider` — uses `anthropic` SDK (needs `ANTHROPIC_API_KEY`)
   - `ManualProvider` — writes prompt files for user to paste into Claude
 - [x] **MD ↔ JSON sync** — Bidirectional sync via `@vacationeer` marker blocks:
@@ -279,11 +284,14 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
 
 ### Planned — Chat / AI
 - [x] Connect chat to AI provider cascade (sidebar panel, `POST /api/chat`, CLI preferred)
-- [ ] Tool use: AI executes actions (add/edit attractions, schedule) via structured responses
+- [x] Tool use: AI returns `actions` JSON blocks, server parses them, frontend executes (add_attraction, schedule, add_day)
+- [x] "Add attraction" via chat (AI provides name, coordinates, category, price, duration, tags, tips)
+- [x] "Schedule attraction" via chat (AI picks date + time)
+- [x] Chat persistence via localStorage (survives page refreshes)
 - [ ] AI-suggested day plans based on preferences + proximity
-- [ ] "Add attraction" via chat
 - [ ] "Reorganize day" via chat
 - [ ] Streaming responses (SSE) for better UX
+- [ ] Edit/delete attractions via chat actions
 
 ### Planned — Scoring & Filtering
 - [ ] Map filtering by score range
@@ -404,7 +412,15 @@ The `pipeline/` module handles new trip creation. The AI provider abstraction (`
 Background execution is handled by `pipeline/runner.py`: `start_pipeline()` launches a daemon thread that runs research → conversion → HTML build, tracking progress in a `PipelineJob` dataclass. The server exposes this via REST endpoints (`/api/pipeline/start`, `/api/pipeline/status/{slug}`, `/api/pipeline/jobs`). The frontend `newTripForm()` Alpine.js component polls status every 3 seconds and renders a progress bar with step labels. Users can dismiss the modal and continue browsing — the pipeline keeps running.
 
 ### Sidebar chat
-The chat assistant lives in the sidebar (always visible alongside map/overview/timeline). The Alpine.js `sidebarChat()` component sends messages to `POST /api/chat`, which uses the AI provider cascade (`get_provider()` from `pipeline/ai_provider.py`): Claude Code CLI first, then Anthropic API, with system prompt containing trip context (attractions, days, preferences). No API key needed when Claude Code CLI is installed — it uses the local session. For the API provider, native multi-turn messaging is used; for CLI, conversation history is formatted into a single prompt. The chat is conversational only — tool use (AI executing actions) is planned but not yet implemented.
+The chat assistant lives in the sidebar (always visible alongside map/overview/timeline). The Alpine.js `sidebarChat()` component sends messages to `POST /api/chat`, which uses the AI provider cascade (`get_provider()` from `pipeline/ai_provider.py`): Claude Code CLI first, then Anthropic API, with system prompt containing full trip context (all attractions with IDs, scheduled days, preferences, unscheduled list, available categories).
+
+**Tool use**: The system prompt teaches the AI to return ````actions` blocks (JSON arrays) at the end of responses. The server (`re.search` on the response) extracts these, returns them alongside the text content. The frontend `executeActions()` method processes each action (calls `$store.trip.addAttraction()`, `scheduleAttraction()`, etc.) and shows confirmation messages. Supported actions: `add_attraction`, `schedule`, `add_day`, `add_day_trip`.
+
+**Persistence**: Chat messages persist to `localStorage` (key: `vacationeer_chat`). A "Clear" button resets to the default greeting. Messages survive page refreshes and `$store.trip.reload()` calls after actions.
+
+**Windows compatibility**: `ClaudeCodeProvider` uses `shell=True` on Windows (npm installs `.cmd` wrappers), resolves the binary via `shutil.which()`, passes prompts via stdin (avoids shell quoting issues), and forces `encoding="utf-8"` to handle non-ASCII characters.
+
+**Layout**: Export/Import buttons are in the trip picker dropdown (not sidebar bottom). Nav tabs use `flex-shrink: 0` so chat fills all remaining sidebar space.
 
 ### Sync module
 The `sync/` module enables bidirectional sync between MD research files and `trip.json`. It uses `@vacationeer` marker blocks (HTML comments with key-value data) injected below attraction headings in MD files. The sync engine compares marker values against JSON fields and can apply updates in either direction.
@@ -440,7 +456,8 @@ Tests live in `tests/` and use pytest. Run with `python -m pytest tests/ -v`. Cu
 - Pipeline: `pipeline/` — AI provider cascade, questionnaire, research, conversion
 - Sync: `sync/` — MD ↔ JSON bidirectional sync via marker blocks
 - Views generate HTML strings — all CSS/JS is inline (CDN deps: Alpine.js, Leaflet, SortableJS)
-- Chat is in the sidebar (not a tab) — `sidebarChat()` Alpine component, `POST /api/chat` backend
+- Chat is in the sidebar (not a tab) — `sidebarChat()` Alpine component, `POST /api/chat` backend, AI returns `actions` JSON blocks parsed by server
+- Chat actions format: ````actions\n[{"type":"add_attraction","data":{...}}]\n``` — server extracts via regex, frontend executes via `$store.trip` methods
 - Map uses Folium — tiles must work without Referer header (no OSM tiles)
 - Map CSS: inject via `folium.Element` into `get_root().html`, NOT via `MacroElement` (Jinja2 header macro doesn't render reliably)
 - Color theme: navy #1a2332 + white, category colors in `theme.py`

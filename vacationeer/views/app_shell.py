@@ -286,6 +286,15 @@ html, body {{
     opacity: 0.5;
     margin-left: auto;
 }}
+.trip-picker-dropdown .tp-item .tp-status.tp-loading {{
+    opacity: 1;
+    color: #4ea4f6;
+    animation: tp-pulse 1.5s ease-in-out infinite;
+}}
+@keyframes tp-pulse {{
+    0%, 100% {{ opacity: 1; }}
+    50% {{ opacity: 0.4; }}
+}}
 .trip-picker-dropdown .tp-divider {{
     border-top: 1px solid rgba(255,255,255,0.08);
     margin: 4px 0;
@@ -298,7 +307,7 @@ html, body {{
 .nav {{
     list-style: none;
     padding: 12px 0;
-    flex: 1;
+    flex-shrink: 0;
 }}
 .nav li {{
     position: relative;
@@ -627,7 +636,7 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
     border-radius: 2px;
 }}
 .chat-bubble {{
-    max-width: 90%;
+    max-width: 100%;
     padding: 10px 14px;
     border-radius: 14px;
     font-size: 13px;
@@ -842,6 +851,64 @@ window.addEventListener('message', function(e) {{
     }}
 }});
 
+/* Pipeline progress banner — polls /api/pipeline/status and auto-reloads when done */
+function pipelineBanner() {{
+    return {{
+        active: false,
+        step: '',
+        status: '',
+        pct: 0,
+        _interval: null,
+        init() {{
+            var self = this;
+            var slug = (window.__TRIP_DATA__ && window.__TRIP_DATA__.id) || '';
+            if (!slug) return;
+            // Check if pipeline is running for this trip
+            fetch('/api/pipeline/status/' + slug).then(function(r) {{
+                if (!r.ok) return;
+                return r.json();
+            }}).then(function(d) {{
+                if (!d || d.status === 'done' || d.status === 'error') return;
+                self.active = true;
+                self.status = d.status;
+                self.step = d.step || 'Starting...';
+                self.pct = self._statusPct(d.status);
+                self._startPolling(slug);
+            }}).catch(function() {{}});
+        }},
+        _statusPct(s) {{
+            var map = {{queued:5, researching:25, converting:55, building:80, done:100, error:100}};
+            return map[s] || 10;
+        }},
+        _startPolling(slug) {{
+            var self = this;
+            this._interval = setInterval(function() {{
+                fetch('/api/pipeline/status/' + slug).then(function(r) {{
+                    if (!r.ok) {{ self._stop(); return; }}
+                    return r.json();
+                }}).then(function(d) {{
+                    if (!d) return;
+                    self.status = d.status;
+                    self.step = d.step || '';
+                    self.pct = self._statusPct(d.status);
+                    if (d.status === 'done') {{
+                        self.step = 'Trip ready! Reloading...';
+                        self.pct = 100;
+                        self._stop();
+                        setTimeout(function() {{ window.location.reload(); }}, 1000);
+                    }} else if (d.status === 'error') {{
+                        self.step = 'Error: ' + (d.error || 'Unknown error');
+                        self._stop();
+                    }}
+                }}).catch(function() {{}});
+            }}, 3000);
+        }},
+        _stop() {{
+            if (this._interval) {{ clearInterval(this._interval); this._interval = null; }}
+        }}
+    }};
+}}
+
 /* Trip picker component */
 function tripPicker() {{
     return {{
@@ -940,8 +1007,11 @@ function newTripForm() {{
                 this.job.slug = data.slug;
                 this.job.status = data.status;
                 this.job.step = data.step || 'Starting...';
-                this.phase = 'progress';
-                this.startPolling();
+                // Navigate immediately to the new (skeleton) trip page
+                var destSlug = dest.split(',')[0].trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                var appUrl = '/' + destSlug + '-app.html';
+                window.dispatchEvent(new CustomEvent('close-modal'));
+                window.location.href = appUrl;
             }} catch (e) {{
                 alert('Network error: ' + e.message);
             }}
@@ -1005,12 +1075,19 @@ function newTripForm() {{
 
 /* Sidebar chat component */
 function sidebarChat() {{
+    var STORAGE_KEY = 'vacationeer_chat';
+    var defaultMsg = {{ role: 'assistant', content: "Hi! I'm your travel assistant for {esc(trip.destination)}. Ask me to add attractions, schedule your days, or answer questions about the trip!" }};
+    var saved = [];
+    try {{ saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }} catch(e) {{}}
+    if (!saved.length) saved = [defaultMsg];
+
     return {{
-        messages: [
-            {{ role: 'assistant', content: "Hi! I'm your travel assistant for {esc(trip.destination)}. Ask me to suggest plans, add attractions, or help organize your trip!" }}
-        ],
+        messages: saved,
         input: '',
         loading: false,
+        persist() {{
+            try {{ localStorage.setItem(STORAGE_KEY, JSON.stringify(this.messages)); }} catch(e) {{}}
+        }},
         scrollToBottom() {{
             var self = this;
             this.$nextTick(function() {{
@@ -1018,12 +1095,20 @@ function sidebarChat() {{
                 if (el) el.scrollTop = el.scrollHeight;
             }});
         }},
+        clearChat() {{
+            this.messages = [defaultMsg];
+            this.persist();
+        }},
+        init() {{
+            this.scrollToBottom();
+        }},
         async send() {{
             var text = this.input.trim();
             if (!text || this.loading) return;
             this.messages.push({{ role: 'user', content: text }});
             this.input = '';
             this.loading = true;
+            this.persist();
             this.scrollToBottom();
 
             try {{
@@ -1042,31 +1127,43 @@ function sidebarChat() {{
                     var data = await resp.json();
                     this.messages.push({{ role: 'assistant', content: data.content }});
                     if (data.actions && data.actions.length > 0) {{
-                        await this.executeActions(data.actions);
+                        var result = await this.executeActions(data.actions);
+                        if (result) {{
+                            this.messages.push({{ role: 'assistant', content: result }});
+                        }}
                     }}
                 }}
             }} catch (e) {{
                 this.messages.push({{ role: 'error', content: 'Network error: ' + e.message }});
             }}
             this.loading = false;
+            this.persist();
             this.scrollToBottom();
         }},
         async executeActions(actions) {{
+            var results = [];
             for (var action of actions) {{
                 try {{
                     if (action.type === 'add_attraction') {{
                         await $store.trip.addAttraction(action.data);
+                        results.push('Added: ' + (action.data.name || 'attraction'));
                     }} else if (action.type === 'add_day_trip') {{
                         await $store.trip.addDayTrip(action.data);
+                        results.push('Added day trip: ' + (action.data.name || ''));
                     }} else if (action.type === 'add_day') {{
                         await $store.trip.addDay(action.data);
+                        results.push('Created day: ' + (action.data.date || ''));
                     }} else if (action.type === 'schedule') {{
-                        await $store.trip.scheduleAttraction(action.data);
+                        var d = action.data;
+                        await $store.trip.scheduleAttraction(d.attraction_id, d.date, d.start_time);
+                        results.push('Scheduled: ' + d.attraction_id + ' on ' + d.date);
                     }}
                 }} catch (e) {{
                     console.error('Action failed:', action, e);
+                    results.push('Failed: ' + (action.data.name || action.type) + ' - ' + e.message);
                 }}
             }}
+            return results.length ? '\u2705 ' + results.join('\n\u2705 ') : '';
         }}
     }};
 }}
@@ -1466,13 +1563,24 @@ document.addEventListener('alpine:init', function() {{
                         <button class="tp-item" :class="{{ 'active': t.active }}"
                                 @click="switchTrip(t)">
                             <span x-text="t.name"></span>
-                            <span class="tp-status" x-text="t.pipeline && t.pipeline.status !== 'done' && t.pipeline.status !== 'error' ? '⏳ ' + t.pipeline.step : t.has_trip ? 'ready' : t.has_research ? 'research' : 'config'"></span>
+                            <span class="tp-status" :class="t.pipeline && t.pipeline.status !== 'done' && t.pipeline.status !== 'error' ? 'tp-loading' : ''" x-text="t.pipeline && t.pipeline.status !== 'done' && t.pipeline.status !== 'error' ? '\u23f3 ' + t.pipeline.step : t.has_trip ? 'ready' : t.has_research ? 'research' : 'config'"></span>
                         </button>
                     </template>
                     <div class="tp-divider"></div>
                     <button class="tp-item tp-new" @click="newTrip()">
                         + New trip
                     </button>
+                    <div class="tp-divider"></div>
+                    <div style="display:flex;gap:4px;padding:6px 12px;">
+                        <button onclick="Alpine.store('trip').exportTrip()"
+                                style="flex:1;padding:5px 0;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border-radius:5px;cursor:pointer;font-size:10px;font-family:inherit;"
+                                title="Download trip as JSON">\u2B07 Export</button>
+                        <label style="flex:1;padding:5px 0;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border-radius:5px;cursor:pointer;font-size:10px;text-align:center;font-family:inherit;"
+                               title="Import trip from JSON">\u2B06 Import
+                            <input type="file" accept=".json" style="display:none"
+                                   onchange="if(this.files[0]) Alpine.store('trip').importTrip(this.files[0]); this.value='';">
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1482,7 +1590,10 @@ document.addEventListener('alpine:init', function() {{
             <li><button class="nav-btn" data-tab="tab-timeline"><span class="icon">\U0001f4c5</span><span class="label">Timeline</span></button></li>
         </ul>
         <div class="sidebar-chat" x-data="sidebarChat()">
-            <div class="chat-header">Assistant</div>
+            <div class="chat-header" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>Assistant</span>
+                <button @click="clearChat()" style="background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:10px;padding:2px 6px;" title="Clear chat">Clear</button>
+            </div>
             <div class="chat-messages" x-ref="chatMessages">
                 <template x-for="(msg, i) in messages" :key="i">
                     <div class="chat-bubble" :class="msg.role" x-html="msg.html || msg.content"></div>
@@ -1497,17 +1608,6 @@ document.addEventListener('alpine:init', function() {{
                 <button @click="send()" :disabled="loading || !input.trim()">Send</button>
             </div>
         </div>
-        <div class="sidebar-data-actions" style="padding:8px 16px;display:flex;gap:6px;">
-            <button onclick="Alpine.store('trip').exportTrip()"
-                    style="flex:1;padding:6px 0;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#ccc;border-radius:6px;cursor:pointer;font-size:11px;"
-                    title="Download trip as JSON">\U00002B07 Export</button>
-            <label style="flex:1;padding:6px 0;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#ccc;border-radius:6px;cursor:pointer;font-size:11px;text-align:center;"
-                   title="Import trip from JSON">\U00002B06 Import
-                <input type="file" accept=".json" style="display:none"
-                       onchange="if(this.files[0]) Alpine.store('trip').importTrip(this.files[0]); this.value='';">
-            </label>
-        </div>
-        <div class="sidebar-footer">Vacationeer v0.1</div>
     </aside>
 
     <div class="main">
@@ -1524,6 +1624,29 @@ document.addEventListener('alpine:init', function() {{
             </div>
         </header>
         <div class="content">
+            <!-- Pipeline progress banner (auto-hidden when no pipeline is running) -->
+            <div id="pipeline-banner" x-data="pipelineBanner()" x-show="active"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-end="opacity-0"
+                 style="display:none;background:linear-gradient(135deg,#1a2332,#2c3e50);color:#fff;padding:14px 24px;
+                        font-size:13px;font-family:system-ui,sans-serif;z-index:10;position:relative;">
+                <div style="display:flex;align-items:center;gap:12px;justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <span class="pipeline-spinner" style="display:inline-block;width:18px;height:18px;
+                              border:2px solid rgba(255,255,255,0.3);border-top:2px solid #fff;border-radius:50%;
+                              animation:spin 1s linear infinite;flex-shrink:0;"></span>
+                        <span x-text="step || 'Starting...'"></span>
+                    </div>
+                    <span style="opacity:0.7;font-size:12px;" x-text="pct + '%'"></span>
+                </div>
+                <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;">
+                    <div style="height:100%;background:#27AE60;border-radius:2px;transition:width 0.5s ease;"
+                         :style="'width:' + pct + '%'"></div>
+                </div>
+            </div>
+            <style>
+                @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
+            </style>
             <div id="tab-map" class="tab-panel active">
                 <iframe src="{esc(map_filename)}"></iframe>
             </div>
