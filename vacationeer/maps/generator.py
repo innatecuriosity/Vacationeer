@@ -203,13 +203,18 @@ class _ControlStyle(MacroElement):
 
 
 def generate_map(trip: Trip, output_path: Path) -> Path:
-    if not trip.attractions:
+    if not trip.attractions and not trip.day_trips:
         raise ValueError("Trip has no attractions to map")
 
+    # Gather all locations for center calculation (attractions + day trip subs)
+    all_locs = list(trip.attractions)
+    for dt in trip.day_trips:
+        all_locs.extend(dt.sub_attractions)
+
     # Filter out coordinate outliers (e.g. 0,0) before computing center
-    valid = [a for a in trip.attractions if not (abs(a.location.lat) < 0.01 and abs(a.location.lng) < 0.01)]
+    valid = [a for a in all_locs if not (abs(a.location.lat) < 0.01 and abs(a.location.lng) < 0.01)]
     if not valid:
-        valid = trip.attractions
+        valid = all_locs
 
     # Use median-based filtering: exclude points > 2 degrees from median
     med_lat = statistics.median(a.location.lat for a in valid)
@@ -243,7 +248,29 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
             options=cluster_opts,
         )
 
-    for attraction in trip.attractions:
+    # Collect all mappable attractions: standalone + day trip sub-attractions
+    all_attractions: list[Attraction] = list(trip.attractions)
+    for dt in trip.day_trips:
+        for sub in dt.sub_attractions:
+            all_attractions.append(sub)
+        # Also add day trip itself as a virtual attraction (landmark pin at its location)
+        if dt.location and not (abs(dt.location.lat) < 0.01 and abs(dt.location.lng) < 0.01):
+            dt_as_attr = Attraction(
+                id=dt.id,
+                name=dt.name,
+                description=dt.description,
+                location=dt.location,
+                category=Category.DAY_TRIP,
+                price_eur=dt.total_price_eur,
+                duration_minutes=dt.total_duration_minutes,
+                tags=dt.tags,
+                tips=dt.tips,
+                expected_score=dt.expected_score,
+                user_score=dt.user_score,
+            )
+            all_attractions.append(dt_as_attr)
+
+    for attraction in all_attractions:
         info = get_category_info(attraction.category)
 
         popup_html = _popup_html(attraction)
@@ -263,7 +290,7 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
 
     # Grouping polygon overlays (rendered behind markers)
     grouping_fgs: list[tuple] = []  # (grouping, FeatureGroup) pairs for custom control
-    attr_by_id: dict[str, Attraction] = {a.id: a for a in trip.attractions}
+    attr_by_id: dict[str, Attraction] = {a.id: a for a in all_attractions}
     for grouping in trip.groupings:
         member_ids = _collect_grouping_member_ids(grouping, trip.groupings)
         coords = [
