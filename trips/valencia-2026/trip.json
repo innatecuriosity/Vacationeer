@@ -650,6 +650,1080 @@
       "url": null,
       "expected_score": null,
       "user_score": null
+    },
+    {
+      "id": "cute-cat",
+      "name": "cute cat",
+      "description": null,
+      "location": {
+        "lat": 39.452736,
+        "lng": -0.364522,
+        "address": null
+      },
+      "category": "landmark",
+      "price_eur": null,
+      "duration_minutes": null,
+      "tags": [],
+      "tips": null,
+      "url": null,
+      "expected_score": null,
+      "user_score": null
+    },
+    {
+      "id": "atenea-sky",
+      "name": "Atenea Sky Rooftop",
+      "description": "360-degree panoramic viewpoint from the 8th floor of the Ateneo Mercantil. Rooftop bar with Valencia's most romantic sunset views.",
+      "location": {
+        "lat": 39.47,
+        "lng": -0.3765,
+        "address": "Plaza del Ayuntamiento, 18 (bar entrance: C/ Moratin, 12)"
+      },
+      "category": "food",
+      "price_eur": 8.0,
+      "duration_minutes": 45,
+      "tags": [
+        "viewpoint",
+        "drinks",
+        "romantic",
+        "sunset"
+      ],
+      "tips": "Go around 7-7:30 PM in late March for golden hour. 8 EUR partially deductible from drinks. Cocktails 8-14 EUR.",
+      "url": "https://ateneasky.com/en/",
+      "expected_score": 8.0,
+      "user_score": null
+    },
+    {
+      "id": "blackbird-cafe",
+      "name": "Blackbird Cafe",
+      "description": "Specialty coffee with Valencia's best pastries. The brioche cinnamon bun alone is worth the visit. Second location in old town.",
+      "location": {
+        "lat": 39.4625,
+        "lng": -0.374,
+        "address": "Carrer de la Reina Na Maria, 7, Ruzafa"
+      },
+      "category": "food",
+      "price_eur": 7.0,
+      "duration_minutes": 30,
+      "tags": [
+        "coffee",
+        "pastry",
+        "ruzafa",
+        "food"
+      ],
+      "tips": "Also \"Little Blackbird\" at Carrer de les Danses, 2 (old town).",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "bluebell-coffee",
+      "name": "Bluebell Coffee Co.",
+      "description": "Ruzafa's pioneering specialty coffee roaster. Own-roasted beans, excellent brunch, homemade cakes. Cozy interior with charming patio.",
+      "location": {
+        "lat": 39.462,
+        "lng": -0.3745,
+        "address": "Carrer de Buenos Aires, 3, Ruzafa"
+      },
+      "category": "food",
+      "price_eur": 10.0,
+      "duration_minutes": 45,
+      "tags": [
+        "coffee",
+        "brunch",
+        "ruzafa",
+        "food"
+      ],
+      "tips": "3-5 EUR coffee, 8-14 EUR brunch.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "bodega-rentaora",
+      "name": "Bodega La Rentaora",
+      "description": "Old-school El Carmen tavern. Tiny wooden tables, cheap house wine, massive portions of authentic Valencian dishes. Time capsule.",
+      "location": {
+        "lat": 39.478,
+        "lng": -0.3795,
+        "address": "Placa de Mossen Sorell, 11"
+      },
+      "category": "food",
+      "price_eur": 12.0,
+      "duration_minutes": 45,
+      "tags": [
+        "food",
+        "tapas",
+        "budget",
+        "el-carmen",
+        "authentic"
+      ],
+      "tips": "8-15 EUR/person. Portions are huge — 2-3 tapas per person is plenty.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "cabanyal-progres",
+      "name": "Carrer del Progres — Cabanyal Tiles",
+      "description": "Densest concentration of colourful Art Nouveau ceramic tile facades. Each house different — blues, greens, yellows, florals. Open-air architectural museum.",
+      "location": {
+        "lat": 39.47,
+        "lng": -0.331,
+        "address": "Carrer del Progres, El Cabanyal"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 20,
+      "tags": [
+        "architecture",
+        "photogenic",
+        "free",
+        "cabanyal",
+        "neighbourhood"
+      ],
+      "tips": "Tiles weren't just decorative — they protected from corrosive sea air. Also walk Carrer de Sant Pere and Carrer de la Reina.",
+      "url": null,
+      "expected_score": 7.5,
+      "user_score": null
+    },
+    {
+      "id": "calle-colores",
+      "name": "Calle de los Colores",
+      "description": "Forgotten alley turned open-air gallery. One mural spans 60+ metres. The epicentre of El Carmen's street art scene.",
+      "location": {
+        "lat": 39.479,
+        "lng": -0.381,
+        "address": "Carrer de Moret, El Carmen"
+      },
+      "category": "museum",
+      "price_eur": 0.0,
+      "duration_minutes": 10,
+      "tags": [
+        "street-art",
+        "free",
+        "el-carmen"
+      ],
+      "tips": "Best in morning light.",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "casa-fran",
+      "name": "Casa Fran",
+      "description": "Beautifully designed specialty coffee shop near Central Market. Top Danish roaster beans. One of Valencia's most photogenic cafes.",
+      "location": {
+        "lat": 39.4735,
+        "lng": -0.3815,
+        "address": "C/ Virgen de la Misericordia, 4"
+      },
+      "category": "food",
+      "price_eur": 8.0,
+      "duration_minutes": 40,
+      "tags": [
+        "coffee",
+        "brunch",
+        "food",
+        "photogenic"
+      ],
+      "tips": "3-5 EUR coffee, 8-12 EUR breakfast.",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "casa-gargoles",
+      "name": "Casa de les Gargoles",
+      "description": "1917 house with gargoyles, blue/white/green tiles, columns, and floral borders. Extraordinary decorative ambition on a modest fisherman's house.",
+      "location": {
+        "lat": 39.4695,
+        "lng": -0.3305,
+        "address": "Carrer del Progres, El Cabanyal"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 5,
+      "tags": [
+        "architecture",
+        "photogenic",
+        "free",
+        "cabanyal"
+      ],
+      "tips": null,
+      "url": null,
+      "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "casa-judia",
+      "name": "La Casa Judia (The Jewish House)",
+      "description": "1930 Modernista building blending Arabic, Egyptian, and Hebrew decorative styles on one facade. Star of David at the entrance. Most people miss it.",
+      "location": {
+        "lat": 39.4625,
+        "lng": -0.3715,
+        "address": "Calle Sueca area, Ruzafa"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 5,
+      "tags": [
+        "architecture",
+        "hidden-gem",
+        "free",
+        "ruzafa"
+      ],
+      "tips": "Exterior only (private building).",
+      "url": null,
+      "expected_score": 5.5,
+      "user_score": null
+    },
+    {
+      "id": "casa-montana",
+      "name": "Casa Montana",
+      "description": "Historic bodega since 1836 with original wooden wine barrels. Exceptional wine selection, refined tapas. Most atmospheric tapas spot in Valencia.",
+      "location": {
+        "lat": 39.4685,
+        "lng": -0.3305,
+        "address": "C/ de Josep Benlliure, 69, Cabanyal"
+      },
+      "category": "food",
+      "price_eur": 16.0,
+      "duration_minutes": 60,
+      "tags": [
+        "food",
+        "tapas",
+        "wine",
+        "cabanyal",
+        "authentic"
+      ],
+      "tips": "Nearly 200 years old. Pair with a Cabanyal neighbourhood walk. 12-20 EUR/person.",
+      "url": null,
+      "expected_score": 8.0,
+      "user_score": null
+    },
+    {
+      "id": "casa-vani",
+      "name": "Casa Vani",
+      "description": "Michelin Bib Gourmand tapas bar in El Carmen. Award-winning quality at neighbourhood prices. Tiny — reservations needed.",
+      "location": {
+        "lat": 39.4768,
+        "lng": -0.38,
+        "address": "C/ dels Cavallers, 30"
+      },
+      "category": "food",
+      "price_eur": 14.0,
+      "duration_minutes": 60,
+      "tags": [
+        "food",
+        "tapas",
+        "el-carmen",
+        "quality"
+      ],
+      "tips": "10-18 EUR/person. Book for dinner — very small.",
+      "url": null,
+      "expected_score": 7.5,
+      "user_score": null
+    },
+    {
+      "id": "cccc-cloisters",
+      "name": "Centre del Carme Cloisters",
+      "description": "700-year-old Gothic and Renaissance cloisters in a converted Carmelite convent. Peaceful orange tree courtyards alongside free contemporary art exhibitions.",
+      "location": {
+        "lat": 39.4788,
+        "lng": -0.3818,
+        "address": "Carrer del Museu, 2"
+      },
+      "category": "museum",
+      "price_eur": 0.0,
+      "duration_minutes": 30,
+      "tags": [
+        "hidden-gem",
+        "architecture",
+        "art",
+        "free"
+      ],
+      "tips": "Always free. Go for the medieval cloisters, stay for the art.",
+      "url": "https://www.consorcimuseus.gva.es/centro-del-carmen/",
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "dos-aguas-courtyard",
+      "name": "Palacio de Dos Aguas (Courtyards)",
+      "description": "Rococo palace courtyards with marble fountains and terracotta figures. Most tourists miss these entirely. Also houses the Ceramics Museum.",
+      "location": {
+        "lat": 39.471,
+        "lng": -0.374,
+        "address": "Carrer del Poeta Querol, 2"
+      },
+      "category": "museum",
+      "price_eur": 3.0,
+      "duration_minutes": 45,
+      "tags": [
+        "hidden-gem",
+        "architecture",
+        "museum",
+        "free-sundays"
+      ],
+      "tips": "Free Saturday afternoons and Sundays. The facade alone is worth seeing from outside.",
+      "url": "https://www.cultura.gob.es/mnceramica/en/home.html",
+      "expected_score": 7.5,
+      "user_score": null
+    },
+    {
+      "id": "espai-verd",
+      "name": "Espai Verd",
+      "description": "1986 brutalist residential building where every balcony overflows with vegetation. A vertical garden decades before the concept was trendy.",
+      "location": {
+        "lat": 39.49,
+        "lng": -0.362,
+        "address": "Carrer del Music Hipolit Martinez, 16, Benimaclet"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 15,
+      "tags": [
+        "architecture",
+        "hidden-gem",
+        "free",
+        "off-the-beaten-path"
+      ],
+      "tips": "Exterior only (private residence). 10-min tram ride to Benimaclet. Combine with Benimaclet neighbourhood walk.",
+      "url": null,
+      "expected_score": 5.5,
+      "user_score": null
+    },
+    {
+      "id": "forn-del-tossal",
+      "name": "Forn del Tossal",
+      "description": "Historic bakery since 1795 on Plaza del Tossal. Traditional Valencian bread and pastries. 225+ years of continuous operation.",
+      "location": {
+        "lat": 39.4755,
+        "lng": -0.3805,
+        "address": "Placa del Tossal, 6"
+      },
+      "category": "food",
+      "price_eur": 3.0,
+      "duration_minutes": 15,
+      "tags": [
+        "food",
+        "pastry",
+        "el-carmen",
+        "traditional"
+      ],
+      "tips": "1-4 EUR per item. Perfect morning stop before exploring El Carmen street art.",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "gnomo-shop",
+      "name": "GNOMO Design Shop",
+      "description": "Design shop with a Wes-Anderson-worthy colourful 1980s facade. Curated postcards, stationery, ceramics. Perfect for unique souvenirs.",
+      "location": {
+        "lat": 39.463,
+        "lng": -0.37,
+        "address": "Calle de Cuba, 32, Ruzafa"
+      },
+      "category": "shopping",
+      "price_eur": 0.0,
+      "duration_minutes": 15,
+      "tags": [
+        "shopping",
+        "photogenic",
+        "ruzafa"
+      ],
+      "tips": "Free to browse. The facade is Instagram-worthy.",
+      "url": null,
+      "expected_score": 5.5,
+      "user_score": null
+    },
+    {
+      "id": "heladeria-llinares",
+      "name": "Heladeria Llinares",
+      "description": "Traditional Valencian ice cream since 1930, facing the Cathedral. Try leche merengada — uniquely Valencian frozen cinnamon-lemon drink.",
+      "location": {
+        "lat": 39.4745,
+        "lng": -0.3762,
+        "address": "Plaza de la Reina, 6"
+      },
+      "category": "food",
+      "price_eur": 4.0,
+      "duration_minutes": 15,
+      "tags": [
+        "food",
+        "dessert",
+        "old-town",
+        "traditional"
+      ],
+      "tips": "3-5 EUR for 2 scoops. Almost 100 years old.",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "heladeria-veneta",
+      "name": "Heladeria Veneta",
+      "description": "Ranked top 3 in the world at the Gelato Festival World Masters. Italian-owned, multiple international awards. Dutch chocolate is legendary.",
+      "location": {
+        "lat": 39.474,
+        "lng": -0.377,
+        "address": "Calle Bordadores, 8"
+      },
+      "category": "food",
+      "price_eur": 4.0,
+      "duration_minutes": 15,
+      "tags": [
+        "food",
+        "dessert",
+        "old-town"
+      ],
+      "tips": "3-5 EUR for 2 scoops. Best Ice Cream in Spain (2013, 2015), Best in Europe (2019).",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "horchateria-daniel",
+      "name": "Horchateria Daniel",
+      "description": "Artisan horchata since 1949 in Alboraya — where tiger nuts actually grow. Third generation. Salvador Dali was a visitor. The real deal.",
+      "location": {
+        "lat": 39.497,
+        "lng": -0.354,
+        "address": "Avenida de la Orxata, 41, Alboraya"
+      },
+      "category": "food",
+      "price_eur": 5.0,
+      "duration_minutes": 25,
+      "tags": [
+        "food",
+        "traditional",
+        "off-the-beaten-path",
+        "must-try"
+      ],
+      "tips": "Take tram Line 3/9 to Alboraya-Peris Arago (~15 min). Panach across the street is the main rival — try both.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "horchateria-santa-catalina",
+      "name": "Horchateria de Santa Catalina",
+      "description": "Valencia's most iconic horchateria since 1830. Creamy chufa horchata with fartons. Steps from the Cathedral. Also churros con chocolate.",
+      "location": {
+        "lat": 39.4741,
+        "lng": -0.3771,
+        "address": "Placa de Santa Catalina, 6"
+      },
+      "category": "food",
+      "price_eur": 5.0,
+      "duration_minutes": 20,
+      "tags": [
+        "food",
+        "traditional",
+        "old-town",
+        "must-try"
+      ],
+      "tips": "~5 EUR for horchata + fartons combo. Open daily 8:30-21:30.",
+      "url": null,
+      "expected_score": 7.5,
+      "user_score": null
+    },
+    {
+      "id": "jardin-hesperides",
+      "name": "Jardin de las Hesperides",
+      "description": "Small mythological garden with citrus trees, classical sculptures, and irrigation canals. Greek legends meet Valencian orange heritage.",
+      "location": {
+        "lat": 39.472,
+        "lng": -0.387,
+        "address": "Carrer del Beat Gaspar Bono, s/n"
+      },
+      "category": "nature",
+      "price_eur": 0.0,
+      "duration_minutes": 20,
+      "tags": [
+        "nature",
+        "hidden-gem",
+        "free"
+      ],
+      "tips": "Tiny, literary, almost unknown to tourists. Near the Botanical Garden.",
+      "url": null,
+      "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "jardin-monforte",
+      "name": "Jardin de Monforte",
+      "description": "Hidden neoclassical garden with marble statues, fountains, and rose gardens behind high walls. One of the loveliest small gardens in Spain — almost always empty.",
+      "location": {
+        "lat": 39.4795,
+        "lng": -0.3665,
+        "address": "C/ Antonio Suarez, 7"
+      },
+      "category": "nature",
+      "price_eur": 0.0,
+      "duration_minutes": 30,
+      "tags": [
+        "nature",
+        "hidden-gem",
+        "romantic",
+        "free"
+      ],
+      "tips": "Almost empty on weekday mornings. Time feels suspended.",
+      "url": null,
+      "expected_score": 7.5,
+      "user_score": null
+    },
+    {
+      "id": "jardin-polifilo",
+      "name": "Jardin de Polifilo",
+      "description": "40,000 m² garden inspired by a 1499 Renaissance novel. Rose island, decorative ponds, literary zones. Almost unknown — you'll likely have it to yourselves.",
+      "location": {
+        "lat": 39.494,
+        "lng": -0.386,
+        "address": "Near Palacio de Congresos, north of Turia"
+      },
+      "category": "nature",
+      "price_eur": 0.0,
+      "duration_minutes": 30,
+      "tags": [
+        "nature",
+        "hidden-gem",
+        "free",
+        "off-the-beaten-path"
+      ],
+      "tips": "3 km from centre, worth it if in the area. Spring/summer 9:00-21:00.",
+      "url": null,
+      "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "la-pilareta",
+      "name": "La Pilareta (Bar Pilar)",
+      "description": "Iconic tapas bar since 1917. Famous for clochinas al vapor. Chaotic, loud, 100+ years old, still packed with locals.",
+      "location": {
+        "lat": 39.4745,
+        "lng": -0.3778,
+        "address": "Carrer del Moro Zeit, 13"
+      },
+      "category": "food",
+      "price_eur": 10.0,
+      "duration_minutes": 40,
+      "tags": [
+        "food",
+        "tapas",
+        "budget",
+        "old-town",
+        "authentic"
+      ],
+      "tips": "Clochinas in season May-Aug but great year-round tapas. 6-12 EUR/person.",
+      "url": null,
+      "expected_score": 7.5,
+      "user_score": null
+    },
+    {
+      "id": "lope-de-rueda",
+      "name": "Carrer de Lope de Rueda & Pineda",
+      "description": "El Carmen's most photogenic streets. Narrow lanes with galleries, vintage shops, street art, coloured facades, and hanging plants. Village feeling inside a city.",
+      "location": {
+        "lat": 39.4775,
+        "lng": -0.38,
+        "address": "Between Plaza del Tossal and Torres de Serranos"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 15,
+      "tags": [
+        "photogenic",
+        "free",
+        "el-carmen",
+        "walking"
+      ],
+      "tips": null,
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "marina-beach-club",
+      "name": "Marina Beach Club",
+      "description": "Year-round beachfront lounge at the marina. Pool, DJ sets, cocktails, Mediterranean vibes. Open from 17:30 even in March.",
+      "location": {
+        "lat": 39.459,
+        "lng": -0.326,
+        "address": "Carrer del Marina Real Juan Carlos I, 19"
+      },
+      "category": "food",
+      "price_eur": 12.0,
+      "duration_minutes": 90,
+      "tags": [
+        "drinks",
+        "sunset",
+        "waterfront",
+        "nightlife"
+      ],
+      "tips": "Book ahead for Friday/Saturday. Cocktails 10-14 EUR.",
+      "url": "https://marinabeachclub.com/en/home/",
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "marina-valencia",
+      "name": "Marina Real Juan Carlos I",
+      "description": "Modern waterfront with harbour views, mega-yachts, restaurants, and the Veles e Vents building. Great for evening strolls and sunset drinks.",
+      "location": {
+        "lat": 39.4622,
+        "lng": -0.3266,
+        "address": "Marina Real Juan Carlos I"
+      },
+      "category": "food",
+      "price_eur": 0.0,
+      "duration_minutes": 45,
+      "tags": [
+        "waterfront",
+        "free",
+        "sunset",
+        "drinks",
+        "walking"
+      ],
+      "tips": "Marina Beach Club open year-round (from 17:30 in March) — closest thing to a chiringuito in winter.",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "masusa-paella",
+      "name": "Masusa Paella Bar",
+      "description": "Unfussy Ruzafa corner restaurant with laser focus on paella. Deeply flavorsome, genuinely local, very reasonable prices.",
+      "location": {
+        "lat": 39.461,
+        "lng": -0.3745,
+        "address": "Carrer del Literat Azorin, 17, Ruzafa"
+      },
+      "category": "food",
+      "price_eur": 15.0,
+      "duration_minutes": 75,
+      "tags": [
+        "food",
+        "paella",
+        "ruzafa",
+        "budget"
+      ],
+      "tips": "12-18 EUR/person. No pretense, just excellent rice. Lunch.",
+      "url": null,
+      "expected_score": 7.5,
+      "user_score": null
+    },
+    {
+      "id": "na-jordana-deih",
+      "name": "Deih Murals — Carrer de Na Jordana",
+      "description": "Building-scale surreal murals by Valencian artist Deih. Futuristic, cosmic, human-alien landscapes. Internationally recognised art on his home turf.",
+      "location": {
+        "lat": 39.4785,
+        "lng": -0.379,
+        "address": "Carrer de Na Jordana, El Carmen"
+      },
+      "category": "museum",
+      "price_eur": 0.0,
+      "duration_minutes": 10,
+      "tags": [
+        "street-art",
+        "free",
+        "el-carmen"
+      ],
+      "tips": null,
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "olhops",
+      "name": "Olhops Craft Beer",
+      "description": "Ruzafa taproom with 20+ rotating taps. Tasting flights available. Casual, walk-in, great for craft beer lovers.",
+      "location": {
+        "lat": 39.4625,
+        "lng": -0.373,
+        "address": "Ruzafa"
+      },
+      "category": "food",
+      "price_eur": 8.0,
+      "duration_minutes": 45,
+      "tags": [
+        "drinks",
+        "ruzafa",
+        "beer"
+      ],
+      "tips": "3-5 EUR/beer, tasting flight ~12-15 EUR. No booking needed.",
+      "url": null,
+      "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "palacio-cervello",
+      "name": "Palacio de Cervello",
+      "description": "18th-century palace with original frescoes, period furniture. Napoleon stayed here. Free guided tours — even most locals don't know about it.",
+      "location": {
+        "lat": 39.4735,
+        "lng": -0.371,
+        "address": "Plaza de Tetuan, s/n"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 45,
+      "tags": [
+        "hidden-gem",
+        "history",
+        "free",
+        "architecture"
+      ],
+      "tips": "Free guided tours — check schedule, book ahead. Houses the Municipal Archive.",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "pichiavo-ruzafa",
+      "name": "PichiAvo Bacchus Mural",
+      "description": "Massive mural fusing classical Greek mythology with graffiti wildstyle lettering. By Valencian duo PichiAvo in their home neighbourhood.",
+      "location": {
+        "lat": 39.462,
+        "lng": -0.374,
+        "address": "Plaza de Doctor Landete, Ruzafa"
+      },
+      "category": "museum",
+      "price_eur": 0.0,
+      "duration_minutes": 5,
+      "tags": [
+        "street-art",
+        "free",
+        "ruzafa"
+      ],
+      "tips": "PichiAvo exhibit internationally but this is their home turf.",
+      "url": null,
+      "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "playa-malvarrosa",
+      "name": "Playa de la Malvarrosa",
+      "description": "Valencia's iconic 1.8 km city beach. Palm-lined promenade, beachfront restaurants, and the stretch that inspired painter Sorolla.",
+      "location": {
+        "lat": 39.4783,
+        "lng": -0.323,
+        "address": "Paseo Maritimo, 46011"
+      },
+      "category": "nature",
+      "price_eur": 0.0,
+      "duration_minutes": 60,
+      "tags": [
+        "beach",
+        "free",
+        "walking"
+      ],
+      "tips": "Casa Carmela nearby for legendary traditional paella (book ahead).",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "playa-patacona",
+      "name": "Playa de la Patacona",
+      "description": "Locals' favourite beach, quieter than Malvarrosa. Beachfront restaurants in converted traditional houses. Best for a peaceful sunset walk.",
+      "location": {
+        "lat": 39.4878,
+        "lng": -0.3215,
+        "address": "Passeig de la Patacona, Alboraya"
+      },
+      "category": "nature",
+      "price_eur": 0.0,
+      "duration_minutes": 60,
+      "tags": [
+        "beach",
+        "free",
+        "sunset",
+        "romantic",
+        "walking"
+      ],
+      "tips": "La Mas Bonita Patacona is the standout beachfront restaurant. Combine with horchata in Alboraya.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "plaza-tossal-art",
+      "name": "Plaza del Tossal Street Art",
+      "description": "Crossroads of Valencia's urban art scene. Murals by Escif and Blu. Surrounding streets dense with pieces in every direction.",
+      "location": {
+        "lat": 39.4761,
+        "lng": -0.3803,
+        "address": "Plaza del Tossal, El Carmen"
+      },
+      "category": "museum",
+      "price_eur": 0.0,
+      "duration_minutes": 15,
+      "tags": [
+        "street-art",
+        "free",
+        "el-carmen"
+      ],
+      "tips": "Walk Carrer de Dalt, Carrer de Baix, Carrer de Lliria for densest murals.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "pont-assut-or",
+      "name": "Pont de l'Assut de l'Or (The Harp)",
+      "description": "Calatrava's dramatic white cable-stayed bridge. 125m pylon is the highest point in Valencia. Best viewed from below with water reflections.",
+      "location": {
+        "lat": 39.4548,
+        "lng": -0.3497,
+        "address": "City of Arts and Sciences, eastern Turia"
+      },
+      "category": "museum",
+      "price_eur": 0.0,
+      "duration_minutes": 10,
+      "tags": [
+        "architecture",
+        "photogenic",
+        "free",
+        "city-of-arts"
+      ],
+      "tips": "Best at night when illuminated. Reflections in Agora pools are stunning.",
+      "url": null,
+      "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "port-saplaya",
+      "name": "Port Saplaya (Little Venice)",
+      "description": "Colourful rainbow buildings along artificial canals with moored boats. Reminiscent of Venice and Burano. Genuinely photogenic and unique.",
+      "location": {
+        "lat": 39.4965,
+        "lng": -0.3155,
+        "address": "Port Saplaya, Alboraya"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 45,
+      "tags": [
+        "photogenic",
+        "hidden-gem",
+        "free",
+        "off-the-beaten-path",
+        "neighbourhood"
+      ],
+      "tips": "~8 km from centre. Bus L112A/L112B (40-60 min, 1.50 EUR) or taxi ~15 EUR. Restaurante Mosquetero has Menu del Dia ~16 EUR with views.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "portal-valldigna",
+      "name": "Portal de Valldigna",
+      "description": "1400 stone gateway in the 11th-century Moorish wall. Literally stepping through a door between two civilisations. Morning light through the arch is stunning.",
+      "location": {
+        "lat": 39.478,
+        "lng": -0.3785,
+        "address": "Carrer del Portal de Valldigna / Carrer de Salines"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 10,
+      "tags": [
+        "history",
+        "photogenic",
+        "free",
+        "el-carmen"
+      ],
+      "tips": "Morning light is best for photos.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "puente-del-mar",
+      "name": "Puente del Mar",
+      "description": "1592 Renaissance stone bridge with saint pavilions on the balustrades. Oldest and most beautiful bridge in Valencia. Glows warm at sunset.",
+      "location": {
+        "lat": 39.4703,
+        "lng": -0.3637,
+        "address": "Connects Paseo de la Alameda to Plaza America"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 10,
+      "tags": [
+        "history",
+        "photogenic",
+        "free",
+        "bridge"
+      ],
+      "tips": "Evening light is best.",
+      "url": null,
+      "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "puente-flores",
+      "name": "Puente de las Flores",
+      "description": "Pedestrian bridge lined with 27,000 flowerpots. Late March spring plantings should be vibrant. Most photogenic bridge crossing in Valencia.",
+      "location": {
+        "lat": 39.4711,
+        "lng": -0.3643,
+        "address": "Crosses Turia between old town and Gran Via"
+      },
+      "category": "nature",
+      "price_eur": 0.0,
+      "duration_minutes": 10,
+      "tags": [
+        "photogenic",
+        "free",
+        "nature",
+        "bridge"
+      ],
+      "tips": "Spring blooms at their best in late March.",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "restaurante-levante",
+      "name": "Restaurante Levante",
+      "description": "Widely considered best traditional paella in Valencia city. Wood-fired, chicken, rabbit, local beans. Off the tourist path — where locals go.",
+      "location": {
+        "lat": 39.481,
+        "lng": -0.397,
+        "address": "Av. de Manuel de Falla, 12, Campanar"
+      },
+      "category": "food",
+      "price_eur": 20.0,
+      "duration_minutes": 90,
+      "tags": [
+        "food",
+        "paella",
+        "authentic",
+        "must-try"
+      ],
+      "tips": "Book a few days ahead. Lunch only (paella is a lunch dish). 15-25 EUR/person.",
+      "url": null,
+      "expected_score": 8.5,
+      "user_score": null
+    },
+    {
+      "id": "tallat-coffee",
+      "name": "Tallat Coffee Roasters",
+      "description": "Specialty coffee heaven near the beach. Extreme precision roasting — the nerd's choice. Combine with a Cabanyal walk.",
+      "location": {
+        "lat": 39.465,
+        "lng": -0.334,
+        "address": "C/ de la Barraca, 25, Cabanyal"
+      },
+      "category": "food",
+      "price_eur": 4.0,
+      "duration_minutes": 20,
+      "tags": [
+        "coffee",
+        "cabanyal",
+        "food"
+      ],
+      "tips": "3-5 EUR coffee.",
+      "url": null,
+      "expected_score": 6.0,
+      "user_score": null
+    },
+    {
+      "id": "tasca-angel",
+      "name": "Tasca Angel",
+      "description": "Traditional Valencian tapas since 1946. Nothing over 7 EUR. Legendary fried sardines. True hole-in-the-wall behind the Silk Exchange.",
+      "location": {
+        "lat": 39.4735,
+        "lng": -0.3795,
+        "address": "Carrer de la Purisima, 1"
+      },
+      "category": "food",
+      "price_eur": 10.0,
+      "duration_minutes": 45,
+      "tags": [
+        "food",
+        "tapas",
+        "budget",
+        "old-town",
+        "authentic"
+      ],
+      "tips": "5-12 EUR per person. Packed with regulars — arrive early or late.",
+      "url": null,
+      "expected_score": 8.0,
+      "user_score": null
+    },
+    {
+      "id": "terraza-270",
+      "name": "Terraza 270",
+      "description": "Stylish rooftop terrace at Barcelo Valencia Hotel. Best views of the City of Arts and Sciences at sunset. Cocktails 10-15 EUR.",
+      "location": {
+        "lat": 39.457,
+        "lng": -0.3545,
+        "address": "Av. de Franca, 11 (Barcelo Valencia Hotel)"
+      },
+      "category": "food",
+      "price_eur": 12.0,
+      "duration_minutes": 60,
+      "tags": [
+        "drinks",
+        "sunset",
+        "romantic",
+        "rooftop"
+      ],
+      "tips": "Perfect after an afternoon at the City of Arts and Sciences.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "ubik-cafe",
+      "name": "Ubik Cafe",
+      "description": "Cafe-bookshop-gallery-music venue that helped spark Ruzafa's creative transformation. Unpretentious, slightly bohemian cultural heart.",
+      "location": {
+        "lat": 39.463,
+        "lng": -0.372,
+        "address": "Carrer del Literat Azorin, 13"
+      },
+      "category": "food",
+      "price_eur": 4.0,
+      "duration_minutes": 30,
+      "tags": [
+        "cafe",
+        "culture",
+        "ruzafa",
+        "neighbourhood"
+      ],
+      "tips": "Free entry. Creative, unpretentious atmosphere.",
+      "url": null,
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "veles-e-vents",
+      "name": "Veles e Vents Building",
+      "description": "Iconic modernist building with floating terraces overlooking the marina and Mediterranean. One of the best free sunset spots in Valencia.",
+      "location": {
+        "lat": 39.458,
+        "lng": -0.326,
+        "address": "Marina de Valencia"
+      },
+      "category": "landmark",
+      "price_eur": 0.0,
+      "duration_minutes": 30,
+      "tags": [
+        "viewpoint",
+        "architecture",
+        "free",
+        "sunset"
+      ],
+      "tips": "Nobody recommends this in tourist guides. Great sunset spot. Varadero bar inside for drinks.",
+      "url": null,
+      "expected_score": 7.0,
+      "user_score": null
     }
   ],
   "day_trips": [
@@ -657,17 +1731,17 @@
       "id": "sagunto-day-trip",
       "name": "Sagunto Day Trip",
       "destination": "Sagunto",
-      "description": "Roman theatre, hilltop castle with panoramic views, Jewish quarter — 30 min by train from Valencia",
+      "description": "2,500 years of layered history — Roman theatre (Spain's first National Monument), 1 km hilltop castle spanning seven civilisations, Jewish quarter. All attractions free.",
       "location": {
         "lat": 39.68,
         "lng": -0.265,
-        "address": "Sagunto, Valencia province"
+        "address": "Sagunto, 27 km north of Valencia"
       },
       "sub_attractions": [
         {
           "id": "sagunto-roman-theatre",
           "name": "Roman Theatre (Teatro Romano)",
-          "description": "1st-century AD theatre carved into hillside, seats 4,000. Spain's first National Monument (1896)",
+          "description": "1st-century AD Roman theatre carved into hillside. Spain's first National Monument. 4,000-seat capacity. Panoramic views over town and coastal plain.",
           "location": {
             "lat": 39.681,
             "lng": -0.264,
@@ -680,19 +1754,19 @@
             "free",
             "roman-ruins"
           ],
-          "tips": null,
+          "tips": "Free. Tue-Sat 10:00-18:00, Sun 10:00-14:00. Closed Mon.",
           "url": null,
-          "expected_score": null,
+          "expected_score": 8.0,
           "user_score": null
         },
         {
           "id": "sagunto-castle",
           "name": "Sagunto Castle",
-          "description": "Nearly 1 km hilltop fortress spanning 2,000+ years — Iberian, Roman, Moorish, and medieval layers",
+          "description": "1 km fortress along a hilltop ridge with seven sections spanning 2,500 years. Roman Forum remains, Moorish walls, panoramic 360° views of sea, mountains, and orange groves.",
           "location": {
-            "lat": 39.682,
-            "lng": -0.263,
-            "address": "Castillo de Sagunto"
+            "lat": 39.683,
+            "lng": -0.266,
+            "address": "Hilltop above Sagunto old town"
           },
           "category": "landmark",
           "price_eur": 0.0,
@@ -701,9 +1775,9 @@
             "free",
             "panoramic-views"
           ],
-          "tips": null,
+          "tips": "Free. 15-20 min steep climb. Bring water. Best views in the region.",
           "url": null,
-          "expected_score": null,
+          "expected_score": 8.5,
           "user_score": null
         },
         {
@@ -725,6 +1799,42 @@
           "tips": null,
           "url": null,
           "expected_score": null,
+          "user_score": null
+        },
+        {
+          "id": "sagunto-juderia",
+          "name": "Sagunto Jewish Quarter",
+          "description": "Compact maze of narrow medieval streets with whitewashed houses and ogival arches. One of the best-preserved Jewish quarters in the Valencia region.",
+          "location": {
+            "lat": 39.679,
+            "lng": -0.265,
+            "address": "Calle del Castillo / Portalet de la Juderia, Sagunto"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 25,
+          "tags": [],
+          "tips": "Free. Enter through the Portalet de la Juderia on Calle del Castillo.",
+          "url": null,
+          "expected_score": 6.5,
+          "user_score": null
+        },
+        {
+          "id": "sagunto-temple-diana",
+          "name": "Temple of Diana Remains",
+          "description": "5th-4th century BC Iberian/Roman temple wall — one of the oldest standing structures in the Valencian Community. Survived Hannibal's 219 BC siege.",
+          "location": {
+            "lat": 39.6785,
+            "lng": -0.2645,
+            "address": "Plaza Mayor, Sagunto"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 10,
+          "tags": [],
+          "tips": "Free. Visible from the street, next to Church of Santa Maria.",
+          "url": null,
+          "expected_score": 5.5,
           "user_score": null
         }
       ],
@@ -750,36 +1860,36 @@
         "booking_reference": null,
         "notes": "Last train ~22:00"
       },
-      "total_price_eur": 7.4,
-      "total_duration_minutes": 360,
+      "total_price_eur": 32.0,
+      "total_duration_minutes": 390,
       "tags": [
         "history",
         "roman-ruins",
         "free-attractions"
       ],
-      "tips": "Best value day trip — castle and theatre are free. Closed Mondays",
-      "expected_score": 8.0,
+      "tips": "All attractions free. Don't visit Monday (closed). Train 30 min, ~3.50 EUR each way.",
+      "expected_score": 8.5,
       "user_score": null
     },
     {
       "id": "albufera-day-trip",
       "name": "Albufera + El Palmar Day Trip",
-      "destination": "Albufera / El Palmar",
-      "description": "Freshwater lagoon nature park and birthplace of paella — sunset boat rides through rice paddies",
+      "destination": "Albufera Natural Park",
+      "description": "Spain's largest freshwater lagoon surrounded by rice paddies. Birthplace of paella. 300+ bird species. Sunset boat rides and authentic paella in El Palmar village.",
       "location": {
         "lat": 39.333,
-        "lng": -0.353,
-        "address": "Parc Natural de l'Albufera"
+        "lng": -0.35,
+        "address": "El Palmar, 15 km south of Valencia"
       },
       "sub_attractions": [
         {
           "id": "albufera-boat-ride",
-          "name": "Albufera Sunset Boat Ride",
-          "description": "Traditional wooden boat ride through the lagoon and rice paddies at sunset",
+          "name": "Albufera Boat Ride",
+          "description": "45-min ride on traditional wooden boats through reed channels and the open lagoon. Sunset turns the water to gold and red. The #1 sunset experience near Valencia.",
           "location": {
-            "lat": 39.334,
+            "lat": 39.327,
             "lng": -0.352,
-            "address": "Embarcadero Albufera"
+            "address": "Jetties in El Palmar village"
           },
           "category": "nature",
           "price_eur": 5.0,
@@ -788,9 +1898,9 @@
             "sunset",
             "highlight"
           ],
-          "tips": null,
-          "url": null,
-          "expected_score": null,
+          "tips": "5 EUR shared, 6 EUR sunset (Albumar.es). Arrive 30 min before sunset for best light.",
+          "url": "https://albumar.es/?lang=en",
+          "expected_score": 9.0,
           "user_score": null
         },
         {
@@ -834,6 +1944,60 @@
           "url": null,
           "expected_score": null,
           "user_score": null
+        },
+        {
+          "id": "el-palmar-village",
+          "name": "El Palmar Village",
+          "description": "Tiny fishing village — birthplace of paella. Traditional barracas, atmospheric jetties, 20+ rice restaurants. Ground zero for authentic Valencian paella.",
+          "location": {
+            "lat": 39.3265,
+            "lng": -0.3515,
+            "address": "El Palmar, Albufera"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 30,
+          "tags": [],
+          "tips": "Arroceria Maribel (Michelin Bib Gourmand) and Bon Aire (international paella winner) are the best. Menu del dia ~18 EUR weekdays.",
+          "url": null,
+          "expected_score": 7.0,
+          "user_score": null
+        },
+        {
+          "id": "raco-olla",
+          "name": "Raco de l'Olla Visitor Centre",
+          "description": "Free interpretation centre with birdwatching hides and exhibits on Albufera's ecology. Late March is excellent for wading birds, flamingos, and glossy ibis.",
+          "location": {
+            "lat": 39.358,
+            "lng": -0.34,
+            "address": "Between Valencia and El Palmar (bus 24/25 stop nearby)"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 60,
+          "tags": [],
+          "tips": "Free. Mon-Sun 9:00-14:00. Bring binoculars. Up to 100 species on a good March day.",
+          "url": null,
+          "expected_score": 6.5,
+          "user_score": null
+        },
+        {
+          "id": "la-devesa",
+          "name": "La Devesa (Dehesa del Saler)",
+          "description": "Wild dune beaches, pine forests, and Mediterranean scrub on the sandbar between the lagoon and sea. 6 walking trails. Valencia's only virgin beach.",
+          "location": {
+            "lat": 39.368,
+            "lng": -0.323,
+            "address": "Between El Saler and El Palmar"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 60,
+          "tags": [],
+          "tips": "Free. The 4 km Scenic Trail is the most rewarding. Flat and accessible.",
+          "url": null,
+          "expected_score": 7.0,
+          "user_score": null
         }
       ],
       "outbound": {
@@ -858,37 +2022,37 @@
         "booking_reference": null,
         "notes": "Check last bus time — can be early"
       },
-      "total_price_eur": 23.0,
-      "total_duration_minutes": 300,
+      "total_price_eur": 55.0,
+      "total_duration_minutes": 480,
       "tags": [
         "nature",
         "paella",
         "sunset",
         "birdwatching"
       ],
-      "tips": "Eat authentic paella in El Palmar. Sunset boat ride is the highlight",
-      "expected_score": 8.5,
+      "tips": "Bus #24 from Porta de la Mar (1.50 EUR, 50 min). Boat ride 5 EUR/pp. Go afternoon for sunset. Paella is a lunch dish.",
+      "expected_score": 9.0,
       "user_score": null
     },
     {
       "id": "xativa-day-trip",
       "name": "Xativa Day Trip",
       "destination": "Xativa",
-      "description": "Impressive hilltop castle, Borgia family history, medieval old town — 50 min by train",
+      "description": "Double castle on a mountain ridge, birthplace of the Borgia popes. Fine Arts Museum with the famous upside-down Philip V portrait. Town of 1,000 fountains.",
       "location": {
-        "lat": 38.99,
-        "lng": -0.5185,
-        "address": "Xativa, Valencia province"
+        "lat": 39.522,
+        "lng": -0.518,
+        "address": "Xativa, 60 km southwest of Valencia"
       },
       "sub_attractions": [
         {
           "id": "xativa-castle",
-          "name": "Xativa Castle",
-          "description": "Double-walled hilltop fortress with spectacular views — one of the best castles in the Valencia region",
+          "name": "Castell de Xativa",
+          "description": "Double castle on a mountain ridge — Castell Menor (Iberian/Roman) and Castell Major (Gothic/medieval). Prison cells, chapels, and sweeping views over the Costera valley.",
           "location": {
-            "lat": 38.992,
-            "lng": -0.52,
-            "address": "Castillo de Xativa"
+            "lat": 39.526,
+            "lng": -0.522,
+            "address": "Hilltop above Xativa"
           },
           "category": "landmark",
           "price_eur": 6.0,
@@ -897,31 +2061,67 @@
             "panoramic-views",
             "highlight"
           ],
-          "tips": null,
-          "url": null,
-          "expected_score": null,
+          "tips": "6 EUR combined ticket includes both museums. Book online — capacity limited. 25-30 min steep climb, do first when fresh.",
+          "url": "https://xativaturismo.com/en/ticket-castle/",
+          "expected_score": 9.0,
           "user_score": null
         },
         {
           "id": "xativa-old-town",
-          "name": "Xativa Old Town & Borgia Sites",
-          "description": "Medieval streets, Borgia family connections, Collegiate Basilica, Almodi museum",
+          "name": "Xativa Old Town & Fountains",
+          "description": "Town of 1,000 fountains. Neoclassical Royal Fountain (25 jets), rare Gothic fountain, Borgia Palace, atmospheric cobbled streets, and lively market square.",
           "location": {
-            "lat": 38.99,
-            "lng": -0.518,
-            "address": "Centro Historico, Xativa"
+            "lat": 39.521,
+            "lng": -0.517,
+            "address": "Placa del Mercat, Xativa"
           },
           "category": "landmark",
           "price_eur": 0.0,
-          "duration_minutes": 90,
+          "duration_minutes": 60,
           "tags": [
             "borgia",
             "history",
             "free"
           ],
-          "tips": null,
+          "tips": "Free to walk. Casa la Abuela for legendary arroz al horno (~17 EUR menu del dia).",
           "url": null,
-          "expected_score": null,
+          "expected_score": 7.0,
+          "user_score": null
+        },
+        {
+          "id": "xativa-bellas-artes",
+          "name": "Museo de Bellas Artes de Xativa",
+          "description": "Fine art museum with the famous upside-down portrait of Philip V — the city's symbolic revenge for being burned in 1707. Works by Ribera and Goya.",
+          "location": {
+            "lat": 39.5215,
+            "lng": -0.5175,
+            "address": "Plaza Arzobispo Mayoral, 2, Xativa"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 45,
+          "tags": [],
+          "tips": "Included in 6 EUR castle ticket. The upside-down Philip V is the unofficial symbol of Xativa.",
+          "url": null,
+          "expected_score": 7.5,
+          "user_score": null
+        },
+        {
+          "id": "xativa-sant-feliu",
+          "name": "Ermita de Sant Feliu",
+          "description": "Oldest church in the Kingdom of Valencia. Romanesque doorway, recycled Roman columns, and the largest medieval Gothic murals surviving in the region.",
+          "location": {
+            "lat": 39.524,
+            "lng": -0.52,
+            "address": "Base of castle hill, on the road up"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 20,
+          "tags": [],
+          "tips": "Free. On the path to the castle — stop on the way up. Closed Mon.",
+          "url": null,
+          "expected_score": 7.0,
           "user_score": null
         }
       ],
@@ -947,15 +2147,390 @@
         "booking_reference": null,
         "notes": "Last train ~21:30"
       },
-      "total_price_eur": 19.0,
-      "total_duration_minutes": 420,
+      "total_price_eur": 78.0,
+      "total_duration_minutes": 480,
       "tags": [
         "history",
         "castle",
         "borgia"
       ],
-      "tips": "Closed Mondays. The castle views are among the best in the region",
+      "tips": "Train C-2 ~50-60 min, ~4-5 EUR each way. Book castle tickets online (capacity limited). Castle climb 25-30 min — do it first while fresh. Avoid Monday. Casa la Abuela for legendary arroz al horno.",
       "expected_score": 8.0,
+      "user_score": null
+    },
+    {
+      "id": "gandia-day-trip",
+      "name": "Gandia Day Trip",
+      "destination": "Gandia",
+      "description": "Borgia Ducal Palace, old town, 3 km golden beach, Marjal wetlands for birdwatching. Birthplace of fideua — the noodle version of paella.",
+      "location": {
+        "lat": 38.968,
+        "lng": -0.181,
+        "address": "Gandia, 65 km south of Valencia"
+      },
+      "sub_attractions": [
+        {
+          "id": "gandia-ducal-palace",
+          "name": "Ducal Palace of the Borgias",
+          "description": "14th-century Gothic-Renaissance palace of the Borgia dukes. Crown Hall, Golden Gallery, Chapel of Saint Francis Borgia. Audio guide in 7 languages.",
+          "location": {
+            "lat": 38.9685,
+            "lng": -0.1815,
+            "address": "Carrer Duc Alfons el Vell, 1, Gandia"
+          },
+          "category": "landmark",
+          "price_eur": 8.0,
+          "duration_minutes": 60,
+          "tags": [],
+          "tips": "Book online. Joint ticket with Monastery of Cotalba = 12 EUR (great value). Mon-Sat 10:00-14:00 / 15:00-19:00, Sun 10:00-14:00.",
+          "url": "https://www.palauducal.com/en/",
+          "expected_score": 8.0,
+          "user_score": null
+        },
+        {
+          "id": "gandia-maga",
+          "name": "MAGa Archaeological Museum",
+          "description": "Prehistory museum in a 14th-century hospital. Pieces from Cova del Parpalló — one of Europe's key Upper Paleolithic sites. Free on Sundays.",
+          "location": {
+            "lat": 38.969,
+            "lng": -0.18,
+            "address": "C/ Hospital, 21, Gandia"
+          },
+          "category": "museum",
+          "price_eur": 2.0,
+          "duration_minutes": 40,
+          "tags": [],
+          "tips": "2 EUR, free Sundays. The building itself is worth seeing.",
+          "url": null,
+          "expected_score": 6.0,
+          "user_score": null
+        },
+        {
+          "id": "gandia-beach-marjal",
+          "name": "Gandia Beach & Marjal Wetlands",
+          "description": "3 km golden beach with 7 km promenade. The Marjal wetlands (1,300 ha) between town and beach — boardwalks, flamingos, migratory birds. March is perfect.",
+          "location": {
+            "lat": 38.955,
+            "lng": -0.165,
+            "address": "Playa Nord / Marjal de Gandia"
+          },
+          "category": "nature",
+          "price_eur": 0.0,
+          "duration_minutes": 120,
+          "tags": [],
+          "tips": "Bus L2 from old town to beach (~20 min, 1.60 EUR). Eat fideua at one of the beachfront restaurants.",
+          "url": null,
+          "expected_score": 7.0,
+          "user_score": null
+        }
+      ],
+      "outbound": null,
+      "return_trip": null,
+      "total_price_eur": 80.0,
+      "total_duration_minutes": 510,
+      "tags": [],
+      "tips": "Train C1 ~1h15, ~5.80 EUR each way. Ducal Palace ~7-8 EUR (must-see). Skip Collegiate Church (10 EUR — too pricey). Bus L2 to beach for fideua lunch. Joint monastery+palace ticket 12 EUR if visiting Cotalba.",
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "montanejos-day-trip",
+      "name": "Montanejos Hot Springs Day Trip",
+      "destination": "Montanejos",
+      "description": "Natural thermal springs at constant 25°C in a river gorge. Free access. Combine with the Ruta de los Estrechos gorge hike (8 km, 2.5-3h).",
+      "location": {
+        "lat": 40.07,
+        "lng": -0.52,
+        "address": "Montanejos, 100 km northwest of Valencia"
+      },
+      "sub_attractions": [
+        {
+          "id": "montanejos-springs",
+          "name": "Fuente de los Banos Hot Springs",
+          "description": "Crystal-clear turquoise thermal pools at constant 25°C year-round in a river gorge. Blue Flag certified. 6,000 litres/min geothermal spring. Free access.",
+          "location": {
+            "lat": 40.068,
+            "lng": -0.518,
+            "address": "20 min walk from Montanejos village"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 120,
+          "tags": [],
+          "tips": "Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25°C even in March. Changing facilities may be closed off-season.",
+          "url": "https://www.visitmontanejos.com/en/nature/la-fuente-de-los-banos/",
+          "expected_score": 8.5,
+          "user_score": null
+        },
+        {
+          "id": "montanejos-estrechos",
+          "name": "Ruta de los Estrechos",
+          "description": "8 km gorge hike through dramatic narrows with wooden walkways and suspension bridges over turquoise water. One of the best moderate hikes in the Valencia region.",
+          "location": {
+            "lat": 40.072,
+            "lng": -0.522,
+            "address": "Start from Montanejos village"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 180,
+          "tags": [],
+          "tips": "2.5-3 hours, moderate difficulty. Wear proper shoes. Best done in morning, then hot springs in afternoon.",
+          "url": "https://www.visitmontanejos.com/en/nature/los-estrechos/",
+          "expected_score": 8.0,
+          "user_score": null
+        }
+      ],
+      "outbound": null,
+      "return_trip": null,
+      "total_price_eur": 70.0,
+      "total_duration_minutes": 600,
+      "tags": [],
+      "tips": "Limited bus (Mon/Thu only, ~10 EUR each way). Organized tours 60-85 EUR/pp. Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25°C even in March.",
+      "expected_score": 7.5,
+      "user_score": null
+    },
+    {
+      "id": "peniscola-day-trip",
+      "name": "Peniscola Day Trip",
+      "destination": "Peniscola",
+      "description": "Medieval walled town on a rocky headland jutting into the sea. Papa Luna Castle, Game of Thrones filming location. Dramatic, photogenic, worth the long journey.",
+      "location": {
+        "lat": 40.358,
+        "lng": 0.408,
+        "address": "Peniscola, 150 km north of Valencia"
+      },
+      "sub_attractions": [
+        {
+          "id": "peniscola-castle",
+          "name": "Papa Luna Castle",
+          "description": "13th-century Templar fortress, home of antipope Benedict XIII. Dramatic position on a rocky headland. Game of Thrones filming location (Meereen, Season 6).",
+          "location": {
+            "lat": 40.359,
+            "lng": 0.407,
+            "address": "Old town hilltop, Peniscola"
+          },
+          "category": "landmark",
+          "price_eur": 5.0,
+          "duration_minutes": 60,
+          "tags": [],
+          "tips": "5 EUR. Winter hours 10:30-17:30. The views from the battlements are spectacular.",
+          "url": "https://castillodepeniscola.dipcas.es/en/",
+          "expected_score": 7.5,
+          "user_score": null
+        },
+        {
+          "id": "peniscola-old-town",
+          "name": "Peniscola Old Town",
+          "description": "Walled medieval streets climbing to the castle. Stone archways, whitewashed houses, sea views from every turn. El Bufador sea blowhole at the base.",
+          "location": {
+            "lat": 40.3575,
+            "lng": 0.4075,
+            "address": "Old town, Peniscola"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 90,
+          "tags": [],
+          "tips": "Free to walk. El Bufador (blowhole) is best at high tide. 2-3 hours for a thorough explore.",
+          "url": null,
+          "expected_score": 7.0,
+          "user_score": null
+        }
+      ],
+      "outbound": null,
+      "return_trip": null,
+      "total_price_eur": 124.0,
+      "total_duration_minutes": 720,
+      "tags": [],
+      "tips": "HIFE bus recommended (~15-25 EUR each way, 2.5h, 7/day). Castle 5 EUR. Longest day trip — needs early start. March: artichokes in season in nearby Benicarlo.",
+      "expected_score": 6.5,
+      "user_score": null
+    },
+    {
+      "id": "requena-day-trip",
+      "name": "Requena Day Trip",
+      "destination": "Requena",
+      "description": "Medieval walled town with underground wine caves, Gothic churches, silk museum, and the Utiel-Requena wine region. Authentically lived-in, not polished for tourists.",
+      "location": {
+        "lat": 39.488,
+        "lng": -1.1,
+        "address": "Requena, 70 km west of Valencia"
+      },
+      "sub_attractions": [
+        {
+          "id": "requena-cuevas",
+          "name": "Cuevas de la Villa",
+          "description": "22 interconnected underground chambers beneath the medieval quarter. Ossuary, granary, wine cellars with grape-stomping pools. 1.2 km route at constant 15-16°C.",
+          "location": {
+            "lat": 39.4885,
+            "lng": -1.101,
+            "address": "Plaza de Albornoz, 6, La Villa, Requena"
+          },
+          "category": "landmark",
+          "price_eur": 4.0,
+          "duration_minutes": 60,
+          "tags": [],
+          "tips": "4 EUR or combined ticket with 4 museums for 8 EUR. Wed-Sun 10:30-14:00 & 16:00-19:00. Closed Mon/Tue.",
+          "url": "https://www.requena.es/cuevas-villa",
+          "expected_score": 8.0,
+          "user_score": null
+        },
+        {
+          "id": "requena-la-villa",
+          "name": "La Villa (Requena Medieval Quarter)",
+          "description": "Walled medieval quarter with cobbled streets, stone mansions, Jewish Quarter, Moorish Alcazaba ruins. Authentically quiet — feels like stepping back 500 years.",
+          "location": {
+            "lat": 39.4882,
+            "lng": -1.1005,
+            "address": "La Villa, Requena"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 45,
+          "tags": [],
+          "tips": "Free to walk. Enter through medieval gates.",
+          "url": null,
+          "expected_score": 7.0,
+          "user_score": null
+        },
+        {
+          "id": "requena-salvador",
+          "name": "Iglesia del Salvador",
+          "description": "Outstanding Isabelline Gothic church (1380-1533). Richly sculpted facade with floral chains, virgins, and angels. Stunning octagonal Communion Chapel with blue-tiled dome.",
+          "location": {
+            "lat": 39.4888,
+            "lng": -1.1012,
+            "address": "La Villa, adjacent to Cuevas entrance"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 20,
+          "tags": [],
+          "tips": "Check locally for visiting hours. Adjacent to the caves.",
+          "url": null,
+          "expected_score": 6.5,
+          "user_score": null
+        },
+        {
+          "id": "requena-wine-museum",
+          "name": "Museo del Vino",
+          "description": "Wine heritage museum in the 15th-century Palacio del Cid. History of Utiel-Requena D.O. and the native Bobal grape. 2,500 years of winemaking.",
+          "location": {
+            "lat": 39.4875,
+            "lng": -1.0995,
+            "address": "Palacio del Cid, Requena"
+          },
+          "category": "landmark",
+          "price_eur": 2.0,
+          "duration_minutes": 30,
+          "tags": [],
+          "tips": "2 EUR or included in combined ticket (8 EUR with caves + 3 other museums).",
+          "url": "https://www.turismorequena.es/en/museo-del-vino",
+          "expected_score": 6.0,
+          "user_score": null
+        },
+        {
+          "id": "requena-silk-museum",
+          "name": "Casa del Arte Mayor de la Seda",
+          "description": "Three floors of silk heritage in the 1740 Guild of Silk Weavers HQ. Requena's surprising connection to Valencia's silk trade.",
+          "location": {
+            "lat": 39.4878,
+            "lng": -1.1,
+            "address": "La Villa, Requena"
+          },
+          "category": "landmark",
+          "price_eur": 2.0,
+          "duration_minutes": 25,
+          "tags": [],
+          "tips": "Included in combined ticket.",
+          "url": "https://www.turismorequena.es/en/content/house-silk-art-0",
+          "expected_score": 5.5,
+          "user_score": null
+        }
+      ],
+      "outbound": null,
+      "return_trip": null,
+      "total_price_eur": 78.0,
+      "total_duration_minutes": 510,
+      "tags": [],
+      "tips": "Train C-3 ~75-85 min, ~5-7 EUR each way. Caves 4 EUR, combined ticket with 4 museums just 8 EUR. Much colder than Valencia (700 m altitude) — bring layers. Avoid Mon/Tue (closed).",
+      "expected_score": 7.0,
+      "user_score": null
+    },
+    {
+      "id": "sierra-calderona-day-trip",
+      "name": "Sierra Calderona Day Trip",
+      "destination": "Sierra Calderona Natural Park",
+      "description": "Mountain hiking 45 min from the city. Moorish castle ruins, pine forests, panoramic views from 600 m peaks. 7+ trails for all levels. Free entry.",
+      "location": {
+        "lat": 39.72,
+        "lng": -0.41,
+        "address": "Serra, 25 km northwest of Valencia"
+      },
+      "sub_attractions": [
+        {
+          "id": "castell-serra-trail",
+          "name": "Castell de Serra Hike",
+          "description": "7 km circular hike to 8th-century Moorish castle ruins at 536 m. Square tower, crenellated walls, panoramic Turia valley views. El Cid conquered this castle in 1095.",
+          "location": {
+            "lat": 39.715,
+            "lng": -0.405,
+            "address": "Start: Serra Town Hall (Plaça del Poble)"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 120,
+          "tags": [],
+          "tips": "Moderate difficulty, 207 m elevation gain. Best all-round trail. Combine with village lunch.",
+          "url": null,
+          "expected_score": 8.0,
+          "user_score": null
+        },
+        {
+          "id": "garbi-viewpoint",
+          "name": "Garbi Viewpoint Hike",
+          "description": "10-12 km hike to 601 m summit. Best panorama in the park — Mediterranean, Valencia skyline, Albufera lagoon, and interior mountain ranges visible.",
+          "location": {
+            "lat": 39.71,
+            "lng": -0.4,
+            "address": "Start: Serra town or Area Recreativa del Garbi"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 240,
+          "tags": [],
+          "tips": "Moderate to demanding, ~400 m elevation gain. Late March is ideal — brutally hot in summer. Bring 1.5L water.",
+          "url": null,
+          "expected_score": 7.5,
+          "user_score": null
+        },
+        {
+          "id": "serra-village",
+          "name": "Serra Village",
+          "description": "Authentic mountain village at the foot of Sierra Calderona. Sculpture Route, Oil Museum, natural springs. White houses, orange trees, zero tourists.",
+          "location": {
+            "lat": 39.693,
+            "lng": -0.412,
+            "address": "Serra, Valencia"
+          },
+          "category": "landmark",
+          "price_eur": 0.0,
+          "duration_minutes": 60,
+          "tags": [],
+          "tips": "Casa Granero for a sit-down lunch. Bar Domingo on the square for post-hike beers.",
+          "url": null,
+          "expected_score": 6.0,
+          "user_score": null
+        }
+      ],
+      "outbound": null,
+      "return_trip": null,
+      "total_price_eur": 30.0,
+      "total_duration_minutes": 480,
+      "tags": [],
+      "tips": "Metro L1 to Betera + bus 230 to Serra. Check bus schedule — limited! Taxi from Betera ~12-18 EUR if bus doesn't work. Castell de Serra trail (7 km, 2h) is the best moderate option.",
+      "expected_score": 7.5,
       "user_score": null
     }
   ],
@@ -966,7 +2541,16 @@
       "description": "Historic old town attractions within walking distance",
       "color": "#e74c3c",
       "parent_id": null,
-      "member_ids": ["cathedral", "la-lonja", "mercado-central", "almoina", "torres-serranos", "plaza-virgen", "plaza-ayuntamiento", "torres-quart"]
+      "member_ids": [
+        "cathedral",
+        "la-lonja",
+        "mercado-central",
+        "almoina",
+        "torres-serranos",
+        "plaza-virgen",
+        "plaza-ayuntamiento",
+        "torres-quart"
+      ]
     },
     {
       "id": "city-of-arts",
@@ -974,7 +2558,12 @@
       "description": "The modern architectural complex in Turia riverbed",
       "color": "#3498db",
       "parent_id": null,
-      "member_ids": ["oceanografic", "museu-ciencies", "hemisferic", "city-arts-exterior"]
+      "member_ids": [
+        "oceanografic",
+        "museu-ciencies",
+        "hemisferic",
+        "city-arts-exterior"
+      ]
     },
     {
       "id": "free-attractions",
@@ -982,12 +2571,69 @@
       "description": "No entrance fee required",
       "color": "#2ecc71",
       "parent_id": null,
-      "member_ids": ["turia-gardens", "city-arts-exterior", "plaza-virgen", "plaza-ayuntamiento", "bellas-artes", "cccc", "viveros", "gulliver-park", "mercado-central"]
+      "member_ids": [
+        "turia-gardens",
+        "city-arts-exterior",
+        "plaza-virgen",
+        "plaza-ayuntamiento",
+        "bellas-artes",
+        "cccc",
+        "viveros",
+        "gulliver-park",
+        "mercado-central"
+      ]
     }
   ],
   "days": [
     {
       "date": "2026-03-21",
+      "label": null,
+      "start_time": null,
+      "activities": [
+        {
+          "id": "36c0721b",
+          "attraction_id": "cathedral",
+          "day_trip_id": null,
+          "name": "Valencia Cathedral + Miguelete Tower",
+          "start_time": null,
+          "duration_minutes": 75,
+          "price_eur": 10.0,
+          "category": "landmark",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        },
+        {
+          "id": "e38d78c5",
+          "attraction_id": "hemisferic",
+          "day_trip_id": null,
+          "name": "L'Hemisferic",
+          "start_time": null,
+          "duration_minutes": 60,
+          "price_eur": 8.0,
+          "category": "entertainment",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        },
+        {
+          "id": "8bc97407",
+          "attraction_id": "museo-del-arroz",
+          "day_trip_id": null,
+          "name": "Museo del Arroz",
+          "start_time": null,
+          "duration_minutes": 40,
+          "price_eur": 2.0,
+          "category": "museum",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "date": "2026-03-22",
       "label": null,
       "start_time": null,
       "activities": [
@@ -1042,15 +2688,34 @@
           "travel_from_prev_minutes": null,
           "status": "planned",
           "notes": null
+        },
+        {
+          "id": "e5753224",
+          "attraction_id": "torres-de-quart",
+          "day_trip_id": null,
+          "name": "Torres de Quart",
+          "start_time": null,
+          "duration_minutes": 30,
+          "price_eur": 2.0,
+          "category": "landmark",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        },
+        {
+          "id": "48ba8fda",
+          "attraction_id": "centre-del-carme",
+          "day_trip_id": null,
+          "name": "Centre del Carme (CCCC)",
+          "start_time": null,
+          "duration_minutes": 60,
+          "price_eur": 0.0,
+          "category": "museum",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
         }
       ],
-      "notes": null
-    },
-    {
-      "date": "2026-03-22",
-      "label": null,
-      "start_time": null,
-      "activities": [],
       "notes": null
     },
     {
@@ -1059,39 +2724,39 @@
       "start_time": null,
       "activities": [
         {
-          "id": "36c0721b",
-          "attraction_id": "cathedral",
+          "id": "2214cc59",
+          "attraction_id": "city-of-arts-exterior",
           "day_trip_id": null,
-          "name": "Valencia Cathedral + Miguelete Tower",
+          "name": "City of Arts and Sciences (Exterior)",
           "start_time": null,
-          "duration_minutes": 75,
-          "price_eur": 10.0,
+          "duration_minutes": 60,
+          "price_eur": 0.0,
           "category": "landmark",
           "travel_from_prev_minutes": null,
           "status": "planned",
           "notes": null
         },
         {
-          "id": "e38d78c5",
-          "attraction_id": "hemisferic",
+          "id": "aaa2488d",
+          "attraction_id": "prehistoric-caves",
           "day_trip_id": null,
-          "name": "L'Hemisferic",
+          "name": "Prehistoric Caves Exhibition",
           "start_time": null,
           "duration_minutes": 60,
-          "price_eur": 8.0,
-          "category": "entertainment",
+          "price_eur": 0.0,
+          "category": "museum",
           "travel_from_prev_minutes": null,
           "status": "planned",
           "notes": null
         },
         {
-          "id": "8bc97407",
-          "attraction_id": "museo-del-arroz",
+          "id": "df1f29b1",
+          "attraction_id": "liber-toy-soldiers",
           "day_trip_id": null,
-          "name": "Museo del Arroz",
+          "name": "L'Iber Museum of Toy Soldiers",
           "start_time": null,
-          "duration_minutes": 40,
-          "price_eur": 2.0,
+          "duration_minutes": 90,
+          "price_eur": 8.0,
           "category": "museum",
           "travel_from_prev_minutes": null,
           "status": "planned",

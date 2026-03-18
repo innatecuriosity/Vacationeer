@@ -57,19 +57,6 @@ Valencia is flat with 200+ km of bike lanes - one of Spain's best cycling cities
 - E-bike: ~12-15 EUR/day
 - Companies: Cobra Renta Bike, Valencia Bikes, Sky Bike Rent
 
-<!-- @vacationeer
-id: turia-gardens
-type: attraction
-name: Turia Gardens
-description: Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside
-price_eur: 0.0
-duration_minutes: 120
-location: 39.478, -0.37 | Jardín del Turia
-expected_score: 8.0
-url: null
--->
-
-
 ### Rules
 - Bike lanes are **mandatory** when they exist
 - **No sidewalk riding** (fines!)
@@ -150,16 +137,6 @@ Weekday lunchtimes (13:00-15:30) most restaurants offer a **3-course set menu wi
 ## SAFETY
 
 Valencia is **one of Spain's safest large cities** - calmer than Barcelona or Madrid. Violent crime against tourists is very rare.
-
-<!-- @vacationeer
-id: flet
-type: attraction
-name: flet
-description: we sleep here
-location: 0.0, -0.383757
-url: null
--->
-
 
 ### Watch Out For
 - **Pickpockets** in Central Market, Old Town, Plaza del Ayuntamiento, metro
