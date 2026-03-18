@@ -491,8 +491,8 @@ def render_timeline(trip: Trip) -> str:
           <div class="day-col-header">
             <div class="day-col-title">
               <div>
-                <span class="day-num">Day <span x-text="i+1"></span></span>
-                <span class="day-date" x-text="formatDate(day.date)"></span>
+                <span class="day-num">Day <span x-text="i+1"></span> &mdash; <span x-text="dayName(day.date)"></span></span>
+                <span class="day-date" x-text="shortDate(day.date)"></span>
                 <template x-if="!editing || editing.date !== day.date || editing.field !== 'label'">
                   <span class="day-col-label"
                         x-show="day.label"
@@ -775,10 +775,23 @@ function kanbanTimeline() {{
             return p === 0 ? 'Free' : '\\u20ac' + p;
         }},
 
+        dayName: function(d) {{
+            if (!d) return '';
+            var dt = new Date(d + 'T00:00:00');
+            return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dt.getDay()];
+        }},
+
+        shortDate: function(d) {{
+            if (!d) return '';
+            var dt = new Date(d + 'T00:00:00');
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return months[dt.getMonth()] + ' ' + dt.getDate();
+        }},
+
         formatDate: function(d) {{
             if (!d) return '';
             var dt = new Date(d + 'T00:00:00');
-            var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
             var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             return days[dt.getDay()] + ', ' + months[dt.getMonth()] + ' ' + dt.getDate();
         }},
