@@ -127,3 +127,21 @@ _DEFAULT_INFO = CategoryInfo(
 
 def get_category_info(cat: Category) -> CategoryInfo:
     return CATEGORY_META.get(cat, _DEFAULT_INFO)
+
+
+# ---------------------------------------------------------------------------
+# Grouping colors
+# ---------------------------------------------------------------------------
+
+GROUPING_PALETTE = [
+    "#e74c3c", "#3498db", "#2ecc71", "#f39c12", "#9b59b6", "#1abc9c",
+    "#e67e22", "#34495e", "#16a085", "#d35400", "#c0392b", "#2980b9",
+]
+
+
+def next_grouping_color(used: list[str]) -> str:
+    """Return the first palette color not already in use."""
+    for c in GROUPING_PALETTE:
+        if c not in used:
+            return c
+    return GROUPING_PALETTE[0]

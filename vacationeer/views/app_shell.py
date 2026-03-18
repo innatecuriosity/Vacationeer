@@ -5,7 +5,7 @@ from datetime import date, time
 from pathlib import Path
 
 from vacationeer.models.trip import Category, Trip
-from vacationeer.theme import CATEGORY_META, PRIMARY
+from vacationeer.theme import CATEGORY_META, GROUPING_PALETTE, PRIMARY
 from vacationeer.views.helpers import esc
 
 
@@ -126,6 +126,7 @@ def generate_app(
 
     overview_inner = tab_contents.get("overview-content", "")
     timeline_inner = tab_contents.get("timeline-content", "")
+    grouping_palette = GROUPING_PALETTE
 
     trip_json = json.dumps(
         trip.model_dump(mode="json"),
@@ -1500,6 +1501,90 @@ document.addEventListener('alpine:init', function() {{
             if (result.ok) reloadMap();
         }},
 
+        // ---- Grouping methods ----
+        async addGrouping(data) {{
+            var self = this;
+            var ok = false;
+            await tryServerOrLocal('/api/groupings', {{
+                method: 'POST', headers: {{'Content-Type':'application/json'}},
+                body: JSON.stringify(data)
+            }}, async function(resp) {{
+                var g = await resp.json();
+                if (!self.groupings) self.groupings = [];
+                self.groupings.push(g);
+                toast('success', 'Grouping created');
+                ok = true;
+            }}, function() {{
+                var local = Object.assign({{}}, data, {{ id: _genId(), member_ids: data.member_ids || [] }});
+                if (!self.groupings) self.groupings = [];
+                self.groupings.push(local);
+                _persistLocal(); toast('success', 'Saved locally'); ok = true;
+            }});
+            return {{ ok: ok }};
+        }},
+        async updateGrouping(id, data) {{
+            var self = this;
+            await tryServerOrLocal('/api/groupings/' + id, {{
+                method: 'PATCH', headers: {{'Content-Type':'application/json'}},
+                body: JSON.stringify(data)
+            }}, async function(resp) {{
+                var updated = await resp.json();
+                var idx = (self.groupings || []).findIndex(function(g) {{ return g.id === id; }});
+                if (idx >= 0) self.groupings[idx] = updated;
+                toast('success', 'Grouping updated');
+            }}, function() {{
+                var idx = (self.groupings || []).findIndex(function(g) {{ return g.id === id; }});
+                if (idx >= 0) Object.assign(self.groupings[idx], data);
+                _persistLocal(); toast('success', 'Saved locally');
+            }});
+        }},
+        async deleteGrouping(id) {{
+            var self = this;
+            await tryServerOrLocal('/api/groupings/' + id, {{ method: 'DELETE' }},
+            async function() {{
+                self.groupings = (self.groupings || []).filter(function(g) {{ return g.id !== id; }});
+                // Clear parent_id on orphaned children
+                (self.groupings || []).forEach(function(g) {{ if (g.parent_id === id) g.parent_id = null; }});
+                toast('success', 'Grouping deleted');
+            }}, function() {{
+                self.groupings = (self.groupings || []).filter(function(g) {{ return g.id !== id; }});
+                _persistLocal(); toast('success', 'Deleted locally');
+            }});
+        }},
+        async toggleGroupingMember(groupingId, attractionId) {{
+            var self = this;
+            var grouping = (self.groupings || []).find(function(g) {{ return g.id === groupingId; }});
+            if (!grouping) return;
+            var idx = grouping.member_ids.indexOf(attractionId);
+            if (idx >= 0) {{
+                // Remove
+                await tryServerOrLocal('/api/groupings/' + groupingId + '/members/' + attractionId, {{ method: 'DELETE' }},
+                async function() {{ grouping.member_ids.splice(idx, 1); }},
+                function() {{ grouping.member_ids.splice(idx, 1); _persistLocal(); }});
+            }} else {{
+                // Add
+                await tryServerOrLocal('/api/groupings/' + groupingId + '/members/' + attractionId, {{ method: 'POST' }},
+                async function() {{ grouping.member_ids.push(attractionId); }},
+                function() {{ grouping.member_ids.push(attractionId); _persistLocal(); }});
+            }}
+        }},
+        getGroupingsForAttraction(id) {{
+            return (this.groupings || []).filter(function(g) {{ return g.member_ids && g.member_ids.includes(id); }});
+        }},
+        getAllMemberIds(groupingId) {{
+            var self = this;
+            var grouping = (self.groupings || []).find(function(g) {{ return g.id === groupingId; }});
+            if (!grouping) return [];
+            var ids = [].concat(grouping.member_ids || []);
+            // Add members from child groupings recursively
+            (self.groupings || []).forEach(function(g) {{
+                if (g.parent_id === groupingId) {{
+                    ids = ids.concat(self.getAllMemberIds(g.id));
+                }}
+            }});
+            return ids;
+        }},
+
         async addDay(data) {{
             var self = this;
             var ok = false;
@@ -1822,6 +1907,9 @@ document.addEventListener('alpine:init', function() {{
         </button>
         <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'add-day'}}))">
             <span>\U0001f4c5</span> Day
+        </button>
+        <button @click="open=false; window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'manage-groupings'}}))">
+            <span>\U0001f3f7</span> Groupings
         </button>
     </div>
 </div>
@@ -2482,6 +2570,148 @@ document.addEventListener('alpine:init', function() {{
                         </div>
                     </div>
                 </template>
+            </div>
+        </div>
+    </template>
+
+    <!-- Manage Groupings Modal -->
+    <template x-if="modal === 'manage-groupings'">
+        <div class="modal-backdrop" @mousedown.self="modal = null">
+            <div class="modal" style="max-width:560px" x-data="{{
+                mode: 'list',
+                editId: null,
+                form: {{ name: '', description: '', color: '', parent_id: '' }},
+                palette: {json.dumps(grouping_palette)},
+                init() {{ this.form.color = this.palette[0]; }},
+                resetForm() {{
+                    this.form = {{ name: '', description: '', color: this.palette[0], parent_id: '' }};
+                    this.editId = null;
+                    this.mode = 'form';
+                }},
+                editGrouping(g) {{
+                    this.form = {{ name: g.name, description: g.description || '', color: g.color, parent_id: g.parent_id || '' }};
+                    this.editId = g.id;
+                    this.mode = 'form';
+                }},
+                async saveGrouping() {{
+                    if (!this.form.name.trim()) return;
+                    var data = {{
+                        name: this.form.name.trim(),
+                        description: this.form.description.trim() || null,
+                        color: this.form.color,
+                        parent_id: this.form.parent_id || null
+                    }};
+                    if (this.editId) {{
+                        await $store.trip.updateGrouping(this.editId, data);
+                    }} else {{
+                        await $store.trip.addGrouping(data);
+                    }}
+                    this.mode = 'list';
+                    this.editId = null;
+                }},
+                async removeGrouping(id) {{
+                    if (confirm('Delete this grouping?')) {{
+                        await $store.trip.deleteGrouping(id);
+                    }}
+                }},
+                isDescendant(gid, ancestorId) {{
+                    if (!ancestorId) return false;
+                    var visited = {{}};
+                    var cur = gid;
+                    while (cur) {{
+                        if (cur === ancestorId) return true;
+                        if (visited[cur]) return false;
+                        visited[cur] = true;
+                        var p = ($store.trip.groupings || []).find(function(x) {{ return x.id === cur; }});
+                        cur = p ? p.parent_id : null;
+                    }}
+                    return false;
+                }},
+                getGrouping(id) {{
+                    return ($store.trip.groupings || []).find(function(g) {{ return g.id === id; }});
+                }}
+            }}">
+                <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between">
+                    <span x-text="mode === 'list' ? 'Groupings' : (editId ? 'Edit Grouping' : 'New Grouping')"></span>
+                    <button @click="window.dispatchEvent(new CustomEvent('close-modal'))" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0 4px;line-height:1">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- List view -->
+                    <template x-if="mode === 'list'">
+                        <div>
+                            <template x-if="!($store.trip.groupings || []).length">
+                                <p style="color:#888;text-align:center;padding:20px 0">No groupings yet. Create one to organize your attractions.</p>
+                            </template>
+                            <template x-for="g in ($store.trip.groupings || [])" :key="g.id">
+                                <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eee">
+                                    <span :style="'width:14px;height:14px;border-radius:50%;flex-shrink:0;background:' + g.color" style="display:inline-block"></span>
+                                    <div style="flex:1;min-width:0">
+                                        <div style="font-weight:600;font-size:14px" x-text="g.name"></div>
+                                        <div style="font-size:12px;color:#888" x-text="(g.member_ids || []).length + ' attractions'"></div>
+                                    </div>
+                                    <button style="background:none;border:none;cursor:pointer;font-size:13px;color:#4ea4f6;padding:4px 8px" @click="editGrouping(g)">Edit</button>
+                                    <button style="background:none;border:none;cursor:pointer;font-size:16px;color:#e74c3c;padding:4px 8px" @click="removeGrouping(g.id)">&times;</button>
+                                </div>
+                            </template>
+                            <div style="margin-top:16px;text-align:center">
+                                <button class="btn btn-primary" @click="resetForm()">+ New Grouping</button>
+                            </div>
+                        </div>
+                    </template>
+                    <!-- Form view -->
+                    <template x-if="mode === 'form'">
+                        <div>
+                            <div class="form-group">
+                                <label>Name <span style="color:#e74c3c">*</span></label>
+                                <input type="text" x-model="form.name" placeholder="e.g. City Center" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px">
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" x-model="form.description" placeholder="Optional" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px">
+                            </div>
+                            <div class="form-group">
+                                <label>Color</label>
+                                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                                    <template x-for="c in palette" :key="c">
+                                        <span @click="form.color = c"
+                                              :style="'display:inline-block;width:28px;height:28px;border-radius:50%;cursor:pointer;background:' + c + ';border:3px solid ' + (form.color === c ? '#1a2332' : 'transparent')"
+                                        ></span>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Parent Grouping</label>
+                                <select x-model="form.parent_id" style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px">
+                                    <option value="">None (top-level)</option>
+                                    <template x-for="g in ($store.trip.groupings || []).filter(function(g) {{ return g.id !== editId; }})" :key="g.id">
+                                        <option :value="g.id" x-text="g.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <template x-if="editId">
+                                <div class="form-group">
+                                    <label>Members</label>
+                                    <div style="max-height:200px;overflow-y:auto;border:1px solid #e2e5e9;border-radius:6px;padding:6px">
+                                        <template x-for="a in ($store.trip.attractions || [])" :key="a.id">
+                                            <label style="display:flex;align-items:center;gap:8px;padding:4px 6px;cursor:pointer;font-size:13px" @click.stop>
+                                                <input type="checkbox"
+                                                       :checked="(getGrouping(editId) || {{member_ids:[]}}).member_ids.includes(a.id)"
+                                                       @change="$store.trip.toggleGroupingMember(editId, a.id)">
+                                                <span x-text="a.name"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                            <div class="modal-actions">
+                                <button class="btn btn-cancel" @click="mode = 'list'">Back</button>
+                                <button class="btn btn-primary" @click="saveGrouping()" :disabled="!form.name.trim()">
+                                    <span x-text="editId ? 'Save' : 'Create'"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
     </template>

@@ -116,8 +116,16 @@ When scheduled onto a Day via `schedule-day-trip`, a DayTrip expands into indivi
 ### TravelSegment
 Transport between locations: `mode` (train/bus/car/walk/boat/metro), `origin`, `destination`, optional departure/arrival times, `duration_minutes`, `price_eur`, `booking_reference`, `notes`.
 
+### Grouping
+A named, hierarchical collection of attractions. Lives on `trip.groupings`. Fields:
+- `id`, `name`, `description`, `color` — display metadata (color auto-assigned from palette)
+- `parent_id` — optional parent grouping for hierarchy (flat list with parent pointers)
+- `member_ids` — list of attraction IDs belonging to this grouping
+
+An attraction can belong to multiple groupings. Hierarchy is validated for cycles (max 10 levels). Recursive member collection gathers IDs from all descendants.
+
 ### Trip
-Top-level container: destination, dates, travelers, budget, preferences, `attractions` (backlog of regular places), `day_trips` (composite day trip entities), `days` (the schedule).
+Top-level container: destination, dates, travelers, budget, preferences, `attractions` (backlog of regular places), `day_trips` (composite day trip entities), `days` (the schedule), `groupings` (hierarchical attraction collections).
 
 ### Preferences
 User's interests, things to avoid, pace (relaxed/moderate/packed), daily budget.
@@ -200,7 +208,8 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Rich hover tooltips (name, category, description preview, duration/price/score)
   - Inline popup editing: clickable star rating (1-10), edit duration/price, save via API
   - Map ↔ app sync: popup edits trigger store reload via postMessage
-  - Layer control for filtering by category (all categories listed, even if empty)
+  - Custom Leaflet layer control (no Folium LayerControl): Categories section + Groupings section, each with all/none toggles, colored dots for groupings, Labels toggle — no radio buttons
+  - Grouping polygon overlays: convex hull (≥3 members), polyline (2), circle (1) per grouping, togglable via layer control
   - Auto-refresh after mutations (cache-busting iframe reload)
 - [x] **App shell** — Single HTML page with:
   - Dark navy (#1a2332) sidebar (340px) with Map/Overview/Timeline tabs
@@ -217,6 +226,9 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Score bars (green 8+, yellow 6-8, red <6)
   - Tags as pills, tips box, URL buttons
   - Search and filter by category, sort by name/category/score/price
+  - Grouping pills on card headers (colored, from groupings the attraction belongs to)
+  - Filter by grouping (dropdown alongside category filter)
+  - Expanded card: groupings section with toggle checkboxes for quick add/remove
 - [x] **Timeline tab** — Kanban-style board with drag-and-drop:
   - Left sidebar: unscheduled attractions pool (with day trips section)
   - Horizontal scrolling day columns — all days visible at once
@@ -224,7 +236,7 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Day column headers: Day N, weekday + date (Mon, Jul 6), editable label; swap buttons (← →) to reorder days
   - Inline editing: click day label or notes to edit in-place (PATCH /api/days/{date})
   - Activity cards: time, name, description, duration, notes; proportional min-height based on duration
-  - Pool cards show description/english name below attraction name
+  - Pool cards show description/english name below attraction name, with grouping pills
   - Click-to-expand detail modal: full attraction info (description, tips, 10-star rating, duration, price, address, Google Maps link, URL, tags, scheduled day/time, day-trip sub-attractions); actions: unschedule, delete
   - Card buttons: ▼ expand + × remove, 28×28px touch targets for mobile
   - Whole card is draggable (no handle restriction), `user-select: none` prevents text selection; buttons excluded via SortableJS `filter`
@@ -245,7 +257,18 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Chat history persists across refreshes via `localStorage`
   - Clear chat button in header
   - Alpine.js `sidebarChat()` component with message history, persistence, and auto-scroll
-- [x] **Sample data** — Valencia 2026 trip with 29 attractions + 3 day trips (with sub-attractions and travel segments)
+- [x] **Groupings** — Hierarchical attraction collections:
+  - Data model: `Grouping` with `parent_id` hierarchy + `member_ids` many-to-many
+  - Server CRUD: 6 endpoints (`GET/POST/PATCH/DELETE /api/groupings`, member add/remove)
+  - Cycle detection on parent assignment (max 10 levels)
+  - Auto-color from palette (`theme.py: GROUPING_PALETTE`)
+  - Overview: colored pills on cards, filter by grouping, toggle checkboxes in expanded cards
+  - Timeline: grouping pills on pool cards
+  - Map: convex hull polygons per grouping (pure Python Andrew's monotone chain), togglable layers
+  - Custom Leaflet layer control: Categories + Groupings sections with all/none toggles, no radio buttons
+  - Management modal: create/edit/delete groupings, color picker, parent selector, member checkboxes
+  - Alpine store methods: `addGrouping`, `updateGrouping`, `deleteGrouping`, `toggleGroupingMember`, `getGroupingsForAttraction`, `getAllMemberIds`
+- [x] **Sample data** — Valencia 2026 trip with 29 attractions + 3 day trips + 3 groupings (City Center, City of Arts & Sciences, Free Activities)
 - [x] **CLI** — map, info, build, serve + scheduling commands (init-days, schedule, schedule-day-trip, unschedule, backlog, swap-days, move-activity)
 - [x] **Trip management** — `trips` (list with status), `use` (set active trip), `.active-trip` file
 - [x] **Pipeline** — New trip creation flow:
@@ -483,7 +506,9 @@ Tests live in `tests/` and use pytest. Run with `python -m pytest tests/ -v`. Cu
 - Chat uses marked.js for markdown rendering; system prompt delivered via stdin `<instructions>` tags (not `--system-prompt` CLI flag)
 - In plain JS functions (not Alpine templates), use `Alpine.store('trip')` not `$store.trip`
 - Map uses Folium — tiles must work without Referer header (no OSM tiles)
-- Map CSS: inject via `folium.Element` into `get_root().html`, NOT via `MacroElement` (Jinja2 header macro doesn't render reliably)
+- Map CSS: inject via `folium.Element` into `get_root().html`, NOT via `MacroElement` (Jinja2 header macro doesn't render reliably for CSS)
+- Map custom controls: inject via `MacroElement` with Jinja2 `{% macro script %}` template — renders in the script section AFTER Folium's map/layer initialization (unlike `folium.Element` which renders in `<body>` before map init)
+- Groupings: `trip.groupings` list, CRUD via `/api/groupings/*`, convex hull polygons on map, pills on cards
 - Color theme: navy #1a2332 + white, category colors in `theme.py`
 - Test with: `python -m vacationeer build trips/valencia-2026/trip.json`
 - Run tests: `python -m pytest tests/ -v`

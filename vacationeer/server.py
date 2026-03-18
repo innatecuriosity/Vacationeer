@@ -6,6 +6,7 @@ import re
 from datetime import date, time, timedelta
 from pathlib import Path
 from typing import Optional
+from uuid import uuid4
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +20,7 @@ from vacationeer.models.trip import (
     Category,
     Day,
     DayTrip,
+    Grouping,
     Location,
     Preferences,
     TravelMode,
@@ -934,6 +936,113 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
         log.info("Set day trip score: %s = %s", day_trip_id, body.score)
         return day_trip
+
+    # ------------------------------------------------------------------
+    # Grouping endpoints
+    # ------------------------------------------------------------------
+
+    def _find_grouping(gid: str):
+        trip = _trip()
+        for i, g in enumerate(trip.groupings):
+            if g.id == gid:
+                return i, g
+        raise HTTPException(status_code=404, detail=f"Grouping '{gid}' not found")
+
+    def _has_cycle(trip: Trip, grouping_id: str, proposed_parent_id: str | None) -> bool:
+        if not proposed_parent_id:
+            return False
+        visited: set[str] = set()
+        current = proposed_parent_id
+        while current:
+            if current == grouping_id:
+                return True
+            if current in visited:
+                return True
+            visited.add(current)
+            parent = next((g for g in trip.groupings if g.id == current), None)
+            current = parent.parent_id if parent else None
+        return False
+
+    @app.get("/api/groupings")
+    def list_groupings():
+        return _trip().groupings
+
+    @app.post("/api/groupings", status_code=201)
+    def create_grouping(request: Request, background_tasks: BackgroundTasks):
+        import asyncio
+        body = asyncio.get_event_loop().run_until_complete(request.json())
+        trip = _trip()
+        # Auto-assign color if not provided
+        if not body.get("color"):
+            from vacationeer.theme import next_grouping_color
+            used = [g.color for g in trip.groupings]
+            body["color"] = next_grouping_color(used)
+        # Generate slug ID
+        gid = slugify(body.get("name", "group"))
+        if any(g.id == gid for g in trip.groupings):
+            gid = f"{gid}-{uuid4().hex[:4]}"
+        body["id"] = gid
+        # Validate parent_id
+        if body.get("parent_id") and not any(g.id == body["parent_id"] for g in trip.groupings):
+            raise HTTPException(status_code=422, detail=f"Parent grouping '{body['parent_id']}' not found")
+        grouping = Grouping(**body)
+        trip.groupings.append(grouping)
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Created grouping: %s (%s)", grouping.name, grouping.id)
+        return grouping
+
+    @app.patch("/api/groupings/{grouping_id}")
+    def update_grouping(grouping_id: str, request: Request, background_tasks: BackgroundTasks):
+        import asyncio
+        body = asyncio.get_event_loop().run_until_complete(request.json())
+        trip = _trip()
+        idx, grouping = _find_grouping(grouping_id)
+        if "parent_id" in body and _has_cycle(trip, grouping_id, body["parent_id"]):
+            raise HTTPException(status_code=422, detail="Circular parent reference")
+        for key, val in body.items():
+            if key != "id" and hasattr(grouping, key):
+                setattr(grouping, key, val)
+        trip.groupings[idx] = grouping
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Updated grouping: %s", grouping_id)
+        return grouping
+
+    @app.delete("/api/groupings/{grouping_id}")
+    def delete_grouping(grouping_id: str, background_tasks: BackgroundTasks):
+        trip = _trip()
+        idx, _ = _find_grouping(grouping_id)
+        trip.groupings.pop(idx)
+        # Clear parent_id on orphaned children
+        for g in trip.groupings:
+            if g.parent_id == grouping_id:
+                g.parent_id = None
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Deleted grouping: %s", grouping_id)
+        return {"ok": True}
+
+    @app.post("/api/groupings/{grouping_id}/members/{attraction_id}", status_code=201)
+    def add_grouping_member(grouping_id: str, attraction_id: str, background_tasks: BackgroundTasks):
+        trip = _trip()
+        idx, grouping = _find_grouping(grouping_id)
+        if attraction_id not in [a.id for a in trip.attractions]:
+            raise HTTPException(status_code=404, detail=f"Attraction '{attraction_id}' not found")
+        if attraction_id not in grouping.member_ids:
+            grouping.member_ids.append(attraction_id)
+            trip.groupings[idx] = grouping
+            background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Added %s to grouping %s", attraction_id, grouping_id)
+        return grouping
+
+    @app.delete("/api/groupings/{grouping_id}/members/{attraction_id}")
+    def remove_grouping_member(grouping_id: str, attraction_id: str, background_tasks: BackgroundTasks):
+        trip = _trip()
+        idx, grouping = _find_grouping(grouping_id)
+        if attraction_id in grouping.member_ids:
+            grouping.member_ids.remove(attraction_id)
+            trip.groupings[idx] = grouping
+            background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Removed %s from grouping %s", attraction_id, grouping_id)
+        return grouping
 
     # ------------------------------------------------------------------
     # Activity endpoints (nested under days)

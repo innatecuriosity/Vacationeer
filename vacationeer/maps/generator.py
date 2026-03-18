@@ -8,7 +8,7 @@ from branca.element import MacroElement
 from folium.plugins import MarkerCluster
 from jinja2 import Template
 
-from vacationeer.models.trip import Attraction, Category, Trip
+from vacationeer.models.trip import Attraction, Category, Grouping, Trip
 from vacationeer.theme import CATEGORY_META, FONT_STACK_MAP, get_category_info
 from vacationeer.views.helpers import category_label
 
@@ -159,6 +159,40 @@ def _marker_html(emoji: str, name: str) -> str:
     )
 
 
+def _convex_hull(points: list[tuple[float, float]]) -> list[tuple[float, float]]:
+    """Compute convex hull using the gift-wrapping (Jarvis march) algorithm."""
+    pts = sorted(set(points))
+    if len(pts) <= 2:
+        return pts
+
+    def cross(o: tuple[float, float], a: tuple[float, float], b: tuple[float, float]) -> float:
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+    # Build lower hull
+    lower: list[tuple[float, float]] = []
+    for p in pts:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+    # Build upper hull
+    upper: list[tuple[float, float]] = []
+    for p in reversed(pts):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    # Concatenate, removing last point of each half (it's repeated)
+    return lower[:-1] + upper[:-1]
+
+
+def _collect_grouping_member_ids(grouping: Grouping, all_groupings: list[Grouping]) -> set[str]:
+    """Recursively collect member_ids from a grouping and all its descendants."""
+    ids = set(grouping.member_ids)
+    children = [g for g in all_groupings if g.parent_id == grouping.id]
+    for child in children:
+        ids |= _collect_grouping_member_ids(child, all_groupings)
+    return ids
+
+
 class _ControlStyle(MacroElement):
     """DEPRECATED — CSS is now injected directly via folium.Element.
 
@@ -227,44 +261,65 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         )
         marker.add_to(groups[attraction.category])
 
+    # Grouping polygon overlays (rendered behind markers)
+    grouping_fgs: list[tuple] = []  # (grouping, FeatureGroup) pairs for custom control
+    attr_by_id: dict[str, Attraction] = {a.id: a for a in trip.attractions}
+    for grouping in trip.groupings:
+        member_ids = _collect_grouping_member_ids(grouping, trip.groupings)
+        coords = [
+            (attr_by_id[mid].location.lat, attr_by_id[mid].location.lng)
+            for mid in member_ids
+            if mid in attr_by_id
+        ]
+        if not coords:
+            continue
+
+        fg = folium.FeatureGroup(name=f"\u25CF {grouping.name}", show=False)
+
+        if len(coords) >= 3:
+            hull = _convex_hull(coords)
+            folium.Polygon(
+                locations=hull,
+                color=grouping.color,
+                fill=True,
+                fill_color=grouping.color,
+                fill_opacity=0.15,
+                weight=2,
+                opacity=0.6,
+                tooltip=grouping.name,
+            ).add_to(fg)
+        elif len(coords) == 2:
+            folium.PolyLine(
+                locations=coords,
+                color=grouping.color,
+                weight=3,
+                opacity=0.5,
+                dash_array='10 5',
+                tooltip=grouping.name,
+            ).add_to(fg)
+        else:
+            folium.CircleMarker(
+                location=coords[0],
+                radius=30,
+                color=grouping.color,
+                fill=True,
+                fill_color=grouping.color,
+                fill_opacity=0.15,
+                tooltip=grouping.name,
+            ).add_to(fg)
+
+        fg.add_to(m)
+        grouping_fgs.append((grouping, fg))
+
     # Add ALL clusters to map (even empty ones show in layer control)
     for cat, cluster in groups.items():
         cluster.add_to(m)
 
-    # Unified layer control (top-right)
-    folium.LayerControl(collapsed=False, position='topright').add_to(m)
+    # No Folium LayerControl — we inject a custom one via JS (see below)
 
-    # Custom CSS — inject into HTML body (header MacroElement doesn't render reliably)
+    # Custom CSS
     css_html = """
     <style>
-    .leaflet-control-layers {
-        border-radius: 12px !important;
-        padding: 14px 18px !important;
-        box-shadow: 0 2px 12px rgba(0,0,0,.2) !important;
-        font-family: 'Segoe UI', Roboto, Arial, sans-serif !important;
-        font-size: 13px !important;
-        background: rgba(255,255,255,.95) !important;
-        backdrop-filter: blur(4px);
-        border: none !important;
-        min-width: 180px;
-    }
-    .leaflet-control-layers-overlays label {
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        padding: 3px 0 !important;
-        margin: 0 !important;
-        cursor: pointer;
-    }
-    .leaflet-control-layers-overlays label span { font-size: 13px; }
-    .leaflet-control-layers-separator {
-        border-top: 1px solid #e0e0e0 !important;
-        margin: 6px 0 !important;
-    }
-    .leaflet-control-layers-toggle {
-        width: 36px !important;
-        height: 36px !important;
-    }
     .marker-cluster {
         background: rgba(255,255,255,0.85) !important;
         border: 2px solid #1a2332 !important;
@@ -312,60 +367,152 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         opacity: 0.8;
         text-shadow: 0 1px 3px rgba(0,0,0,.3);
     }
-    .leaflet-popup-close-button:hover {
-        color: #fff !important;
-        opacity: 1;
-    }
-    .labels-hidden .marker-label {
-        display: none !important;
-    }
-    .label-toggle-control {
+    .leaflet-popup-close-button:hover { color: #fff !important; opacity: 1; }
+    .labels-hidden .marker-label { display: none !important; }
+    .vac-layer-ctrl {
         background: rgba(255,255,255,.95);
         backdrop-filter: blur(4px);
-        border-radius: 8px;
-        padding: 6px 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        border-radius: 12px;
+        padding: 12px 16px;
+        box-shadow: 0 2px 12px rgba(0,0,0,.2);
         font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-        font-size: 12px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        font-size: 13px;
+        min-width: 180px;
+        max-height: 70vh;
+        overflow-y: auto;
     }
-    .label-toggle-control input { cursor: pointer; }
+    .vac-layer-ctrl .section-hdr {
+        display: flex; align-items: center; justify-content: space-between;
+        font-weight: 700; font-size: 11px; text-transform: uppercase;
+        color: #666; letter-spacing: .5px; padding: 6px 0 4px; margin-top: 4px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .vac-layer-ctrl .section-hdr:first-child { margin-top: 0; }
+    .vac-layer-ctrl .section-hdr .toggle-btns { font-weight: 400; text-transform: none; font-size: 11px; }
+    .vac-layer-ctrl .toggle-btns a { cursor: pointer; color: #4ea4f6; text-decoration: none; margin-left: 4px; }
+    .vac-layer-ctrl .toggle-btns a:hover { text-decoration: underline; }
+    .vac-layer-ctrl label {
+        display: flex; align-items: center; gap: 6px;
+        padding: 3px 0; margin: 0; cursor: pointer; font-size: 13px;
+    }
+    .vac-layer-ctrl label input { cursor: pointer; margin: 0; }
+    .vac-layer-ctrl .g-dot {
+        display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
     </style>
     """
     m.get_root().html.add_child(folium.Element(css_html))
 
-    # Label toggle control — inject as raw script referencing the map variable
-    map_name = m.get_name()
-    label_toggle_js = f"""
-    <script>
-    (function() {{
-        var LabelToggle = L.Control.extend({{
-            options: {{ position: 'topright' }},
-            onAdd: function(map) {{
-                var div = L.DomUtil.create('div', 'label-toggle-control');
-                var cb = L.DomUtil.create('input', '', div);
-                cb.type = 'checkbox'; cb.checked = true; cb.id = 'label-toggle-cb';
-                var lbl = L.DomUtil.create('label', '', div);
-                lbl.htmlFor = 'label-toggle-cb';
-                lbl.textContent = 'Labels';
-                lbl.style.cursor = 'pointer'; lbl.style.margin = '0';
-                L.DomEvent.disableClickPropagation(div);
-                cb.addEventListener('change', function() {{
-                    var c = map.getContainer();
-                    if (cb.checked) {{ c.classList.remove('labels-hidden'); }}
-                    else {{ c.classList.add('labels-hidden'); }}
-                }});
-                return div;
-            }}
-        }});
-        new LabelToggle().addTo({map_name});
-    }})();
-    </script>
-    """
-    m.get_root().html.add_child(folium.Element(label_toggle_js))
+    # Build custom layer control — inject as MacroElement so it renders
+    # in the script section AFTER Folium's own map/layer initialization.
+    cat_layers_items = [
+        {"var": groups[cat].get_name(),
+         "label": f"{get_category_info(cat).html_icon} {get_category_info(cat).label}",
+         "on": True}
+        for cat in Category
+    ]
+    grp_layers_items = [
+        {"var": fg.get_name(),
+         "label": grouping.name,
+         "color": grouping.color,
+         "on": False}
+        for grouping, fg in grouping_fgs
+    ]
+
+    class _LayerControl(MacroElement):
+        _template = Template("""
+            {% macro script(this, kwargs) %}
+            (function() {
+                var map = {{ this._parent.get_name() }};
+                var catLayers = [
+                    {% for c in this.cat_items %}
+                    {v:{{ c.var }},label:"{{ c.label }}",on:{{ c.on | tojson }}}{{ "," if not loop.last }}
+                    {% endfor %}
+                ];
+                var grpLayers = [
+                    {% for g in this.grp_items %}
+                    {v:{{ g.var }},label:"{{ g.label }}",color:"{{ g.color }}",on:{{ g.on | tojson }}}{{ "," if not loop.last }}
+                    {% endfor %}
+                ];
+
+                var LayerPanel = L.Control.extend({
+                    options: { position: 'topright' },
+                    onAdd: function() {
+                        var div = L.DomUtil.create('div', 'vac-layer-ctrl');
+                        L.DomEvent.disableClickPropagation(div);
+                        L.DomEvent.disableScrollPropagation(div);
+
+                        function makeSection(title, layers, useColor) {
+                            var hdr = document.createElement('div');
+                            hdr.className = 'section-hdr';
+                            hdr.innerHTML = '<span>' + title + '</span>' +
+                                '<span class="toggle-btns"><a class="sel-all">all</a> / <a class="sel-none">none</a></span>';
+                            div.appendChild(hdr);
+
+                            var cbs = [];
+                            layers.forEach(function(lyr) {
+                                var lbl = document.createElement('label');
+                                var cb = document.createElement('input');
+                                cb.type = 'checkbox'; cb.checked = lyr.on;
+                                cb.addEventListener('change', function() {
+                                    if (cb.checked) map.addLayer(lyr.v); else map.removeLayer(lyr.v);
+                                });
+                                lbl.appendChild(cb);
+                                if (useColor && lyr.color) {
+                                    var dot = document.createElement('span');
+                                    dot.className = 'g-dot';
+                                    dot.style.background = lyr.color;
+                                    lbl.appendChild(dot);
+                                }
+                                var txt = document.createElement('span');
+                                txt.innerHTML = lyr.label;
+                                lbl.appendChild(txt);
+                                div.appendChild(lbl);
+                                cbs.push(cb);
+                            });
+
+                            hdr.querySelector('.sel-all').addEventListener('click', function() {
+                                cbs.forEach(function(cb, i) { cb.checked = true; map.addLayer(layers[i].v); });
+                            });
+                            hdr.querySelector('.sel-none').addEventListener('click', function() {
+                                cbs.forEach(function(cb, i) { cb.checked = false; map.removeLayer(layers[i].v); });
+                            });
+                        }
+
+                        makeSection('Categories', catLayers, false);
+                        if (grpLayers.length) makeSection('Groupings', grpLayers, true);
+
+                        // Labels toggle
+                        var sep = document.createElement('div');
+                        sep.style.cssText = 'border-top:1px solid #e0e0e0;margin:8px 0 4px';
+                        div.appendChild(sep);
+                        var lbl = document.createElement('label');
+                        var cb = document.createElement('input');
+                        cb.type = 'checkbox'; cb.checked = true;
+                        cb.addEventListener('change', function() {
+                            var c = map.getContainer();
+                            if (cb.checked) c.classList.remove('labels-hidden');
+                            else c.classList.add('labels-hidden');
+                        });
+                        lbl.appendChild(cb);
+                        var s = document.createElement('span'); s.textContent = 'Labels';
+                        lbl.appendChild(s);
+                        div.appendChild(lbl);
+
+                        return div;
+                    }
+                });
+                new LayerPanel().addTo(map);
+            })();
+            {% endmacro %}
+        """)
+
+        def __init__(self, cat_items, grp_items):
+            super().__init__()
+            self.cat_items = cat_items
+            self.grp_items = grp_items
+
+    _LayerControl(cat_layers_items, grp_layers_items).add_to(m)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(output_path))

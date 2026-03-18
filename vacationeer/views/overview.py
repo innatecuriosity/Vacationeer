@@ -41,6 +41,7 @@ def render_overview(trip: Trip) -> str:
             font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;"
      x-data="{{
        filter: 'all',
+       groupFilter: 'all',
        search: '',
        sortBy: 'category',
        expanded: null,
@@ -67,6 +68,10 @@ def render_overview(trip: Trip) -> str:
        filtered() {{
          let list = $store.trip.attractions || [];
          if (this.filter !== 'all') list = list.filter(a => a.category === this.filter);
+         if (this.groupFilter !== 'all') {{
+           let grp = ($store.trip.groupings || []).find(g => g.id === this.groupFilter);
+           if (grp) list = list.filter(a => (grp.member_ids || []).includes(a.id));
+         }}
          if (this.search.trim()) {{
            let q = this.search.trim().toLowerCase();
            list = list.filter(a => a.name.toLowerCase().includes(q));
@@ -145,6 +150,30 @@ def render_overview(trip: Trip) -> str:
     </div>
   </div>
 
+  <!-- ===== Grouping filter bar ===== -->
+  <div x-show="($store.trip.groupings || []).length"
+       style="margin-bottom:16px;padding:16px;background:#fff;border-radius:10px;
+              box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+    <div style="font-size:13px;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">
+      Filter by Grouping
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <button @click="groupFilter = 'all'"
+              :style="'display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:2px solid #1a2332;transition:all .15s;'
+                      + (groupFilter === 'all' ? 'background:#1a2332;color:#fff;' : 'background:#fff;color:#1a2332;')"
+      >All</button>
+
+      <template x-for="grp in ($store.trip.groupings || [])" :key="grp.id">
+        <button @click="groupFilter = grp.id"
+                :style="'display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:2px solid ' + (grp.color || '#888') + ';transition:all .15s;'
+                        + (groupFilter === grp.id ? 'background:' + (grp.color || '#888') + ';color:#fff;' : 'background:#fff;color:' + (grp.color || '#888') + ';')">
+          <span x-text="grp.name"></span>
+          (<span x-text="(grp.member_ids || []).length"></span>)
+        </button>
+      </template>
+    </div>
+  </div>
+
   <!-- ===== Search & Sort bar ===== -->
   <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
     <input type="text" x-model="search" placeholder="Search attractions..."
@@ -201,6 +230,11 @@ def render_overview(trip: Trip) -> str:
           <!-- Category pill -->
           <span :style="'display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;color:#fff;background:' + catColor(attraction.category)"
                 x-text="catLabel(attraction.category)"></span>
+          <!-- Grouping pills -->
+          <template x-for="grp in ($store.trip.groupings || []).filter(g => (g.member_ids || []).includes(attraction.id))" :key="grp.id">
+            <span :style="'display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:500;color:#fff;background:' + (grp.color || '#888') + ';margin-left:4px;'"
+                  x-text="grp.name"></span>
+          </template>
           <!-- Expected score -->
           <span x-show="attraction.expected_score != null"
                 style="display:inline-flex;align-items:center;gap:3px;">
@@ -287,6 +321,24 @@ def render_overview(trip: Trip) -> str:
             <template x-for="tag in (attraction.tags || [])" :key="tag">
               <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#e8ecf1;color:#4a5568;font-size:11px;font-weight:500;"
                     x-text="tag"></span>
+            </template>
+          </div>
+        </div>
+
+        <!-- Groupings -->
+        <div x-show="($store.trip.groupings || []).length"
+             style="margin:8px 0;" @click.stop>
+          <div style="font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Groupings</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <template x-for="grp in ($store.trip.groupings || [])" :key="grp.id">
+              <label :style="'display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid ' + (grp.color || '#888') + ';'
+                             + ((grp.member_ids || []).includes(attraction.id) ? 'background:' + (grp.color || '#888') + ';color:#fff;' : 'background:#fff;color:' + (grp.color || '#888') + ';')">
+                <input type="checkbox"
+                       :checked="(grp.member_ids || []).includes(attraction.id)"
+                       @change="$store.trip.toggleGroupingMember(grp.id, attraction.id)"
+                       :style="'accent-color:' + (grp.color || '#888') + ';cursor:pointer;width:12px;height:12px;margin:0;'">
+                <span x-text="grp.name"></span>
+              </label>
             </template>
           </div>
         </div>

@@ -5,7 +5,7 @@
   "start_date": "2026-03-21",
   "end_date": "2026-03-28",
   "travelers": 2,
-  "budget_eur": 2000.0,
+  "budget_eur": 1000.0,
   "preferences": {
     "interests": [
       "history",
@@ -524,7 +524,7 @@
         "address": "C/ del Literat Azorin, 17"
       },
       "category": "food",
-      "price_eur": 0.0,
+      "price_eur": 5.0,
       "duration_minutes": 40,
       "tags": [
         "free-entry",
@@ -604,7 +604,7 @@
         "address": "C/ de Vicente Sancho Tello, 10"
       },
       "category": "entertainment",
-      "price_eur": 8.0,
+      "price_eur": 9.0,
       "duration_minutes": 120,
       "tags": [
         "hidden-gem",
@@ -613,7 +613,7 @@
       "tips": "Check programme at cinesbabel.com. Perfect for a rainy evening",
       "url": "https://www.cinesbabel.com/",
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": 3.0
     },
     {
       "id": "flet",
@@ -625,6 +625,24 @@
         "address": null
       },
       "category": "landmark",
+      "price_eur": null,
+      "duration_minutes": null,
+      "tags": [],
+      "tips": null,
+      "url": null,
+      "expected_score": null,
+      "user_score": null
+    },
+    {
+      "id": "another-flat",
+      "name": "another flat",
+      "description": "Check-in: 2026-03-19 / Check-out: 2026-03-28",
+      "location": {
+        "lat": 39.461609,
+        "lng": -0.394993,
+        "address": null
+      },
+      "category": "accommodation",
       "price_eur": null,
       "duration_minutes": null,
       "tags": [],
@@ -941,12 +959,91 @@
       "user_score": null
     }
   ],
+  "groupings": [
+    {
+      "id": "city-center",
+      "name": "City Center",
+      "description": "Historic old town attractions within walking distance",
+      "color": "#e74c3c",
+      "parent_id": null,
+      "member_ids": ["cathedral", "la-lonja", "mercado-central", "almoina", "torres-serranos", "plaza-virgen", "plaza-ayuntamiento", "torres-quart"]
+    },
+    {
+      "id": "city-of-arts",
+      "name": "City of Arts & Sciences",
+      "description": "The modern architectural complex in Turia riverbed",
+      "color": "#3498db",
+      "parent_id": null,
+      "member_ids": ["oceanografic", "museu-ciencies", "hemisferic", "city-arts-exterior"]
+    },
+    {
+      "id": "free-attractions",
+      "name": "Free Activities",
+      "description": "No entrance fee required",
+      "color": "#2ecc71",
+      "parent_id": null,
+      "member_ids": ["turia-gardens", "city-arts-exterior", "plaza-virgen", "plaza-ayuntamiento", "bellas-artes", "cccc", "viveros", "gulliver-park", "mercado-central"]
+    }
+  ],
   "days": [
     {
       "date": "2026-03-21",
       "label": null,
       "start_time": null,
-      "activities": [],
+      "activities": [
+        {
+          "id": "e4550b91",
+          "attraction_id": "torres-serranos",
+          "day_trip_id": null,
+          "name": "Torres de Serranos",
+          "start_time": null,
+          "duration_minutes": 30,
+          "price_eur": 2.0,
+          "category": "landmark",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        },
+        {
+          "id": "481ac832",
+          "attraction_id": "almoina",
+          "day_trip_id": null,
+          "name": "L'Almoina Archaeological Centre",
+          "start_time": null,
+          "duration_minutes": 50,
+          "price_eur": 2.0,
+          "category": "museum",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        },
+        {
+          "id": "deffb3d4",
+          "attraction_id": "mercado-central",
+          "day_trip_id": null,
+          "name": "Mercado Central",
+          "start_time": null,
+          "duration_minutes": 60,
+          "price_eur": 0.0,
+          "category": "food",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        },
+        {
+          "id": "43171d24",
+          "attraction_id": "museo-fallero",
+          "day_trip_id": null,
+          "name": "Museo Fallero",
+          "start_time": null,
+          "duration_minutes": 60,
+          "price_eur": 2.0,
+          "category": "museum",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        }
+      ],
       "notes": null
     },
     {
@@ -960,14 +1057,68 @@
       "date": "2026-03-23",
       "label": null,
       "start_time": null,
-      "activities": [],
+      "activities": [
+        {
+          "id": "36c0721b",
+          "attraction_id": "cathedral",
+          "day_trip_id": null,
+          "name": "Valencia Cathedral + Miguelete Tower",
+          "start_time": null,
+          "duration_minutes": 75,
+          "price_eur": 10.0,
+          "category": "landmark",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        },
+        {
+          "id": "e38d78c5",
+          "attraction_id": "hemisferic",
+          "day_trip_id": null,
+          "name": "L'Hemisferic",
+          "start_time": null,
+          "duration_minutes": 60,
+          "price_eur": 8.0,
+          "category": "entertainment",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        },
+        {
+          "id": "8bc97407",
+          "attraction_id": "museo-del-arroz",
+          "day_trip_id": null,
+          "name": "Museo del Arroz",
+          "start_time": null,
+          "duration_minutes": 40,
+          "price_eur": 2.0,
+          "category": "museum",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        }
+      ],
       "notes": null
     },
     {
       "date": "2026-03-24",
       "label": null,
       "start_time": null,
-      "activities": [],
+      "activities": [
+        {
+          "id": "4c80fa16",
+          "attraction_id": "bioparc",
+          "day_trip_id": null,
+          "name": "Bioparc",
+          "start_time": "10:00:00",
+          "duration_minutes": 310,
+          "price_eur": 29.5,
+          "category": "nature",
+          "travel_from_prev_minutes": null,
+          "status": "planned",
+          "notes": null
+        }
+      ],
       "notes": null
     },
     {

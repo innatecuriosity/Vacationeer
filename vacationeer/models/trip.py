@@ -106,6 +106,15 @@ class DayTrip(BaseModel):
     user_score: Optional[float] = None
 
 
+class Grouping(BaseModel):
+    id: str = Field(default_factory=_id)
+    name: str
+    description: Optional[str] = None
+    color: str = "#3498db"
+    parent_id: Optional[str] = None
+    member_ids: list[str] = Field(default_factory=list)
+
+
 class Preferences(BaseModel):
     interests: list[str] = Field(default_factory=list)
     avoid: list[str] = Field(default_factory=list)
@@ -124,6 +133,7 @@ class Trip(BaseModel):
     preferences: Optional[Preferences] = None
     attractions: list[Attraction] = Field(default_factory=list)
     day_trips: list[DayTrip] = Field(default_factory=list)
+    groupings: list[Grouping] = Field(default_factory=list)
     days: list[Day] = Field(default_factory=list)
 
     @property

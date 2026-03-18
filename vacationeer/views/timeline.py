@@ -458,6 +458,11 @@ def render_timeline(trip: Trip) -> str:
               <span x-show="attr.expected_score" :style="'color:' + (attr.expected_score >= 8 ? '#27AE60' : attr.expected_score >= 6 ? '#F1C40F' : '#E74C3C')"
                     x-text="'\\u2605' + (attr.expected_score||0).toFixed(1)"></span>
             </div>
+            <div style="display:flex;flex-wrap:wrap;gap:2px;">
+              <template x-for="g in ($store.trip.groupings || []).filter(g => g.member_ids.includes(attr.id))" :key="g.id">
+                <span :style="'display:inline-block;padding:0 5px;border-radius:8px;font-size:9px;color:#fff;background:' + g.color + ';margin-right:3px;margin-top:2px;'" x-text="g.name"></span>
+              </template>
+            </div>
           </div>
           <button class="card-btn" @click.stop="openDetail(attr)" title="Details">&#x25BC;</button>
         </div>
@@ -470,6 +475,11 @@ def render_timeline(trip: Trip) -> str:
             <div class="card-name" x-text="dt.name"></div>
             <div class="card-desc" x-show="dt.description" x-text="dt.description"></div>
             <div class="card-meta" style="color:#1E8449;">Day Trip</div>
+            <div style="display:flex;flex-wrap:wrap;gap:2px;">
+              <template x-for="g in ($store.trip.groupings || []).filter(g => g.member_ids.includes(dt.id))" :key="g.id">
+                <span :style="'display:inline-block;padding:0 5px;border-radius:8px;font-size:9px;color:#fff;background:' + g.color + ';margin-right:3px;margin-top:2px;'" x-text="g.name"></span>
+              </template>
+            </div>
           </div>
           <button class="card-btn" @click.stop="openDayTripDetail(dt)" title="Details">&#x25BC;</button>
         </div>
