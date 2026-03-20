@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_cdb6c0fd81d31c5f8fa20b34c1efd52b {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+    <style>
+    .leaflet-control-layers {
+        border-radius: 12px !important;
+        padding: 14px 18px !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,.2) !important;
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif !important;
+        font-size: 13px !important;
+        background: rgba(255,255,255,.95) !important;
+        backdrop-filter: blur(4px);
+        border: none !important;
+        min-width: 180px;
+    }
+    .leaflet-control-layers-overlays label {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 3px 0 !important;
+        margin: 0 !important;
+        cursor: pointer;
+    }
+    .leaflet-control-layers-overlays label span { font-size: 13px; }
+    .leaflet-control-layers-separator {
+        border-top: 1px solid #e0e0e0 !important;
+        margin: 6px 0 !important;
+    }
+    .leaflet-control-layers-toggle {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    .marker-cluster {
+        background: rgba(255,255,255,0.85) !important;
+        border: 2px solid #1a2332 !important;
+        border-radius: 50% !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .marker-cluster div {
+        background: #1a2332 !important;
+        color: #fff !important;
+        font-weight: 700;
+        font-size: 13px;
+        border-radius: 50%;
+        width: 30px !important;
+        height: 30px !important;
+        margin: 3px !important;
+        line-height: 30px !important;
+        text-align: center;
+    }
+    .marker-cluster-small,
+    .marker-cluster-medium,
+    .marker-cluster-large {
+        background: rgba(255,255,255,0.85) !important;
+    }
+    .leaflet-popup-content-wrapper {
+        padding: 0 !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,.2) !important;
+    }
+    .leaflet-popup-content {
+        margin: 0 !important;
+        width: auto !important;
+    }
+    .leaflet-popup-close-button {
+        z-index: 10 !important;
+        color: #fff !important;
+        font-size: 20px !important;
+        font-weight: 400 !important;
+        width: 28px !important;
+        height: 28px !important;
+        line-height: 28px !important;
+        text-align: center;
+        right: 6px !important;
+        top: 6px !important;
+        opacity: 0.8;
+        text-shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
+    .leaflet-popup-close-button:hover {
+        color: #fff !important;
+        opacity: 1;
+    }
+    .labels-hidden .marker-label {
+        display: none !important;
+    }
+    .label-toggle-control {
+        background: rgba(255,255,255,.95);
+        backdrop-filter: blur(4px);
+        border-radius: 8px;
+        padding: 6px 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .label-toggle-control input { cursor: pointer; }
+    </style>
+    
+    
+    <script>
+    (function() {
+        var LabelToggle = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'label-toggle-control');
+                var cb = L.DomUtil.create('input', '', div);
+                cb.type = 'checkbox'; cb.checked = true; cb.id = 'label-toggle-cb';
+                var lbl = L.DomUtil.create('label', '', div);
+                lbl.htmlFor = 'label-toggle-cb';
+                lbl.textContent = 'Labels';
+                lbl.style.cursor = 'pointer'; lbl.style.margin = '0';
+                L.DomEvent.disableClickPropagation(div);
+                cb.addEventListener('change', function() {
+                    var c = map.getContainer();
+                    if (cb.checked) { c.classList.remove('labels-hidden'); }
+                    else { c.classList.add('labels-hidden'); }
+                });
+                return div;
+            }
+        });
+        new LabelToggle().addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+    })();
+    </script>
+    
+    
+            <div class="folium-map" id="map_cdb6c0fd81d31c5f8fa20b34c1efd52b" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_cdb6c0fd81d31c5f8fa20b34c1efd52b = L.map(
+                "map_cdb6c0fd81d31c5f8fa20b34c1efd52b",
+                {
+                    center: [39.469158620689676, -0.3705068965517242],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_f3d536b1e86a08eea37383947619614f = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_f3d536b1e86a08eea37383947619614f.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_d898d8ee1706939414fb8a5f3984e5ca = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            var marker_b95b4d6569b8506417e351d996140271 = L.marker(
+                [39.4529, -0.3477],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_314c64ca17e8901d06d483089ed0619c = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eOceanografic\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_ccd44b213fcaa9b16c634ac120af0442 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_6f69576ff8e75760c0a26da1fe089ced = $(`<div id="html_6f69576ff8e75760c0a26da1fe089ced" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_oceanografic">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Oceanografic</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Europe's largest aquarium — 45,000+ animals, 500+ species, dolphin shows</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_oceanografic">5h30</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_oceanografic">€42</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">8.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">must-do</span><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">full-day</span><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">included-in-combo</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Start at Arctic end (belugas), arrive 20 min early for dolphin show</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">       <a href="https://www.oceanografic.org/en/" target="_blank" style="display:inline-block;background:#C0392B;color:#fff;text-decoration:none;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;margin-top:8px;">Website ↗</a>     </div>   </div> </div> </div>`)[0];
+                popup_ccd44b213fcaa9b16c634ac120af0442.setContent(html_6f69576ff8e75760c0a26da1fe089ced);
+            
+        
+
+        marker_b95b4d6569b8506417e351d996140271.bindPopup(popup_ccd44b213fcaa9b16c634ac120af0442)
+        ;
+
+        
+    
+    
+            marker_b95b4d6569b8506417e351d996140271.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Oceanografic</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">Europe's largest aquarium — 45,000+ animals, 500+ species, dolphin shows</div><div style="color:#888;font-size:10px;margin-top:1px;">5h30 · €42 · ★8.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_b95b4d6569b8506417e351d996140271.setIcon(div_icon_314c64ca17e8901d06d483089ed0619c);
+            
+    
+            var marker_46579b49cecaef46f0a1d067e7ffb804 = L.marker(
+                [39.4753, -0.3753],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_558c340702ee185d253fd98a6e61742a = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eValencia Cathedral + Miguelete Tower\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_1124a082412916861f869e009066a174 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_42269484e914a0b5bfc9b5e0af6620b8 = $(`<div id="html_42269484e914a0b5bfc9b5e0af6620b8" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_cathedral">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Valencia Cathedral + Miguelete Tower</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Gothic/Baroque/Renaissance mix, claims to house the Holy Grail. 207 steps for panoramic views</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_cathedral">1h15</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_cathedral">€10</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">8.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">free-during-mass</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Free during mass hours</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_1124a082412916861f869e009066a174.setContent(html_42269484e914a0b5bfc9b5e0af6620b8);
+            
+        
+
+        marker_46579b49cecaef46f0a1d067e7ffb804.bindPopup(popup_1124a082412916861f869e009066a174)
+        ;
+
+        
+    
+    
+            marker_46579b49cecaef46f0a1d067e7ffb804.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Valencia Cathedral + Miguelete Tower</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">Gothic/Baroque/Renaissance mix, claims to house the Holy Grail. 207 steps for pa...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h15 · €10 · ★8.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_46579b49cecaef46f0a1d067e7ffb804.setIcon(div_icon_558c340702ee185d253fd98a6e61742a);
+            
+    
+            var marker_c7d22a4e0fbee1191761dda0af0180ae = L.marker(
+                [39.4742, -0.3789],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_87a3092be7d416e82374b221adcb0a1b = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eLa Lonja de la Seda\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_ed2a5bac03e7e06257427ec79847b8b6 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_87bb008cc5033214dcb5ab0d35c27387 = $(`<div id="html_87bb008cc5033214dcb5ab0d35c27387" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_la-lonja">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">La Lonja de la Seda</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">15th-century Gothic silk exchange — UNESCO World Heritage, stunning twisted columns</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_la-lonja">45 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_la-lonja">€2</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">9.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">unesco</span><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">free-sunday</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_ed2a5bac03e7e06257427ec79847b8b6.setContent(html_87bb008cc5033214dcb5ab0d35c27387);
+            
+        
+
+        marker_c7d22a4e0fbee1191761dda0af0180ae.bindPopup(popup_ed2a5bac03e7e06257427ec79847b8b6)
+        ;
+
+        
+    
+    
+            marker_c7d22a4e0fbee1191761dda0af0180ae.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>La Lonja de la Seda</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">15th-century Gothic silk exchange — UNESCO World Heritage, stunning twisted colu...</div><div style="color:#888;font-size:10px;margin-top:1px;">45min · €2 · ★9.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_c7d22a4e0fbee1191761dda0af0180ae.setIcon(div_icon_87a3092be7d416e82374b221adcb0a1b);
+            
+    
+            var marker_91371bfb7ad0f7a6c4df9ce4d260fab1 = L.marker(
+                [39.4792, -0.3755],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_ed299f5f5fadc582418c915aaca05026 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eTorres de Serranos\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_ca7e517d48b0cd8a3aa5b0062738af9e = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_ca0dc0e0601633b8200581046490b3eb = $(`<div id="html_ca0dc0e0601633b8200581046490b3eb" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_torres-serranos">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Torres de Serranos</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">14th-century city gate with great old town views</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_torres-serranos">30 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_torres-serranos">€2</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">free-sunday</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_ca7e517d48b0cd8a3aa5b0062738af9e.setContent(html_ca0dc0e0601633b8200581046490b3eb);
+            
+        
+
+        marker_91371bfb7ad0f7a6c4df9ce4d260fab1.bindPopup(popup_ca7e517d48b0cd8a3aa5b0062738af9e)
+        ;
+
+        
+    
+    
+            marker_91371bfb7ad0f7a6c4df9ce4d260fab1.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Torres de Serranos</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">14th-century city gate with great old town views</div><div style="color:#888;font-size:10px;margin-top:1px;">30min · €2 · ★7.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_91371bfb7ad0f7a6c4df9ce4d260fab1.setIcon(div_icon_ed299f5f5fadc582418c915aaca05026);
+            
+    
+            var marker_d9303aa049217625c36e5e76dff95bdb = L.marker(
+                [39.4741, -0.3832],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_a3a4bc36fdab3cfafdd6dc7f3d69d029 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eTorres de Quart\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_2d4b5fb12532ea8a84eb41360e52a964 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_f3f9b2e790c90f64ebe01ca0086012cf = $(`<div id="html_f3f9b2e790c90f64ebe01ca0086012cf" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_torres-de-quart">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Torres de Quart</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Western medieval gate with visible Napoleonic cannonball damage — less crowded than Serranos</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_torres-de-quart">30 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_torres-de-quart">€2</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">free-sunday</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_2d4b5fb12532ea8a84eb41360e52a964.setContent(html_f3f9b2e790c90f64ebe01ca0086012cf);
+            
+        
+
+        marker_d9303aa049217625c36e5e76dff95bdb.bindPopup(popup_2d4b5fb12532ea8a84eb41360e52a964)
+        ;
+
+        
+    
+    
+            marker_d9303aa049217625c36e5e76dff95bdb.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Torres de Quart</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">Western medieval gate with visible Napoleonic cannonball damage — less crowded t...</div><div style="color:#888;font-size:10px;margin-top:1px;">30min · €2 · ★7.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_d9303aa049217625c36e5e76dff95bdb.setIcon(div_icon_a3a4bc36fdab3cfafdd6dc7f3d69d029);
+            
+    
+            var marker_43fac3e9c506feb65890476e68dc6c4a = L.marker(
+                [39.4545, -0.3505],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_12eece2da2f367d8e26533cd70c2e97f = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eCity of Arts and Sciences (Exterior)\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_d2557e011fd990921c4e3f9000163e2e = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_1380a187b6fde877be3c02e433159b93 = $(`<div id="html_1380a187b6fde877be3c02e433159b93" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_city-of-arts-exterior">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">City of Arts and Sciences (Exterior)</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Calatrava's futuristic complex — free to walk around, spectacular at sunset reflected in water pools</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_city-of-arts-exterior">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_city-of-arts-exterior">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">8.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">free</span><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">sunset</span><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">photogenic</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Best at sunset when the buildings reflect in the water pools</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_d2557e011fd990921c4e3f9000163e2e.setContent(html_1380a187b6fde877be3c02e433159b93);
+            
+        
+
+        marker_43fac3e9c506feb65890476e68dc6c4a.bindPopup(popup_d2557e011fd990921c4e3f9000163e2e)
+        ;
+
+        
+    
+    
+            marker_43fac3e9c506feb65890476e68dc6c4a.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>City of Arts and Sciences (Exterior)</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">Calatrava's futuristic complex — free to walk around, spectacular at sunset refl...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · Free · ★8.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_43fac3e9c506feb65890476e68dc6c4a.setIcon(div_icon_12eece2da2f367d8e26533cd70c2e97f);
+            
+    
+            var marker_9cb205845aeb14d6ddb01672cd18a64d = L.marker(
+                [39.4756, -0.3758],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_ebe0725fc7a260b9a0633256d3a6bde6 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003ePlaza de la Virgen\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_0b20b81eabbb91771556ee21709b2864 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_2af936d78621a385bd23eb60a1f35972 = $(`<div id="html_2af936d78621a385bd23eb60a1f35972" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_plaza-de-la-virgen">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Plaza de la Virgen</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Historic heart of old town — Roman forum site, Turia fountain, surrounded by Cathedral and Basilica</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_plaza-de-la-virgen">30 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_plaza-de-la-virgen">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">free</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_0b20b81eabbb91771556ee21709b2864.setContent(html_2af936d78621a385bd23eb60a1f35972);
+            
+        
+
+        marker_9cb205845aeb14d6ddb01672cd18a64d.bindPopup(popup_0b20b81eabbb91771556ee21709b2864)
+        ;
+
+        
+    
+    
+            marker_9cb205845aeb14d6ddb01672cd18a64d.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Plaza de la Virgen</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">Historic heart of old town — Roman forum site, Turia fountain, surrounded by Cat...</div><div style="color:#888;font-size:10px;margin-top:1px;">30min · Free · ★7.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_9cb205845aeb14d6ddb01672cd18a64d.setIcon(div_icon_ebe0725fc7a260b9a0633256d3a6bde6);
+            
+    
+            var marker_c4a960f0d976e1cd3d6e26513bf73d75 = L.marker(
+                [39.4697, -0.3764],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_28c8830fd003b12b29be1df1cb5aea1e = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003ePlaza del Ayuntamiento\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_e0e9df2cc5def2cb7fba69cf76a72f58 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_bd73cc2234eb1be56d0430505001c35d = $(`<div id="html_bd73cc2234eb1be56d0430505001c35d" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_plaza-del-ayuntamiento">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Plaza del Ayuntamiento</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Valencia's grand central square — ornate City Hall, fountains, flower stalls</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_plaza-del-ayuntamiento">20 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_plaza-del-ayuntamiento">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#C0392B18;color:#C0392B;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #C0392B40;">free</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_e0e9df2cc5def2cb7fba69cf76a72f58.setContent(html_bd73cc2234eb1be56d0430505001c35d);
+            
+        
+
+        marker_c4a960f0d976e1cd3d6e26513bf73d75.bindPopup(popup_e0e9df2cc5def2cb7fba69cf76a72f58)
+        ;
+
+        
+    
+    
+            marker_c4a960f0d976e1cd3d6e26513bf73d75.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Plaza del Ayuntamiento</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">Valencia's grand central square — ornate City Hall, fountains, flower stalls</div><div style="color:#888;font-size:10px;margin-top:1px;">20min · Free · ★7.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_c4a960f0d976e1cd3d6e26513bf73d75.setIcon(div_icon_28c8830fd003b12b29be1df1cb5aea1e);
+            
+    
+            var marker_82809cd5ef9f2dc0db28bbb356035246 = L.marker(
+                [0.0, -0.383757],
+                {
+}
+            ).addTo(marker_cluster_d898d8ee1706939414fb8a5f3984e5ca);
+        
+    
+            var div_icon_bd718fb305a0f9d4248f424ef485994e = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfdb\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eflet\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_42d0aaa771d5f8d43b9e3c03f89f8a2b = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_81f5fbf8dc054f6504f02a92cd3debb3 = $(`<div id="html_81f5fbf8dc054f6504f02a92cd3debb3" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_flet">   <!-- Header -->   <div style="background:#C0392B;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Landmarks</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">flet</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">we sleep here</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_flet">—</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_flet">—</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">—</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>                 <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_42d0aaa771d5f8d43b9e3c03f89f8a2b.setContent(html_81f5fbf8dc054f6504f02a92cd3debb3);
+            
+        
+
+        marker_82809cd5ef9f2dc0db28bbb356035246.bindPopup(popup_42d0aaa771d5f8d43b9e3c03f89f8a2b)
+        ;
+
+        
+    
+    
+            marker_82809cd5ef9f2dc0db28bbb356035246.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>flet</b><br><span style="color:#C0392B;font-weight:600;font-size:10px;">Landmarks</span><div style="color:#555;font-size:10px;margin-top:2px;">we sleep here</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_82809cd5ef9f2dc0db28bbb356035246.setIcon(div_icon_bd718fb305a0f9d4248f424ef485994e);
+            
+    
+            marker_cluster_d898d8ee1706939414fb8a5f3984e5ca.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            var marker_7f8c4f0c5dd371dfda95d40febf2496f = L.marker(
+                [39.4557, -0.3521],
+                {
+}
+            ).addTo(marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde);
+        
+    
+            var div_icon_4fa6bfbba7d2a126bffffa322e7ab232 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83d\uddbc\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eMuseu de les Ciencies\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_7b19e0ed27c5e6b430a5b25e88857ade = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_687d6814559999a8c276e3a8b4184e86 = $(`<div id="html_687d6814559999a8c276e3a8b4184e86" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_science-museum">   <!-- Header -->   <div style="background:#2980B9;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Museums</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Museu de les Ciencies</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">3 floors of interactive science — Leonardo da Vinci exhibition, space, genetics</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_science-museum">2h30</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_science-museum">€8</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">9.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">included-in-combo</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Go weekday morning to avoid school groups</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_7b19e0ed27c5e6b430a5b25e88857ade.setContent(html_687d6814559999a8c276e3a8b4184e86);
+            
+        
+
+        marker_7f8c4f0c5dd371dfda95d40febf2496f.bindPopup(popup_7b19e0ed27c5e6b430a5b25e88857ade)
+        ;
+
+        
+    
+    
+            marker_7f8c4f0c5dd371dfda95d40febf2496f.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Museu de les Ciencies</b><br><span style="color:#2980B9;font-weight:600;font-size:10px;">Museums</span><div style="color:#555;font-size:10px;margin-top:2px;">3 floors of interactive science — Leonardo da Vinci exhibition, space, genetics</div><div style="color:#888;font-size:10px;margin-top:1px;">2h30 · €8 · ★9.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_7f8c4f0c5dd371dfda95d40febf2496f.setIcon(div_icon_4fa6bfbba7d2a126bffffa322e7ab232);
+            
+    
+            var marker_31cd00cec21377f8390666f55dccafc1 = L.marker(
+                [39.4756, -0.3748],
+                {
+}
+            ).addTo(marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde);
+        
+    
+            var div_icon_b172cf0da47e264f9c06586a4cef5388 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83d\uddbc\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eL\u0027Almoina Archaeological Centre\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_1ebbd68b542ceec2077268f40782d4ec = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_ad1bce1d750690e938e6a3f06813ee83 = $(`<div id="html_ad1bce1d750690e938e6a3f06813ee83" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_almoina">   <!-- Header -->   <div style="background:#2980B9;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Museums</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">L'Almoina Archaeological Centre</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_almoina">50 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_almoina">€2</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">9.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">underrated</span><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">free-sunday</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_1ebbd68b542ceec2077268f40782d4ec.setContent(html_ad1bce1d750690e938e6a3f06813ee83);
+            
+        
+
+        marker_31cd00cec21377f8390666f55dccafc1.bindPopup(popup_1ebbd68b542ceec2077268f40782d4ec)
+        ;
+
+        
+    
+    
+            marker_31cd00cec21377f8390666f55dccafc1.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>L'Almoina Archaeological Centre</b><br><span style="color:#2980B9;font-weight:600;font-size:10px;">Museums</span><div style="color:#555;font-size:10px;margin-top:2px;">2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic</div><div style="color:#888;font-size:10px;margin-top:1px;">50min · €2 · ★9.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_31cd00cec21377f8390666f55dccafc1.setIcon(div_icon_b172cf0da47e264f9c06586a4cef5388);
+            
+    
+            var marker_4c54c67e667a906880ed4ec2e89e376b = L.marker(
+                [39.4748, -0.3769],
+                {
+}
+            ).addTo(marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde);
+        
+    
+            var div_icon_b0f6f7c93f52c1cdfc2843bf250d72f8 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83d\uddbc\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eL\u0027Iber Museum of Toy Soldiers\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_d4829187b4107a50f6bf84e8adb20235 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_e283e0f3f74ef2510884db4c3f41d1be = $(`<div id="html_e283e0f3f74ef2510884db4c3f41d1be" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_liber-toy-soldiers">   <!-- Header -->   <div style="background:#2980B9;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Museums</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">L'Iber Museum of Toy Soldiers</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">World's largest collection of historical miniatures — 100,000+ figures in obsessively detailed dioramas</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_liber-toy-soldiers">1h30</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_liber-toy-soldiers">€8</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">hidden-gem</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Adults enjoy it more than kids. Tue-Sat 11-14 & 16-19, Sun 11-14</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_d4829187b4107a50f6bf84e8adb20235.setContent(html_e283e0f3f74ef2510884db4c3f41d1be);
+            
+        
+
+        marker_4c54c67e667a906880ed4ec2e89e376b.bindPopup(popup_d4829187b4107a50f6bf84e8adb20235)
+        ;
+
+        
+    
+    
+            marker_4c54c67e667a906880ed4ec2e89e376b.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>L'Iber Museum of Toy Soldiers</b><br><span style="color:#2980B9;font-weight:600;font-size:10px;">Museums</span><div style="color:#555;font-size:10px;margin-top:2px;">World's largest collection of historical miniatures — 100,000+ figures in obsess...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h30 · €8 · ★7.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_4c54c67e667a906880ed4ec2e89e376b.setIcon(div_icon_b0f6f7c93f52c1cdfc2843bf250d72f8);
+            
+    
+            var marker_2c041123b98c932be727ffc0c917dec6 = L.marker(
+                [39.4717, -0.3837],
+                {
+}
+            ).addTo(marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde);
+        
+    
+            var div_icon_381e55af978030dfb2fd4d424d2e4ba6 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83d\uddbc\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003ePrehistoric Caves Exhibition\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_62e7f0d576f8e511015d7a3f8c9d8961 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_143e3c08b985fe0a5ce1bbc77146abe5 = $(`<div id="html_143e3c08b985fe0a5ce1bbc77146abe5" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_prehistoric-caves">   <!-- Header -->   <div style="background:#2980B9;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Museums</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Prehistoric Caves Exhibition</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Immersive recreation of French prehistoric cave galleries with projections and reconstructions — ending March 31</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_prehistoric-caves">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_prehistoric-caves">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">free</span><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">temporary</span><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">ending-soon</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Check availability — exhibition ends March 31, 2026</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_62e7f0d576f8e511015d7a3f8c9d8961.setContent(html_143e3c08b985fe0a5ce1bbc77146abe5);
+            
+        
+
+        marker_2c041123b98c932be727ffc0c917dec6.bindPopup(popup_62e7f0d576f8e511015d7a3f8c9d8961)
+        ;
+
+        
+    
+    
+            marker_2c041123b98c932be727ffc0c917dec6.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Prehistoric Caves Exhibition</b><br><span style="color:#2980B9;font-weight:600;font-size:10px;">Museums</span><div style="color:#555;font-size:10px;margin-top:2px;">Immersive recreation of French prehistoric cave galleries with projections and r...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · Free · ★7.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_2c041123b98c932be727ffc0c917dec6.setIcon(div_icon_381e55af978030dfb2fd4d424d2e4ba6);
+            
+    
+            var marker_41cbf3383a9976655573922659856091 = L.marker(
+                [39.462, -0.331],
+                {
+}
+            ).addTo(marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde);
+        
+    
+            var div_icon_082d18273629997e11fb2d5388218229 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83d\uddbc\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eMuseo del Arroz\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_5ee66b578c4481eb226f54c3d5eef44b = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_eabf09658d096b3a4d6761160d953ad4 = $(`<div id="html_eabf09658d096b3a4d6761160d953ad4" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_museo-del-arroz">   <!-- Header -->   <div style="background:#2980B9;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Museums</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Museo del Arroz</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Rice cultivation and its role in Valencian cuisine — housed in a historic rice mill near the port</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_museo-del-arroz">40 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_museo-del-arroz">€2</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">6.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">free-sunday</span><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">quirky</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Pair with paella lunch nearby. Free on Sundays</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_5ee66b578c4481eb226f54c3d5eef44b.setContent(html_eabf09658d096b3a4d6761160d953ad4);
+            
+        
+
+        marker_41cbf3383a9976655573922659856091.bindPopup(popup_5ee66b578c4481eb226f54c3d5eef44b)
+        ;
+
+        
+    
+    
+            marker_41cbf3383a9976655573922659856091.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Museo del Arroz</b><br><span style="color:#2980B9;font-weight:600;font-size:10px;">Museums</span><div style="color:#555;font-size:10px;margin-top:2px;">Rice cultivation and its role in Valencian cuisine — housed in a historic rice m...</div><div style="color:#888;font-size:10px;margin-top:1px;">40min · €2 · ★6.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_41cbf3383a9976655573922659856091.setIcon(div_icon_082d18273629997e11fb2d5388218229);
+            
+    
+            var marker_c6466a297a8f7345230174f8c6f1a8bc = L.marker(
+                [39.456, -0.354],
+                {
+}
+            ).addTo(marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde);
+        
+    
+            var div_icon_135bc308a043b4196a67e9f52ea8c83c = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83d\uddbc\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eMuseo Fallero\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_8c8a075e0c4f95735381a3fb705e3401 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_f22fefce099a857d0c5e08aaf0326aff = $(`<div id="html_f22fefce099a857d0c5e08aaf0326aff" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_museo-fallero">   <!-- Header -->   <div style="background:#2980B9;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Museums</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Museo Fallero</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Every pardoned Fallas ninot since 1934 — nearly a century of Valencian artistry and satire</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_museo-fallero">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_museo-fallero">€2</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">free-sunday</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Better post-festival when it's quiet. Pair with City of Arts and Sciences nearby</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_8c8a075e0c4f95735381a3fb705e3401.setContent(html_f22fefce099a857d0c5e08aaf0326aff);
+            
+        
+
+        marker_c6466a297a8f7345230174f8c6f1a8bc.bindPopup(popup_8c8a075e0c4f95735381a3fb705e3401)
+        ;
+
+        
+    
+    
+            marker_c6466a297a8f7345230174f8c6f1a8bc.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Museo Fallero</b><br><span style="color:#2980B9;font-weight:600;font-size:10px;">Museums</span><div style="color:#555;font-size:10px;margin-top:2px;">Every pardoned Fallas ninot since 1934 — nearly a century of Valencian artistry ...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · €2 · ★7.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_c6466a297a8f7345230174f8c6f1a8bc.setIcon(div_icon_135bc308a043b4196a67e9f52ea8c83c);
+            
+    
+            var marker_a7a93020d4ff43cbe5fb084b47af4fcd = L.marker(
+                [39.4793, -0.3695],
+                {
+}
+            ).addTo(marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde);
+        
+    
+            var div_icon_7c26ce1b4cce53ca0c36fc58b4c5d6a5 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83d\uddbc\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eMuseo de Bellas Artes\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_290cd621827316ffdb0dd89226341c86 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_0234badbdccc1ce4924fae1874b2e89b = $(`<div id="html_0234badbdccc1ce4924fae1874b2e89b" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_museo-bellas-artes">   <!-- Header -->   <div style="background:#2980B9;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Museums</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Museo de Bellas Artes</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Spain's second-best art gallery — El Greco, Goya, Velazquez. Always free</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_museo-bellas-artes">1h15</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_museo-bellas-artes">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">free</span><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">art</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Worth a walk-through for the building and garden setting even if galleries aren't your thing</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_290cd621827316ffdb0dd89226341c86.setContent(html_0234badbdccc1ce4924fae1874b2e89b);
+            
+        
+
+        marker_a7a93020d4ff43cbe5fb084b47af4fcd.bindPopup(popup_290cd621827316ffdb0dd89226341c86)
+        ;
+
+        
+    
+    
+            marker_a7a93020d4ff43cbe5fb084b47af4fcd.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Museo de Bellas Artes</b><br><span style="color:#2980B9;font-weight:600;font-size:10px;">Museums</span><div style="color:#555;font-size:10px;margin-top:2px;">Spain's second-best art gallery — El Greco, Goya, Velazquez. Always free</div><div style="color:#888;font-size:10px;margin-top:1px;">1h15 · Free · ★7.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_a7a93020d4ff43cbe5fb084b47af4fcd.setIcon(div_icon_7c26ce1b4cce53ca0c36fc58b4c5d6a5);
+            
+    
+            var marker_eea7bb8b4917c88276ddb99baa3a37ef = L.marker(
+                [39.4785, -0.3791],
+                {
+}
+            ).addTo(marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde);
+        
+    
+            var div_icon_8383fec163e15f4c056c5948d45ecd82 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83d\uddbc\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eCentre del Carme (CCCC)\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_e6c5da0589aaafc207b4be059e467594 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_53db30adfb91b787eae3617fa39c7ca7 = $(`<div id="html_53db30adfb91b787eae3617fa39c7ca7" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_centre-del-carme">   <!-- Header -->   <div style="background:#2980B9;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Museums</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Centre del Carme (CCCC)</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Contemporary art in a 13th-century convent — go for the beautiful medieval cloisters</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_centre-del-carme">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_centre-del-carme">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">free</span><span style="display:inline-block;background:#2980B918;color:#2980B9;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #2980B940;">art</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_e6c5da0589aaafc207b4be059e467594.setContent(html_53db30adfb91b787eae3617fa39c7ca7);
+            
+        
+
+        marker_eea7bb8b4917c88276ddb99baa3a37ef.bindPopup(popup_e6c5da0589aaafc207b4be059e467594)
+        ;
+
+        
+    
+    
+            marker_eea7bb8b4917c88276ddb99baa3a37ef.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Centre del Carme (CCCC)</b><br><span style="color:#2980B9;font-weight:600;font-size:10px;">Museums</span><div style="color:#555;font-size:10px;margin-top:2px;">Contemporary art in a 13th-century convent — go for the beautiful medieval clois...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · Free · ★7.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_eea7bb8b4917c88276ddb99baa3a37ef.setIcon(div_icon_8383fec163e15f4c056c5948d45ecd82);
+            
+    
+            marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_6db90d6694d55e6e07e37b86260f7ba5 = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            var marker_f4bccad1cee55164d7d615ccce687e19 = L.marker(
+                [39.4788, -0.4074],
+                {
+}
+            ).addTo(marker_cluster_6db90d6694d55e6e07e37b86260f7ba5);
+        
+    
+            var div_icon_bbc843f938d675e9173226cd3129bfde = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udf33\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eBioparc\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_9994c1ce01ffc0cae1bdd49b0972eec4 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_89f511e44d9f9d2d1231a90941827c0c = $(`<div id="html_89f511e44d9f9d2d1231a90941827c0c" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_bioparc">   <!-- Header -->   <div style="background:#27AE60;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Nature</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Bioparc</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Immersive African zoo — no visible cages, underwater hippo viewing</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_bioparc">5h10</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_bioparc">€30</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">8.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span><span style="font-size:14px;color:#f39c12;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">10/10</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#27AE6018;color:#27AE60;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #27AE6040;">must-do</span><span style="display:inline-block;background:#27AE6018;color:#27AE60;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #27AE6040;">half-day</span><span style="display:inline-block;background:#27AE6018;color:#27AE60;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #27AE6040;">included-in-combo</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Start with savanna. Don't miss underwater hippo window</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">       <a href="https://bioparcvalencia.es/en/" target="_blank" style="display:inline-block;background:#27AE60;color:#fff;text-decoration:none;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;margin-top:8px;">Website ↗</a>     </div>   </div> </div> </div>`)[0];
+                popup_9994c1ce01ffc0cae1bdd49b0972eec4.setContent(html_89f511e44d9f9d2d1231a90941827c0c);
+            
+        
+
+        marker_f4bccad1cee55164d7d615ccce687e19.bindPopup(popup_9994c1ce01ffc0cae1bdd49b0972eec4)
+        ;
+
+        
+    
+    
+            marker_f4bccad1cee55164d7d615ccce687e19.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Bioparc</b><br><span style="color:#27AE60;font-weight:600;font-size:10px;">Nature</span><div style="color:#555;font-size:10px;margin-top:2px;">Immersive African zoo — no visible cages, underwater hippo viewing</div><div style="color:#888;font-size:10px;margin-top:1px;">5h10 · €30 · ★8.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_f4bccad1cee55164d7d615ccce687e19.setIcon(div_icon_bbc843f938d675e9173226cd3129bfde);
+            
+    
+            var marker_ee19ca681a9250d8786269a207efc6b4 = L.marker(
+                [39.478, -0.37],
+                {
+}
+            ).addTo(marker_cluster_6db90d6694d55e6e07e37b86260f7ba5);
+        
+    
+            var div_icon_256d181defc297ab4785582fb3b35df9 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udf33\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eTuria Gardens\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_b362db1fdb532bb555f9b1cd13fd6707 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_9b3840318b0e0feafa4ed41252867349 = $(`<div id="html_9b3840318b0e0feafa4ed41252867349" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_turia-gardens">   <!-- Header -->   <div style="background:#27AE60;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Nature</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Turia Gardens</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_turia-gardens">2h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_turia-gardens">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">8.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#27AE6018;color:#27AE60;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #27AE6040;">free</span><span style="display:inline-block;background:#27AE6018;color:#27AE60;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #27AE6040;">cycling</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_b362db1fdb532bb555f9b1cd13fd6707.setContent(html_9b3840318b0e0feafa4ed41252867349);
+            
+        
+
+        marker_ee19ca681a9250d8786269a207efc6b4.bindPopup(popup_b362db1fdb532bb555f9b1cd13fd6707)
+        ;
+
+        
+    
+    
+            marker_ee19ca681a9250d8786269a207efc6b4.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Turia Gardens</b><br><span style="color:#27AE60;font-weight:600;font-size:10px;">Nature</span><div style="color:#555;font-size:10px;margin-top:2px;">Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside</div><div style="color:#888;font-size:10px;margin-top:1px;">2h00 · Free · ★8.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_ee19ca681a9250d8786269a207efc6b4.setIcon(div_icon_256d181defc297ab4785582fb3b35df9);
+            
+    
+            var marker_9cb974b75fc7a918a70d070505e7d086 = L.marker(
+                [39.4732, -0.3856],
+                {
+}
+            ).addTo(marker_cluster_6db90d6694d55e6e07e37b86260f7ba5);
+        
+    
+            var div_icon_6238e071271f8f56b1ee61c3901023b7 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udf33\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eJardin Botanico\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_768bfb4cef61482b288cb35d10e2d018 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_6655b33c403a1baab806495c1f9d476d = $(`<div id="html_6655b33c403a1baab806495c1f9d476d" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_jardin-botanico">   <!-- Header -->   <div style="background:#27AE60;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Nature</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Jardin Botanico</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">16th-century botanical garden with tropical species, cacti, and greenhouses — peaceful retreat</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_jardin-botanico">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_jardin-botanico">€4</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>                 <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_768bfb4cef61482b288cb35d10e2d018.setContent(html_6655b33c403a1baab806495c1f9d476d);
+            
+        
+
+        marker_9cb974b75fc7a918a70d070505e7d086.bindPopup(popup_768bfb4cef61482b288cb35d10e2d018)
+        ;
+
+        
+    
+    
+            marker_9cb974b75fc7a918a70d070505e7d086.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Jardin Botanico</b><br><span style="color:#27AE60;font-weight:600;font-size:10px;">Nature</span><div style="color:#555;font-size:10px;margin-top:2px;">16th-century botanical garden with tropical species, cacti, and greenhouses — pe...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · €4 · ★7.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_9cb974b75fc7a918a70d070505e7d086.setIcon(div_icon_6238e071271f8f56b1ee61c3901023b7);
+            
+    
+            var marker_e4a4ccfd4ece481067761a3eb50cf782 = L.marker(
+                [39.481, -0.368],
+                {
+}
+            ).addTo(marker_cluster_6db90d6694d55e6e07e37b86260f7ba5);
+        
+    
+            var div_icon_a2156c5d226a6b88f53529a031288ddc = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udf33\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eViveros Gardens\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_2efd1401673d791214934cb7d05cb0c6 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_3d87fb9c16034d3894c1f3b62d32e04d = $(`<div id="html_3d87fb9c16034d3894c1f3b62d32e04d" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_viveros-gardens">   <!-- Header -->   <div style="background:#27AE60;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Nature</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Viveros Gardens</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Large park with fountains next to Bellas Artes museum — free and relaxing</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_viveros-gardens">45 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_viveros-gardens">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">6.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#27AE6018;color:#27AE60;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #27AE6040;">free</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_2efd1401673d791214934cb7d05cb0c6.setContent(html_3d87fb9c16034d3894c1f3b62d32e04d);
+            
+        
+
+        marker_e4a4ccfd4ece481067761a3eb50cf782.bindPopup(popup_2efd1401673d791214934cb7d05cb0c6)
+        ;
+
+        
+    
+    
+            marker_e4a4ccfd4ece481067761a3eb50cf782.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Viveros Gardens</b><br><span style="color:#27AE60;font-weight:600;font-size:10px;">Nature</span><div style="color:#555;font-size:10px;margin-top:2px;">Large park with fountains next to Bellas Artes museum — free and relaxing</div><div style="color:#888;font-size:10px;margin-top:1px;">45min · Free · ★6.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_e4a4ccfd4ece481067761a3eb50cf782.setIcon(div_icon_a2156c5d226a6b88f53529a031288ddc);
+            
+    
+            marker_cluster_6db90d6694d55e6e07e37b86260f7ba5.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_c2fcf2c0e2db47f2666d82c199e6616e = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            var marker_00c6d3da9e2bc4bbe047ce30bd46f628 = L.marker(
+                [39.4735, -0.3793],
+                {
+}
+            ).addTo(marker_cluster_c2fcf2c0e2db47f2666d82c199e6616e);
+        
+    
+            var div_icon_ecbeb186552e3af76e13230013a09cc9 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udf7d\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eMercado Central\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_058e1acded87746c6c0c05a05ae4047d = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_aa3e92e3e4d00271a065951b45e637cb = $(`<div id="html_aa3e92e3e4d00271a065951b45e637cb" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_mercado-central">   <!-- Header -->   <div style="background:#E67E22;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Food</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Mercado Central</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">One of Europe's largest Art Nouveau food markets — 300+ stalls</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_mercado-central">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_mercado-central">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">9.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#E67E2218;color:#E67E22;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #E67E2240;">free-entry</span><span style="display:inline-block;background:#E67E2218;color:#E67E22;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #E67E2240;">morning</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Go early 8-10am. Mon-Sat 7:30-15:00, closed Sun</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_058e1acded87746c6c0c05a05ae4047d.setContent(html_aa3e92e3e4d00271a065951b45e637cb);
+            
+        
+
+        marker_00c6d3da9e2bc4bbe047ce30bd46f628.bindPopup(popup_058e1acded87746c6c0c05a05ae4047d)
+        ;
+
+        
+    
+    
+            marker_00c6d3da9e2bc4bbe047ce30bd46f628.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Mercado Central</b><br><span style="color:#E67E22;font-weight:600;font-size:10px;">Food</span><div style="color:#555;font-size:10px;margin-top:2px;">One of Europe's largest Art Nouveau food markets — 300+ stalls</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · Free · ★9.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_00c6d3da9e2bc4bbe047ce30bd46f628.setIcon(div_icon_ecbeb186552e3af76e13230013a09cc9);
+            
+    
+            var marker_3e2e8469895ecb2a96fded32f71d1d6b = L.marker(
+                [39.4672, -0.3712],
+                {
+}
+            ).addTo(marker_cluster_c2fcf2c0e2db47f2666d82c199e6616e);
+        
+    
+            var div_icon_d90d59ea82e510beb1287333e15efb5b = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udf7d\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eMercado Colon\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_39dc8fa05512149308940b1f12600db9 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_6e0a1f11dadb609993ca27f6e3ae415d = $(`<div id="html_6e0a1f11dadb609993ca27f6e3ae415d" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_mercado-colon">   <!-- Header -->   <div style="background:#E67E22;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Food</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Mercado Colon</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Restored Modernist building turned upscale food court — try horchata and fartons</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_mercado-colon">45 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_mercado-colon">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#E67E2218;color:#E67E22;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #E67E2240;">free-entry</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Must try horchata and fartons here</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_39dc8fa05512149308940b1f12600db9.setContent(html_6e0a1f11dadb609993ca27f6e3ae415d);
+            
+        
+
+        marker_3e2e8469895ecb2a96fded32f71d1d6b.bindPopup(popup_39dc8fa05512149308940b1f12600db9)
+        ;
+
+        
+    
+    
+            marker_3e2e8469895ecb2a96fded32f71d1d6b.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Mercado Colon</b><br><span style="color:#E67E22;font-weight:600;font-size:10px;">Food</span><div style="color:#555;font-size:10px;margin-top:2px;">Restored Modernist building turned upscale food court — try horchata and fartons</div><div style="color:#888;font-size:10px;margin-top:1px;">45min · Free · ★7.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_3e2e8469895ecb2a96fded32f71d1d6b.setIcon(div_icon_d90d59ea82e510beb1287333e15efb5b);
+            
+    
+            var marker_854baeadc80ad694051363d902c544a8 = L.marker(
+                [39.4618, -0.372],
+                {
+}
+            ).addTo(marker_cluster_c2fcf2c0e2db47f2666d82c199e6616e);
+        
+    
+            var div_icon_e54558f6f4c6ae7ab5674e86979c3d52 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udf7d\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eMercado de Ruzafa\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_2b3a13c4ac34ea2d21077149fba7b3cc = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_e2aa9a04661ef9737eb2da820391fd55 = $(`<div id="html_e2aa9a04661ef9737eb2da820391fd55" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_mercado-de-ruzafa">   <!-- Header -->   <div style="background:#E67E22;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Food</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Mercado de Ruzafa</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Local market in trendy Ruzafa — less touristy, explore street art and tapas bars nearby</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_mercado-de-ruzafa">40 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_mercado-de-ruzafa">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#E67E2218;color:#E67E22;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #E67E2240;">free-entry</span><span style="display:inline-block;background:#E67E2218;color:#E67E22;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #E67E2240;">local</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_2b3a13c4ac34ea2d21077149fba7b3cc.setContent(html_e2aa9a04661ef9737eb2da820391fd55);
+            
+        
+
+        marker_854baeadc80ad694051363d902c544a8.bindPopup(popup_2b3a13c4ac34ea2d21077149fba7b3cc)
+        ;
+
+        
+    
+    
+            marker_854baeadc80ad694051363d902c544a8.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Mercado de Ruzafa</b><br><span style="color:#E67E22;font-weight:600;font-size:10px;">Food</span><div style="color:#555;font-size:10px;margin-top:2px;">Local market in trendy Ruzafa — less touristy, explore street art and tapas bars...</div><div style="color:#888;font-size:10px;margin-top:1px;">40min · Free · ★7.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_854baeadc80ad694051363d902c544a8.setIcon(div_icon_e54558f6f4c6ae7ab5674e86979c3d52);
+            
+    
+            marker_cluster_c2fcf2c0e2db47f2666d82c199e6616e.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_8e2cfd32fd26a0abee7031a57a890373 = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            var marker_41dc2b32e0eaab2a8e555eabd9eef86e = L.marker(
+                [39.454, -0.3503],
+                {
+}
+            ).addTo(marker_cluster_8e2cfd32fd26a0abee7031a57a890373);
+        
+    
+            var div_icon_1367eb397efa421fe218a5e13723b849 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfad\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eL\u0027Hemisferic\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_475bb94558a19130a37a55f56b943b06 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_758341d789d3332e795b64b7b7e23964 = $(`<div id="html_758341d789d3332e795b64b7b7e23964" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_hemisferic">   <!-- Header -->   <div style="background:#8E44AD;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Entertainment</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">L'Hemisferic</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Europe's largest IMAX screen and planetarium inside a giant eye-shaped building</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_hemisferic">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_hemisferic">€8</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#8E44AD18;color:#8E44AD;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #8E44AD40;">included-in-combo</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Pick a planetarium show over IMAX — better for adults. Check schedule at cac.es</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">       <a href="https://www.cac.es/en/hemisferic/" target="_blank" style="display:inline-block;background:#8E44AD;color:#fff;text-decoration:none;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;margin-top:8px;">Website ↗</a>     </div>   </div> </div> </div>`)[0];
+                popup_475bb94558a19130a37a55f56b943b06.setContent(html_758341d789d3332e795b64b7b7e23964);
+            
+        
+
+        marker_41dc2b32e0eaab2a8e555eabd9eef86e.bindPopup(popup_475bb94558a19130a37a55f56b943b06)
+        ;
+
+        
+    
+    
+            marker_41dc2b32e0eaab2a8e555eabd9eef86e.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>L'Hemisferic</b><br><span style="color:#8E44AD;font-weight:600;font-size:10px;">Entertainment</span><div style="color:#555;font-size:10px;margin-top:2px;">Europe's largest IMAX screen and planetarium inside a giant eye-shaped building</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · €8 · ★7.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_41dc2b32e0eaab2a8e555eabd9eef86e.setIcon(div_icon_1367eb397efa421fe218a5e13723b849);
+            
+    
+            var marker_5394d080d3be9b50e6082d5ca1646141 = L.marker(
+                [39.471, -0.377],
+                {
+}
+            ).addTo(marker_cluster_8e2cfd32fd26a0abee7031a57a890373);
+        
+    
+            var div_icon_9f1b8fff1d324100b31eef43c9a7d768 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfad\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eMuseum of Illusions\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_ff95a152a571e7a5f5e46947b3bb3ca4 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_29f5425dc56fa20790a6a0c02fddf83e = $(`<div id="html_29f5425dc56fa20790a6a0c02fddf83e" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_museum-of-illusions">   <!-- Header -->   <div style="background:#8E44AD;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Entertainment</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Museum of Illusions</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">60+ optical illusion exhibits — holograms, impossible rooms, gravity-defying perspectives</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_museum-of-illusions">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_museum-of-illusions">€13</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">5.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#8E44AD18;color:#8E44AD;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #8E44AD40;">photogenic</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Fun lighthearted break from history. Daily 10-21</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_ff95a152a571e7a5f5e46947b3bb3ca4.setContent(html_29f5425dc56fa20790a6a0c02fddf83e);
+            
+        
+
+        marker_5394d080d3be9b50e6082d5ca1646141.bindPopup(popup_ff95a152a571e7a5f5e46947b3bb3ca4)
+        ;
+
+        
+    
+    
+            marker_5394d080d3be9b50e6082d5ca1646141.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Museum of Illusions</b><br><span style="color:#8E44AD;font-weight:600;font-size:10px;">Entertainment</span><div style="color:#555;font-size:10px;margin-top:2px;">60+ optical illusion exhibits — holograms, impossible rooms, gravity-defying per...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · €13 · ★5.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_5394d080d3be9b50e6082d5ca1646141.setIcon(div_icon_9f1b8fff1d324100b31eef43c9a7d768);
+            
+    
+            var marker_9cc0903f3e515749bf0e2bf3df975a47 = L.marker(
+                [39.4665, -0.378],
+                {
+}
+            ).addTo(marker_cluster_8e2cfd32fd26a0abee7031a57a890373);
+        
+    
+            var div_icon_3dfdffbf6b33791438817d63cd657640 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfad\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eEl Hachazo (Axe Throwing)\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_e6722c0e77ec02271a0e53eaff40a587 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_36736c087e702dd26328a72793f182f6 = $(`<div id="html_36736c087e702dd26328a72793f182f6" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_el-hachazo">   <!-- Header -->   <div style="background:#8E44AD;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Entertainment</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">El Hachazo (Axe Throwing)</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Throw axes at targets — no experience needed, instructor-guided, includes a drink</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_el-hachazo">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_el-hachazo">€19</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">7.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#8E44AD18;color:#8E44AD;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #8E44AD40;">date-activity</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Book ahead — popular on evenings and weekends</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_e6722c0e77ec02271a0e53eaff40a587.setContent(html_36736c087e702dd26328a72793f182f6);
+            
+        
+
+        marker_9cc0903f3e515749bf0e2bf3df975a47.bindPopup(popup_e6722c0e77ec02271a0e53eaff40a587)
+        ;
+
+        
+    
+    
+            marker_9cc0903f3e515749bf0e2bf3df975a47.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>El Hachazo (Axe Throwing)</b><br><span style="color:#8E44AD;font-weight:600;font-size:10px;">Entertainment</span><div style="color:#555;font-size:10px;margin-top:2px;">Throw axes at targets — no experience needed, instructor-guided, includes a drin...</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · €19 · ★7.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_9cc0903f3e515749bf0e2bf3df975a47.setIcon(div_icon_3dfdffbf6b33791438817d63cd657640);
+            
+    
+            var marker_d973afe37f090e5bbaf190cf65c13e51 = L.marker(
+                [39.4615, -0.3715],
+                {
+}
+            ).addTo(marker_cluster_8e2cfd32fd26a0abee7031a57a890373);
+        
+    
+            var div_icon_2eccfd90e118a97f545c046ce8995e62 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfad\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eVirtual Zone VR\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_9f61f3d92fffa277e48b68cf75d79e78 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_241000fb64b08c734e980639bf4b3cfa = $(`<div id="html_241000fb64b08c734e980639bf4b3cfa" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_virtual-zone-vr">   <!-- Header -->   <div style="background:#8E44AD;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Entertainment</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Virtual Zone VR</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Europe's largest VR arena — free-roam multiplayer games, not a booth experience</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_virtual-zone-vr">1h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_virtual-zone-vr">€25</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">6.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>           <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Combine with Ruzafa tapas and street art</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_9f61f3d92fffa277e48b68cf75d79e78.setContent(html_241000fb64b08c734e980639bf4b3cfa);
+            
+        
+
+        marker_d973afe37f090e5bbaf190cf65c13e51.bindPopup(popup_9f61f3d92fffa277e48b68cf75d79e78)
+        ;
+
+        
+    
+    
+            marker_d973afe37f090e5bbaf190cf65c13e51.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Virtual Zone VR</b><br><span style="color:#8E44AD;font-weight:600;font-size:10px;">Entertainment</span><div style="color:#555;font-size:10px;margin-top:2px;">Europe's largest VR arena — free-roam multiplayer games, not a booth experience</div><div style="color:#888;font-size:10px;margin-top:1px;">1h00 · €25 · ★6.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_d973afe37f090e5bbaf190cf65c13e51.setIcon(div_icon_2eccfd90e118a97f545c046ce8995e62);
+            
+    
+            var marker_1d34546fa9345c335dfb2fffdc6ad3e4 = L.marker(
+                [39.462, -0.359],
+                {
+}
+            ).addTo(marker_cluster_8e2cfd32fd26a0abee7031a57a890373);
+        
+    
+            var div_icon_cde1fc84e30d15050a312612447148ff = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfad\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eGulliver Park\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_0f72c749af19cbfb33e68bbd05b1f203 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_74dc007d862738557137d613ae375813 = $(`<div id="html_74dc007d862738557137d613ae375813" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_gulliver-park">   <!-- Header -->   <div style="background:#8E44AD;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Entertainment</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Gulliver Park</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Giant Gulliver sculpture with slides and climbing — fun even for adults, inside Turia Gardens</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_gulliver-park">30 min</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_gulliver-park">Free</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">6.5</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#8E44AD18;color:#8E44AD;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #8E44AD40;">free</span><span style="display:inline-block;background:#8E44AD18;color:#8E44AD;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #8E44AD40;">playful</span></div>           <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">            </div>   </div> </div> </div>`)[0];
+                popup_0f72c749af19cbfb33e68bbd05b1f203.setContent(html_74dc007d862738557137d613ae375813);
+            
+        
+
+        marker_1d34546fa9345c335dfb2fffdc6ad3e4.bindPopup(popup_0f72c749af19cbfb33e68bbd05b1f203)
+        ;
+
+        
+    
+    
+            marker_1d34546fa9345c335dfb2fffdc6ad3e4.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Gulliver Park</b><br><span style="color:#8E44AD;font-weight:600;font-size:10px;">Entertainment</span><div style="color:#555;font-size:10px;margin-top:2px;">Giant Gulliver sculpture with slides and climbing — fun even for adults, inside ...</div><div style="color:#888;font-size:10px;margin-top:1px;">30min · Free · ★6.5</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_1d34546fa9345c335dfb2fffdc6ad3e4.setIcon(div_icon_cde1fc84e30d15050a312612447148ff);
+            
+    
+            var marker_bb5d1e2278c44faa72fceab6b554d3f3 = L.marker(
+                [39.468, -0.371],
+                {
+}
+            ).addTo(marker_cluster_8e2cfd32fd26a0abee7031a57a890373);
+        
+    
+            var div_icon_7df3bf0615edb250110315a0c7758468 = L.divIcon({
+  "html": "\u003cdiv style=\"display:flex;flex-direction:column;align-items:center;pointer-events:auto;\"\u003e\u003cdiv style=\"font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));\"\u003e\ud83c\udfad\u003c/div\u003e\u003cdiv class=\"marker-label\" style=\"font-family:\u0027\u0027Segoe UI\u0027,Roboto,Arial,sans-serif\u0027;font-size:9px;font-weight:600;color:#222;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;margin-top:1px;text-shadow:0 0 3px #fff,0 0 3px #fff,1px 1px 2px #fff,-1px -1px 2px #fff;\"\u003eCines Babel\u003c/div\u003e\u003c/div\u003e",
+  "iconSize": [80, 40],
+  "iconAnchor": [40, 14],
+  "className": "empty",
+});
+        
+    
+        var popup_734cb1df31d427358898d6eda19ac5fe = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_829d3ebb9cdbe00b654e1f433a90b234 = $(`<div id="html_829d3ebb9cdbe00b654e1f433a90b234" style="width: 100.0%; height: 100.0%;"> <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:300px;" id="popup_cines-babel">   <!-- Header -->   <div style="background:#8E44AD;color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">Entertainment</div>     <div style="font-size:16px;font-weight:700;margin-top:2px;">Cines Babel</div>   </div>    <!-- Body -->   <div style="padding:12px 16px;background:#fff;color:#333;font-size:12px;border-radius:0 0 10px 10px;">     <div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">Independent cinema showing films in original language — vintage charm, curated programme</div>      <!-- Meta row: duration, price, score -->     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:8px;">       <div style="display:flex;align-items:center;gap:4px;" title="Duration">         <span style="font-size:13px;">🕒</span>         <span style="font-weight:600;color:#333;" id="dur_display_cines-babel">2h00</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Price">         <span style="font-size:13px;">💰</span>         <span style="font-weight:600;color:#333;" id="price_display_cines-babel">€8</span>       </div>       <div style="display:flex;align-items:center;gap:4px;" title="Expected score">         <span style="font-size:13px;">&#x2605;</span>         <span style="font-weight:600;color:#333;">6.0</span>       </div>     </div>      <!-- User rating (display only) -->     <div x-show="true" style="margin-bottom:8px;">       <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Your rating</div>       <div style="display:flex;align-items:center;gap:1px;">         <span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span><span style="font-size:14px;color:#ddd;">&#x2605;</span>         <span style="margin-left:6px;font-size:12px;font-weight:600;color:#f39c12;">—</span>       </div>     </div>      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px;"><span style="display:inline-block;background:#8E44AD18;color:#8E44AD;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #8E44AD40;">hidden-gem</span><span style="display:inline-block;background:#8E44AD18;color:#8E44AD;padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid #8E44AD40;">rainy-day</span></div>     <div style="background:#FFF9E6;border-left:3px solid #F1C40F;padding:6px 10px;border-radius:0 6px 6px 0;margin-top:8px;font-size:11px;color:#7D6608;">💡 <b>Tip:</b> Check programme at cinesbabel.com. Perfect for a rainy evening</div>      <!-- Action row -->     <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">       <a href="https://www.cinesbabel.com/" target="_blank" style="display:inline-block;background:#8E44AD;color:#fff;text-decoration:none;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;margin-top:8px;">Website ↗</a>     </div>   </div> </div> </div>`)[0];
+                popup_734cb1df31d427358898d6eda19ac5fe.setContent(html_829d3ebb9cdbe00b654e1f433a90b234);
+            
+        
+
+        marker_bb5d1e2278c44faa72fceab6b554d3f3.bindPopup(popup_734cb1df31d427358898d6eda19ac5fe)
+        ;
+
+        
+    
+    
+            marker_bb5d1e2278c44faa72fceab6b554d3f3.bindTooltip(
+                `<div>
+                     <div style="font-family:''Segoe UI',Roboto,Arial,sans-serif';font-size:11px;line-height:1.4;max-width:220px;"><b>Cines Babel</b><br><span style="color:#8E44AD;font-weight:600;font-size:10px;">Entertainment</span><div style="color:#555;font-size:10px;margin-top:2px;">Independent cinema showing films in original language — vintage charm, curated p...</div><div style="color:#888;font-size:10px;margin-top:1px;">2h00 · €8 · ★6.0</div></div>
+                 </div>`,
+                {
+  "sticky": false,
+}
+            );
+        
+    
+                marker_bb5d1e2278c44faa72fceab6b554d3f3.setIcon(div_icon_7df3bf0615edb250110315a0c7758468);
+            
+    
+            marker_cluster_8e2cfd32fd26a0abee7031a57a890373.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_2a58a601cc86b8c171c471546ad49147 = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            marker_cluster_2a58a601cc86b8c171c471546ad49147.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_8b201ba8a947413f1991864c45b5ac17 = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            marker_cluster_8b201ba8a947413f1991864c45b5ac17.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_0431164e3f4e7edc2d3a6aaa1c5fe592 = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            marker_cluster_0431164e3f4e7edc2d3a6aaa1c5fe592.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_adf7a19a290db9a6ac3bf93e5f605560 = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            marker_cluster_adf7a19a290db9a6ac3bf93e5f605560.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var marker_cluster_b2c6597808232aedf452f9b750e3e774 = L.markerClusterGroup(
+                {
+  "maxClusterRadius": 40,
+  "spiderfyOnMaxZoom": true,
+  "disableClusteringAtZoom": 15,
+  "showCoverageOnHover": false,
+}
+            );
+        
+    
+            marker_cluster_b2c6597808232aedf452f9b750e3e774.addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+        
+    
+            var layer_control_e77b75113b5f70aa59f655fd27d478e4_layers = {
+                base_layers : {
+                    "cartodbvoyager" : tile_layer_f3d536b1e86a08eea37383947619614f,
+                },
+                overlays :  {
+                    "\u0026#x1f3db; Landmarks" : marker_cluster_d898d8ee1706939414fb8a5f3984e5ca,
+                    "\u0026#x1f5bc; Museums" : marker_cluster_908b0a340dd17dff9c2bc7d4e65c9bde,
+                    "\u0026#x1f333; Nature" : marker_cluster_6db90d6694d55e6e07e37b86260f7ba5,
+                    "\u0026#x1f374; Food" : marker_cluster_c2fcf2c0e2db47f2666d82c199e6616e,
+                    "\u0026#x1f3ad; Entertainment" : marker_cluster_8e2cfd32fd26a0abee7031a57a890373,
+                    "\u0026#x1f68c; Transport" : marker_cluster_2a58a601cc86b8c171c471546ad49147,
+                    "\u0026#x1f3e8; Accommodation" : marker_cluster_8b201ba8a947413f1991864c45b5ac17,
+                    "\u0026#x1f6cd; Shopping" : marker_cluster_0431164e3f4e7edc2d3a6aaa1c5fe592,
+                    "\u0026#x1f697; Day Trips" : marker_cluster_adf7a19a290db9a6ac3bf93e5f605560,
+                    "\u0026#x2708; Infrastructure" : marker_cluster_b2c6597808232aedf452f9b750e3e774,
+                },
+            };
+            let layer_control_e77b75113b5f70aa59f655fd27d478e4 = L.control.layers(
+                layer_control_e77b75113b5f70aa59f655fd27d478e4_layers.base_layers,
+                layer_control_e77b75113b5f70aa59f655fd27d478e4_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_cdb6c0fd81d31c5f8fa20b34c1efd52b);
+
+        
+</script>
+</html>

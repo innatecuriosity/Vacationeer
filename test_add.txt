@@ -1,0 +1,14 @@
+```json
+{
+  "name": "Estación del Norte (Valencia Central Station)",
+  "description": "Historic Belle Époque railway station built in 1906, featuring stunning Modernist architecture with ornate ceramic details and decorative ironwork. The beautifully restored public hall is one of Valencia's most impressive architectural landmarks and an important transport hub serving national and regional trains.",
+  "category": "infrastructure",
+  "lat": 39.4726,
+  "lng": -0.3660,
+  "price_eur": 0,
+  "duration_minutes": 45,
+  "tags": ["architecture", "historic", "transport", "Modernist", "free", "photography", "protected monument"],
+  "tips": "Visit during daytime to see the ornate ceiling and details illuminated. The station is operational so expect crowds during peak travel times. The building's public spaces are freely accessible; no ticket needed to explore the main hall.",
+  "url": "https://www.renfe.com/"
+}
+```
