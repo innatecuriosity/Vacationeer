@@ -1,3 +1,0 @@
-```json
-{"type":"add","name":"train station"}
-```
