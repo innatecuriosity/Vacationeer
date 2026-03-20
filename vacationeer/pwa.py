@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import time
 
 
 def generate_manifest(destination: str, dest_slug: str) -> str:
@@ -22,8 +23,9 @@ def generate_manifest(destination: str, dest_slug: str) -> str:
 
 def generate_service_worker(dest_slug: str) -> str:
     """Generate a service worker that caches the app shell and CDN assets."""
+    cache_version = int(time.time())
     return f"""\
-const CACHE_NAME = 'vacationeer-{dest_slug}-v1';
+const CACHE_NAME = 'vacationeer-{dest_slug}-{cache_version}';
 const PRECACHE = [
   './{dest_slug}-app.html',
   './{dest_slug}-map.html',
