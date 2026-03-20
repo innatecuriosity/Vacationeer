@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Optional
 from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 def _id() -> str:
@@ -115,6 +115,13 @@ class Grouping(BaseModel):
     member_ids: list[str] = Field(default_factory=list)
 
 
+class Itinerary(BaseModel):
+    id: str = Field(default_factory=_id)
+    name: str = "Itinerary A"
+    description: Optional[str] = None
+    days: list[Day] = Field(default_factory=list)
+
+
 class Preferences(BaseModel):
     interests: list[str] = Field(default_factory=list)
     avoid: list[str] = Field(default_factory=list)
@@ -135,6 +142,26 @@ class Trip(BaseModel):
     day_trips: list[DayTrip] = Field(default_factory=list)
     groupings: list[Grouping] = Field(default_factory=list)
     days: list[Day] = Field(default_factory=list)
+    itineraries: list[Itinerary] = Field(default_factory=list)
+    active_itinerary_id: Optional[str] = None
+
+    @model_validator(mode="after")
+    def _migrate_days_to_itineraries(self) -> "Trip":
+        if self.days and not self.itineraries:
+            itin = Itinerary(id="default", name="Itinerary A", days=self.days)
+            self.itineraries = [itin]
+            self.active_itinerary_id = "default"
+            self.days = []
+        if not self.active_itinerary_id and self.itineraries:
+            self.active_itinerary_id = self.itineraries[0].id
+        return self
+
+    @property
+    def active_itinerary(self) -> Optional[Itinerary]:
+        return next(
+            (i for i in self.itineraries if i.id == self.active_itinerary_id),
+            self.itineraries[0] if self.itineraries else None,
+        )
 
     @property
     def dest_slug(self) -> str:

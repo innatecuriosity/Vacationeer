@@ -2584,235 +2584,320 @@
       ]
     }
   ],
-  "days": [
+  "days": [],
+  "itineraries": [
     {
-      "date": "2026-03-21",
-      "label": null,
-      "start_time": null,
-      "activities": [
+      "id": "default",
+      "name": "Itinerary A",
+      "description": null,
+      "days": [
         {
-          "id": "36c0721b",
-          "attraction_id": "cathedral",
-          "day_trip_id": null,
-          "name": "Valencia Cathedral + Miguelete Tower",
+          "date": "2026-03-21",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 75,
-          "price_eur": 10.0,
-          "category": "landmark",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [
+            {
+              "id": "36c0721b",
+              "attraction_id": "cathedral",
+              "day_trip_id": null,
+              "name": "Valencia Cathedral + Miguelete Tower",
+              "start_time": null,
+              "duration_minutes": 75,
+              "price_eur": 10.0,
+              "category": "landmark",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "e38d78c5",
+              "attraction_id": "hemisferic",
+              "day_trip_id": null,
+              "name": "L'Hemisferic",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 8.0,
+              "category": "entertainment",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "8bc97407",
+              "attraction_id": "museo-del-arroz",
+              "day_trip_id": null,
+              "name": "Museo del Arroz",
+              "start_time": null,
+              "duration_minutes": 40,
+              "price_eur": 2.0,
+              "category": "museum",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            }
+          ],
           "notes": null
         },
         {
-          "id": "e38d78c5",
-          "attraction_id": "hemisferic",
-          "day_trip_id": null,
-          "name": "L'Hemisferic",
+          "date": "2026-03-22",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 60,
-          "price_eur": 8.0,
-          "category": "entertainment",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [
+            {
+              "id": "e4550b91",
+              "attraction_id": "torres-serranos",
+              "day_trip_id": null,
+              "name": "Torres de Serranos",
+              "start_time": null,
+              "duration_minutes": 30,
+              "price_eur": 2.0,
+              "category": "landmark",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "481ac832",
+              "attraction_id": "almoina",
+              "day_trip_id": null,
+              "name": "L'Almoina Archaeological Centre",
+              "start_time": null,
+              "duration_minutes": 50,
+              "price_eur": 2.0,
+              "category": "museum",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "deffb3d4",
+              "attraction_id": "mercado-central",
+              "day_trip_id": null,
+              "name": "Mercado Central",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 0.0,
+              "category": "food",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "43171d24",
+              "attraction_id": "museo-fallero",
+              "day_trip_id": null,
+              "name": "Museo Fallero",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 2.0,
+              "category": "museum",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "e5753224",
+              "attraction_id": "torres-de-quart",
+              "day_trip_id": null,
+              "name": "Torres de Quart",
+              "start_time": null,
+              "duration_minutes": 30,
+              "price_eur": 2.0,
+              "category": "landmark",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "48ba8fda",
+              "attraction_id": "centre-del-carme",
+              "day_trip_id": null,
+              "name": "Centre del Carme (CCCC)",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 0.0,
+              "category": "museum",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "74b51521",
+              "attraction_id": "bioparc",
+              "day_trip_id": null,
+              "name": "Bioparc",
+              "start_time": null,
+              "duration_minutes": 310,
+              "price_eur": 29.5,
+              "category": "nature",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            }
+          ],
           "notes": null
         },
         {
-          "id": "8bc97407",
-          "attraction_id": "museo-del-arroz",
-          "day_trip_id": null,
-          "name": "Museo del Arroz",
+          "date": "2026-03-23",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 40,
-          "price_eur": 2.0,
-          "category": "museum",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [
+            {
+              "id": "2214cc59",
+              "attraction_id": "city-of-arts-exterior",
+              "day_trip_id": null,
+              "name": "City of Arts and Sciences (Exterior)",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 0.0,
+              "category": "landmark",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "aaa2488d",
+              "attraction_id": "prehistoric-caves",
+              "day_trip_id": null,
+              "name": "Prehistoric Caves Exhibition",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 0.0,
+              "category": "museum",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "df1f29b1",
+              "attraction_id": "liber-toy-soldiers",
+              "day_trip_id": null,
+              "name": "L'Iber Museum of Toy Soldiers",
+              "start_time": null,
+              "duration_minutes": 90,
+              "price_eur": 8.0,
+              "category": "museum",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            }
+          ],
+          "notes": null
+        },
+        {
+          "date": "2026-03-24",
+          "label": null,
+          "start_time": null,
+          "activities": [
+            {
+              "id": "4c80fa16",
+              "attraction_id": "bioparc",
+              "day_trip_id": null,
+              "name": "Bioparc",
+              "start_time": "10:00:00",
+              "duration_minutes": 310,
+              "price_eur": 29.5,
+              "category": "nature",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            }
+          ],
+          "notes": null
+        },
+        {
+          "date": "2026-03-25",
+          "label": null,
+          "start_time": null,
+          "activities": [],
+          "notes": null
+        },
+        {
+          "date": "2026-03-26",
+          "label": null,
+          "start_time": null,
+          "activities": [],
+          "notes": null
+        },
+        {
+          "date": "2026-03-27",
+          "label": null,
+          "start_time": null,
+          "activities": [],
+          "notes": null
+        },
+        {
+          "date": "2026-03-28",
+          "label": null,
+          "start_time": null,
+          "activities": [],
           "notes": null
         }
-      ],
-      "notes": null
+      ]
     },
     {
-      "date": "2026-03-22",
-      "label": null,
-      "start_time": null,
-      "activities": [
+      "id": "86dcf40d",
+      "name": "Itinerary B",
+      "description": null,
+      "days": [
         {
-          "id": "e4550b91",
-          "attraction_id": "torres-serranos",
-          "day_trip_id": null,
-          "name": "Torres de Serranos",
+          "date": "2026-03-21",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 30,
-          "price_eur": 2.0,
-          "category": "landmark",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [],
           "notes": null
         },
         {
-          "id": "481ac832",
-          "attraction_id": "almoina",
-          "day_trip_id": null,
-          "name": "L'Almoina Archaeological Centre",
+          "date": "2026-03-22",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 50,
-          "price_eur": 2.0,
-          "category": "museum",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [],
           "notes": null
         },
         {
-          "id": "deffb3d4",
-          "attraction_id": "mercado-central",
-          "day_trip_id": null,
-          "name": "Mercado Central",
+          "date": "2026-03-23",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 60,
-          "price_eur": 0.0,
-          "category": "food",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [],
           "notes": null
         },
         {
-          "id": "43171d24",
-          "attraction_id": "museo-fallero",
-          "day_trip_id": null,
-          "name": "Museo Fallero",
+          "date": "2026-03-24",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 60,
-          "price_eur": 2.0,
-          "category": "museum",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [],
           "notes": null
         },
         {
-          "id": "e5753224",
-          "attraction_id": "torres-de-quart",
-          "day_trip_id": null,
-          "name": "Torres de Quart",
+          "date": "2026-03-25",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 30,
-          "price_eur": 2.0,
-          "category": "landmark",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [],
           "notes": null
         },
         {
-          "id": "48ba8fda",
-          "attraction_id": "centre-del-carme",
-          "day_trip_id": null,
-          "name": "Centre del Carme (CCCC)",
+          "date": "2026-03-26",
+          "label": null,
           "start_time": null,
-          "duration_minutes": 60,
-          "price_eur": 0.0,
-          "category": "museum",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
+          "activities": [],
+          "notes": null
+        },
+        {
+          "date": "2026-03-27",
+          "label": null,
+          "start_time": null,
+          "activities": [],
+          "notes": null
+        },
+        {
+          "date": "2026-03-28",
+          "label": null,
+          "start_time": null,
+          "activities": [],
           "notes": null
         }
-      ],
-      "notes": null
-    },
-    {
-      "date": "2026-03-23",
-      "label": null,
-      "start_time": null,
-      "activities": [
-        {
-          "id": "2214cc59",
-          "attraction_id": "city-of-arts-exterior",
-          "day_trip_id": null,
-          "name": "City of Arts and Sciences (Exterior)",
-          "start_time": null,
-          "duration_minutes": 60,
-          "price_eur": 0.0,
-          "category": "landmark",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
-          "notes": null
-        },
-        {
-          "id": "aaa2488d",
-          "attraction_id": "prehistoric-caves",
-          "day_trip_id": null,
-          "name": "Prehistoric Caves Exhibition",
-          "start_time": null,
-          "duration_minutes": 60,
-          "price_eur": 0.0,
-          "category": "museum",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
-          "notes": null
-        },
-        {
-          "id": "df1f29b1",
-          "attraction_id": "liber-toy-soldiers",
-          "day_trip_id": null,
-          "name": "L'Iber Museum of Toy Soldiers",
-          "start_time": null,
-          "duration_minutes": 90,
-          "price_eur": 8.0,
-          "category": "museum",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
-          "notes": null
-        }
-      ],
-      "notes": null
-    },
-    {
-      "date": "2026-03-24",
-      "label": null,
-      "start_time": null,
-      "activities": [
-        {
-          "id": "4c80fa16",
-          "attraction_id": "bioparc",
-          "day_trip_id": null,
-          "name": "Bioparc",
-          "start_time": "10:00:00",
-          "duration_minutes": 310,
-          "price_eur": 29.5,
-          "category": "nature",
-          "travel_from_prev_minutes": null,
-          "status": "planned",
-          "notes": null
-        }
-      ],
-      "notes": null
-    },
-    {
-      "date": "2026-03-25",
-      "label": null,
-      "start_time": null,
-      "activities": [],
-      "notes": null
-    },
-    {
-      "date": "2026-03-26",
-      "label": null,
-      "start_time": null,
-      "activities": [],
-      "notes": null
-    },
-    {
-      "date": "2026-03-27",
-      "label": null,
-      "start_time": null,
-      "activities": [],
-      "notes": null
-    },
-    {
-      "date": "2026-03-28",
-      "label": null,
-      "start_time": null,
-      "activities": [],
-      "notes": null
+      ]
     }
-  ]
+  ],
+  "active_itinerary_id": "default"
 }

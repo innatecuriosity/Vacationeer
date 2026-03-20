@@ -1505,6 +1505,7 @@ document.addEventListener('alpine:init', function() {{
         async addGrouping(data) {{
             var self = this;
             var ok = false;
+            var created = null;
             await tryServerOrLocal('/api/groupings', {{
                 method: 'POST', headers: {{'Content-Type':'application/json'}},
                 body: JSON.stringify(data)
@@ -1513,14 +1514,14 @@ document.addEventListener('alpine:init', function() {{
                 if (!self.groupings) self.groupings = [];
                 self.groupings.push(g);
                 toast('success', 'Grouping created');
-                ok = true;
+                ok = true; created = g;
             }}, function() {{
                 var local = Object.assign({{}}, data, {{ id: _genId(), member_ids: data.member_ids || [] }});
                 if (!self.groupings) self.groupings = [];
                 self.groupings.push(local);
-                _persistLocal(); toast('success', 'Saved locally'); ok = true;
+                _persistLocal(); toast('success', 'Saved locally'); ok = true; created = local;
             }});
-            return {{ ok: ok }};
+            return {{ ok: ok, grouping: created }};
         }},
         async updateGrouping(id, data) {{
             var self = this;
@@ -1743,6 +1744,109 @@ document.addEventListener('alpine:init', function() {{
             }});
         }},
 
+        getActiveItinerary() {{
+            var id = this.active_itinerary_id;
+            var itins = this.itineraries || [];
+            for (var i = 0; i < itins.length; i++) {{
+                if (itins[i].id === id) return itins[i];
+            }}
+            return itins[0] || null;
+        }},
+
+        getActiveDays() {{
+            var itin = this.getActiveItinerary();
+            return itin ? itin.days : [];
+        }},
+
+        async switchItinerary(id) {{
+            this.active_itinerary_id = id;
+            try {{
+                await fetch('/api/itineraries/' + id + '/activate', {{ method: 'POST' }});
+            }} catch(e) {{}}
+            await this.reload();
+        }},
+
+        async createItinerary(name, cloneFromId, description) {{
+            var self = this;
+            var body = {{ name: name }};
+            if (cloneFromId) body.clone_from = cloneFromId;
+            if (description) body.description = description;
+            try {{
+                var resp = await fetch('/api/itineraries', {{
+                    method: 'POST',
+                    headers: {{'Content-Type': 'application/json'}},
+                    body: JSON.stringify(body)
+                }});
+                if (resp.ok) {{
+                    var itin = await resp.json();
+                    self.itineraries.push(itin);
+                    self.active_itinerary_id = itin.id;
+                    await self.reload();
+                    toast('success', 'Itinerary "' + name + '" created');
+                    return {{ ok: true, itinerary: itin }};
+                }}
+            }} catch(e) {{}}
+            toast('error', 'Failed to create itinerary');
+            return {{ ok: false }};
+        }},
+
+        async updateItinerary(id, data) {{
+            var self = this;
+            try {{
+                var resp = await fetch('/api/itineraries/' + id, {{
+                    method: 'PATCH',
+                    headers: {{'Content-Type': 'application/json'}},
+                    body: JSON.stringify(data)
+                }});
+                if (resp.ok) {{
+                    for (var i = 0; i < self.itineraries.length; i++) {{
+                        if (self.itineraries[i].id === id) {{
+                            if (data.name !== undefined) self.itineraries[i].name = data.name;
+                            if (data.description !== undefined) self.itineraries[i].description = data.description;
+                            break;
+                        }}
+                    }}
+                    toast('success', 'Itinerary updated');
+                }}
+            }} catch(e) {{ toast('error', 'Failed to update'); }}
+        }},
+
+        async deleteItinerary(id) {{
+            var self = this;
+            if (self.itineraries.length <= 1) {{
+                toast('error', 'Cannot delete the last itinerary');
+                return;
+            }}
+            try {{
+                var resp = await fetch('/api/itineraries/' + id, {{ method: 'DELETE' }});
+                if (resp.ok) {{
+                    self.itineraries = self.itineraries.filter(function(it) {{ return it.id !== id; }});
+                    if (self.active_itinerary_id === id) {{
+                        self.active_itinerary_id = self.itineraries[0].id;
+                    }}
+                    await self.reload();
+                    toast('success', 'Itinerary deleted');
+                }}
+            }} catch(e) {{ toast('error', 'Failed to delete'); }}
+        }},
+
+        async cloneItinerary(id) {{
+            var self = this;
+            try {{
+                var resp = await fetch('/api/itineraries/' + id + '/clone', {{ method: 'POST' }});
+                if (resp.ok) {{
+                    var itin = await resp.json();
+                    self.itineraries.push(itin);
+                    self.active_itinerary_id = itin.id;
+                    await self.reload();
+                    toast('success', 'Itinerary cloned');
+                    return {{ ok: true, itinerary: itin }};
+                }}
+            }} catch(e) {{}}
+            toast('error', 'Failed to clone');
+            return {{ ok: false }};
+        }},
+
         async reload() {{
             try {{
                 var resp = await fetch('/api/trip');
@@ -1754,7 +1858,8 @@ document.addEventListener('alpine:init', function() {{
         exportTrip() {{
             var data = {{}};
             ['id','name','destination','start_date','end_date','travelers','budget_eur',
-             'attractions','days','day_trips','preferences','travel_segments'].forEach(function(f) {{
+             'attractions','days','day_trips','preferences','travel_segments',
+             'itineraries','active_itinerary_id','groupings'].forEach(function(f) {{
                 var val = Alpine.store('trip')[f];
                 if (val !== undefined) data[f] = JSON.parse(JSON.stringify(val));
             }});
@@ -1928,7 +2033,34 @@ document.addEventListener('alpine:init', function() {{
     <template x-if="modal === 'add-attraction'">
         <div class="modal-backdrop" @mousedown.self="modal = null">
             <div class="modal" x-data="{{
-                form: {{ name: '', description: '', category: 'landmark', lat: '', lng: '', address: '', price_eur: '', duration_minutes: '', tags: '', tips: '', url: '' }},
+                form: {{ name: '', description: '', category: 'landmark', lat: '', lng: '', address: '', price_eur: '', duration_minutes: '', tags: [], tagInput: '', tips: '', url: '' }},
+                grouping_ids: [],
+                showNewGrp: false,
+                newGrpName: '',
+                newGrpColor: '{grouping_palette[0]}',
+                grpPalette: {json.dumps(grouping_palette)},
+                addTag() {{
+                    var v = this.form.tagInput.replace(/,/g, '').trim();
+                    if (v && !this.form.tags.includes(v)) this.form.tags.push(v);
+                    this.form.tagInput = '';
+                }},
+                removeTag(i) {{ this.form.tags.splice(i, 1); }},
+                allTags() {{
+                    var s = {{}};
+                    ($store.trip.attractions || []).forEach(function(a) {{ (a.tags || []).forEach(function(t) {{ s[t] = 1; }}); }});
+                    return Object.keys(s).sort();
+                }},
+                toggleGrp(id) {{
+                    var idx = this.grouping_ids.indexOf(id);
+                    if (idx >= 0) this.grouping_ids.splice(idx, 1);
+                    else this.grouping_ids.push(id);
+                }},
+                async createGrp() {{
+                    if (!this.newGrpName.trim()) return;
+                    var res = await $store.trip.addGrouping({{ name: this.newGrpName.trim(), color: this.newGrpColor }});
+                    if (res.ok && res.grouping) this.grouping_ids.push(res.grouping.id);
+                    this.newGrpName = ''; this.showNewGrp = false;
+                }},
 {_location_picker_xdata()}
                 async submit() {{
                     if (!this.form.name.trim()) return;
@@ -1943,12 +2075,20 @@ document.addEventListener('alpine:init', function() {{
                         }},
                         price_eur: this.form.price_eur ? parseFloat(this.form.price_eur) : null,
                         duration_minutes: this.form.duration_minutes ? parseInt(this.form.duration_minutes) : null,
-                        tags: this.form.tags ? this.form.tags.split(',').map(function(t) {{ return t.trim(); }}).filter(Boolean) : [],
+                        tags: this.form.tags || [],
                         tips: this.form.tips.trim() || null,
                         url: this.form.url.trim() || null
                     }};
                     const resp = await $store.trip.addAttraction(data);
-                    if (resp.ok) window.dispatchEvent(new CustomEvent('close-modal'));
+                    if (resp.ok) {{
+                        var newAttr = $store.trip.attractions[$store.trip.attractions.length - 1];
+                        if (newAttr) {{
+                            for (var i = 0; i < this.grouping_ids.length; i++) {{
+                                await $store.trip.toggleGroupingMember(this.grouping_ids[i], newAttr.id);
+                            }}
+                        }}
+                        window.dispatchEvent(new CustomEvent('close-modal'));
+                    }}
                 }}
             }}">
                 <div class="modal-header">Add Attraction</div>
@@ -1979,8 +2119,55 @@ document.addEventListener('alpine:init', function() {{
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Tags (comma-separated)</label>
-                        <input type="text" x-model="form.tags" placeholder="beach, sunset, free">
+                        <label>Tags</label>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 10px;border:2px solid #ddd;border-radius:6px;min-height:38px;align-items:center;box-sizing:border-box;background:#fff;"
+                             @click="$refs.addTagIn.focus()">
+                            <template x-for="(tag, ti) in form.tags" :key="ti">
+                                <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;background:#e8ecf1;color:#4a5568;font-size:12px;font-weight:500;">
+                                    <span x-text="tag"></span>
+                                    <button type="button" @click="removeTag(ti)" style="background:none;border:none;color:#999;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;">&times;</button>
+                                </span>
+                            </template>
+                            <input x-model="form.tagInput" x-ref="addTagIn"
+                                   @keydown.enter.prevent="addTag()"
+                                   @keydown.comma.prevent="addTag()"
+                                   @keydown.backspace="if (!form.tagInput && form.tags.length) form.tags.pop()"
+                                   list="add-tag-suggestions"
+                                   placeholder="Add tag..."
+                                   style="border:none;outline:none;font-size:13px;min-width:80px;flex:1;padding:2px 0;background:transparent;">
+                            <datalist id="add-tag-suggestions">
+                                <template x-for="t in allTags().filter(t => !form.tags.includes(t))" :key="t">
+                                    <option :value="t"></option>
+                                </template>
+                            </datalist>
+                        </div>
+                    </div>
+                    <div class="form-group" x-show="($store.trip.groupings || []).length || showNewGrp">
+                        <label>Groupings</label>
+                        <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
+                            <template x-for="grp in ($store.trip.groupings || [])" :key="grp.id">
+                                <button type="button" @click="toggleGrp(grp.id)"
+                                    :style="'display:inline-flex;align-items:center;padding:4px 12px;border-radius:14px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid ' + (grp.color || '#888') + ';transition:all .15s;'
+                                        + (grouping_ids.includes(grp.id) ? 'background:' + (grp.color || '#888') + ';color:#fff;' : 'background:#fff;color:' + (grp.color || '#888') + ';')"
+                                    x-text="grp.name"></button>
+                            </template>
+                            <button type="button" @click="showNewGrp = !showNewGrp"
+                                style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:2px dashed #aaa;background:#fff;color:#888;font-size:16px;cursor:pointer;line-height:1;"
+                                title="New grouping">+</button>
+                        </div>
+                        <div x-show="showNewGrp" x-transition
+                             style="margin-top:6px;padding:8px 10px;border:1px solid #e2e5e9;border-radius:8px;background:#fafafa;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+                            <input x-model="newGrpName" placeholder="Grouping name" @keydown.enter="createGrp()"
+                                   style="flex:1;min-width:100px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;outline:none;">
+                            <div style="display:flex;gap:3px;">
+                                <template x-for="c in grpPalette.slice(0, 8)" :key="c">
+                                    <button type="button" @click="newGrpColor = c"
+                                        :style="'width:20px;height:20px;border-radius:50%;border:2px solid ' + (newGrpColor === c ? '#333' : 'transparent') + ';background:' + c + ';cursor:pointer;'"></button>
+                                </template>
+                            </div>
+                            <button type="button" @click="createGrp()"
+                                style="padding:4px 10px;background:#27AE60;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Add</button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Tips</label>

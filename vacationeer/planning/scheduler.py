@@ -14,23 +14,32 @@ from vacationeer.models.trip import (
 )
 
 
+def _itin_days(trip: Trip) -> list[Day]:
+    """Return the active itinerary's days list (mutable reference)."""
+    itin = trip.active_itinerary
+    if itin is None:
+        raise ValueError("Trip has no itineraries.")
+    return itin.days
+
+
 def init_days(trip: Trip) -> Trip:
     """Create an empty Day for each date in [start_date, end_date].
 
     Skips dates that already have a Day.
     """
-    existing_dates = {day.date for day in trip.days}
+    days = _itin_days(trip)
+    existing_dates = {day.date for day in days}
     current = trip.start_date
     while current <= trip.end_date:
         if current not in existing_dates:
-            trip.days.append(Day(date=current))
+            days.append(Day(date=current))
         current += timedelta(days=1)
-    trip.days.sort(key=lambda d: d.date)
+    days.sort(key=lambda d: d.date)
     return trip
 
 
 def _find_day(trip: Trip, target_date: date) -> Day:
-    for day in trip.days:
+    for day in _itin_days(trip):
         if day.date == target_date:
             return day
     raise ValueError(f"No day found for {target_date}. Run init-days first.")
@@ -130,22 +139,23 @@ def schedule_day_trip(
 
 def unschedule(trip: Trip, activity_id: str) -> Trip:
     """Remove an Activity from its Day by activity ID."""
-    for day in trip.days:
+    for day in _itin_days(trip):
         day.activities = [a for a in day.activities if a.id != activity_id]
     return trip
 
 
 def get_unscheduled(trip: Trip) -> tuple[list[Attraction], list[DayTrip]]:
     """Return attractions and day trips not assigned to any day."""
+    days = _itin_days(trip)
     scheduled_attraction_ids = {
         act.attraction_id
-        for day in trip.days
+        for day in days
         for act in day.activities
         if act.attraction_id
     }
     scheduled_day_trip_ids = {
         act.day_trip_id
-        for day in trip.days
+        for day in days
         for act in day.activities
         if act.day_trip_id
     }
@@ -176,7 +186,7 @@ def move_activity(trip: Trip, activity_id: str, target_date: date) -> Trip:
     target_day = _find_day(trip, target_date)
     activity = None
 
-    for day in trip.days:
+    for day in _itin_days(trip):
         for act in day.activities:
             if act.id == activity_id:
                 activity = act

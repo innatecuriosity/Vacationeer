@@ -248,12 +248,27 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
             options=cluster_opts,
         )
 
-    # Collect all mappable attractions: standalone + day trip sub-attractions
-    all_attractions: list[Attraction] = list(trip.attractions)
+    # Add standalone attractions to category clusters
+    for attraction in trip.attractions:
+        info = get_category_info(attraction.category)
+        marker = folium.Marker(
+            location=[attraction.location.lat, attraction.location.lng],
+            icon=folium.DivIcon(
+                html=_marker_html(info.emoji, attraction.name),
+                icon_size=(80, 40),
+                icon_anchor=(40, 14),
+            ),
+            tooltip=folium.Tooltip(_tooltip_html(attraction), sticky=False),
+            popup=folium.Popup(_popup_html(attraction), max_width=320),
+        )
+        marker.add_to(groups[attraction.category])
+
+    # Day trips: each gets its own FeatureGroup for independent toggling
+    dt_fgs: list[tuple] = []  # (day_trip, FeatureGroup) pairs
+    dt_info = get_category_info(Category.DAY_TRIP)
     for dt in trip.day_trips:
-        for sub in dt.sub_attractions:
-            all_attractions.append(sub)
-        # Also add day trip itself as a virtual attraction (landmark pin at its location)
+        fg = folium.FeatureGroup(name=dt.name, show=True)
+        # Day trip destination marker
         if dt.location and not (abs(dt.location.lat) < 0.01 and abs(dt.location.lng) < 0.01):
             dt_as_attr = Attraction(
                 id=dt.id,
@@ -268,25 +283,41 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                 expected_score=dt.expected_score,
                 user_score=dt.user_score,
             )
-            all_attractions.append(dt_as_attr)
+            folium.Marker(
+                location=[dt.location.lat, dt.location.lng],
+                icon=folium.DivIcon(
+                    html=_marker_html(dt_info.emoji, dt.name),
+                    icon_size=(80, 40),
+                    icon_anchor=(40, 14),
+                ),
+                tooltip=folium.Tooltip(_tooltip_html(dt_as_attr), sticky=False),
+                popup=folium.Popup(_popup_html(dt_as_attr), max_width=320),
+            ).add_to(fg)
+        # Sub-attraction markers
+        for sub in dt.sub_attractions:
+            sub_info = get_category_info(sub.category)
+            folium.Marker(
+                location=[sub.location.lat, sub.location.lng],
+                icon=folium.DivIcon(
+                    html=_marker_html(sub_info.emoji, sub.name),
+                    icon_size=(80, 40),
+                    icon_anchor=(40, 14),
+                ),
+                tooltip=folium.Tooltip(_tooltip_html(sub), sticky=False),
+                popup=folium.Popup(_popup_html(sub), max_width=320),
+            ).add_to(fg)
+        fg.add_to(m)
+        dt_fgs.append((dt, fg))
 
-    for attraction in all_attractions:
-        info = get_category_info(attraction.category)
-
-        popup_html = _popup_html(attraction)
-        tooltip_html = _tooltip_html(attraction)
-
-        marker = folium.Marker(
-            location=[attraction.location.lat, attraction.location.lng],
-            icon=folium.DivIcon(
-                html=_marker_html(info.emoji, attraction.name),
-                icon_size=(80, 40),
-                icon_anchor=(40, 14),
-            ),
-            tooltip=folium.Tooltip(tooltip_html, sticky=False),
-            popup=folium.Popup(popup_html, max_width=320),
-        )
-        marker.add_to(groups[attraction.category])
+    # Build attr_by_id from all attractions (standalone + day trip subs)
+    all_attractions: list[Attraction] = list(trip.attractions)
+    for dt in trip.day_trips:
+        all_attractions.extend(dt.sub_attractions)
+        if dt.location and not (abs(dt.location.lat) < 0.01 and abs(dt.location.lng) < 0.01):
+            all_attractions.append(Attraction(
+                id=dt.id, name=dt.name, location=dt.location,
+                category=Category.DAY_TRIP,
+            ))
 
     # Grouping polygon overlays (rendered behind markers)
     grouping_fgs: list[tuple] = []  # (grouping, FeatureGroup) pairs for custom control
@@ -432,11 +463,19 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
 
     # Build custom layer control — inject as MacroElement so it renders
     # in the script section AFTER Folium's own map/layer initialization.
+    # Exclude DAY_TRIP from categories (they have their own section)
     cat_layers_items = [
         {"var": groups[cat].get_name(),
-         "label": f"{get_category_info(cat).html_icon} {get_category_info(cat).label}",
+         "label": f"{get_category_info(cat).emoji} {get_category_info(cat).label}",
          "on": True}
         for cat in Category
+        if cat != Category.DAY_TRIP
+    ]
+    dt_layers_items = [
+        {"var": fg.get_name(),
+         "label": f"{dt_info.emoji} {dt.name}",
+         "on": True}
+        for dt, fg in dt_fgs
     ]
     grp_layers_items = [
         {"var": fg.get_name(),
@@ -454,6 +493,11 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                 var catLayers = [
                     {% for c in this.cat_items %}
                     {v:{{ c.var }},label:"{{ c.label }}",on:{{ c.on | tojson }}}{{ "," if not loop.last }}
+                    {% endfor %}
+                ];
+                var dtLayers = [
+                    {% for d in this.dt_items %}
+                    {v:{{ d.var }},label:"{{ d.label }}",on:{{ d.on | tojson }}}{{ "," if not loop.last }}
                     {% endfor %}
                 ];
                 var grpLayers = [
@@ -507,6 +551,7 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                         }
 
                         makeSection('Categories', catLayers, false);
+                        if (dtLayers.length) makeSection('Day Trips', dtLayers, false);
                         if (grpLayers.length) makeSection('Groupings', grpLayers, true);
 
                         // Labels toggle
@@ -534,12 +579,13 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
             {% endmacro %}
         """)
 
-        def __init__(self, cat_items, grp_items):
+        def __init__(self, cat_items, dt_items, grp_items):
             super().__init__()
             self.cat_items = cat_items
+            self.dt_items = dt_items
             self.grp_items = grp_items
 
-    _LayerControl(cat_layers_items, grp_layers_items).add_to(m)
+    _LayerControl(cat_layers_items, dt_layers_items, grp_layers_items).add_to(m)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(output_path))

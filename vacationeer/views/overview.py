@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
+
 from vacationeer.models.trip import Trip, Category
-from vacationeer.theme import CATEGORY_META, SCORE_GREEN, SCORE_YELLOW, SCORE_RED
+from vacationeer.theme import CATEGORY_META, GROUPING_PALETTE, SCORE_GREEN, SCORE_YELLOW, SCORE_RED
 
 
 def _build_category_color_js() -> str:
@@ -35,6 +37,10 @@ def render_overview(trip: Trip) -> str:
     cat_colors_js = _build_category_color_js()
     cat_labels_js = _build_category_label_js()
     cat_icons_js = _build_category_icon_js()
+    cat_options = "\n".join(
+        f'                <option value="{c.value}">{info.label}</option>'
+        for c, info in CATEGORY_META.items()
+    )
 
     return f"""
 <div style="background:#f5f6f8;padding:20px;border-radius:12px;
@@ -91,25 +97,38 @@ def render_overview(trip: Trip) -> str:
          this.editForm = {{
            name: a.name,
            description: a.description || '',
+           category: a.category || 'landmark',
            price_eur: a.price_eur,
            duration_minutes: a.duration_minutes,
            tips: a.tips || '',
            url: a.url || '',
-           tags: (a.tags || []).join(', '),
+           tags: [].concat(a.tags || []),
+           tagInput: '',
            expected_score: a.expected_score
          }};
        }},
+       addTag() {{
+         let v = this.editForm.tagInput.replace(/,/g, '').trim();
+         if (v && !this.editForm.tags.includes(v)) this.editForm.tags.push(v);
+         this.editForm.tagInput = '';
+       }},
+       removeTag(i) {{ this.editForm.tags.splice(i, 1); }},
+       allTags() {{
+         let s = new Set();
+         ($store.trip.attractions || []).forEach(function(a) {{ (a.tags || []).forEach(function(t) {{ s.add(t); }}); }});
+         return Array.from(s).sort();
+       }},
        saveEdit(id) {{
          let f = this.editForm;
-         let tags = f.tags ? f.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
          $store.trip.updateAttraction(id, {{
            name: f.name,
            description: f.description || null,
+           category: f.category,
            price_eur: f.price_eur != null && f.price_eur !== '' ? parseFloat(f.price_eur) : null,
            duration_minutes: f.duration_minutes != null && f.duration_minutes !== '' ? parseInt(f.duration_minutes) : null,
            tips: f.tips || null,
            url: f.url || null,
-           tags: tags,
+           tags: f.tags,
            expected_score: f.expected_score != null && f.expected_score !== '' ? parseFloat(f.expected_score) : null
          }});
          this.editing = null;
@@ -230,11 +249,25 @@ def render_overview(trip: Trip) -> str:
           <!-- Category pill -->
           <span :style="'display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;color:#fff;background:' + catColor(attraction.category)"
                 x-text="catLabel(attraction.category)"></span>
-          <!-- Grouping pills -->
+          <!-- Grouping pills + quick add -->
           <template x-for="grp in ($store.trip.groupings || []).filter(g => (g.member_ids || []).includes(attraction.id))" :key="grp.id">
             <span :style="'display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:500;color:#fff;background:' + (grp.color || '#888') + ';margin-left:4px;'"
                   x-text="grp.name"></span>
           </template>
+          <span x-show="($store.trip.groupings || []).length" x-data="{{ gpOpen: false }}" style="position:relative;display:inline-block;">
+            <button @click.stop="gpOpen = !gpOpen" type="button"
+              style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:1px dashed #aaa;background:#fff;color:#888;font-size:12px;cursor:pointer;line-height:1;padding:0;"
+              title="Add to grouping">+</button>
+            <div x-show="gpOpen" @click.outside="gpOpen = false" x-transition
+                 style="position:absolute;top:24px;left:0;z-index:50;background:#fff;border:1px solid #e2e5e9;border-radius:8px;padding:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;flex-wrap:wrap;gap:4px;min-width:140px;">
+              <template x-for="grp in ($store.trip.groupings || [])" :key="grp.id">
+                <button type="button" @click.stop="$store.trip.toggleGroupingMember(grp.id, attraction.id)"
+                  :style="'display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid ' + (grp.color || '#888') + ';transition:all .15s;white-space:nowrap;'
+                    + ((grp.member_ids || []).includes(attraction.id) ? 'background:' + (grp.color || '#888') + ';color:#fff;' : 'background:#fff;color:' + (grp.color || '#888') + ';')"
+                  x-text="grp.name"></button>
+              </template>
+            </div>
+          </span>
           <!-- Expected score -->
           <span x-show="attraction.expected_score != null"
                 style="display:inline-flex;align-items:center;gap:3px;">
@@ -392,6 +425,14 @@ def render_overview(trip: Trip) -> str:
                       style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;resize:vertical;box-sizing:border-box;"
                       @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'"></textarea>
           </div>
+          <div>
+            <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Category</label>
+            <select x-model="editForm.category"
+                    style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;background:#fff;"
+                    @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+{cat_options}
+            </select>
+          </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <div style="flex:1;min-width:120px;">
               <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Price (&euro;)</label>
@@ -413,10 +454,71 @@ def render_overview(trip: Trip) -> str:
             </div>
           </div>
           <div>
-            <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Tags (comma separated)</label>
-            <input x-model="editForm.tags" placeholder="tag1, tag2, tag3"
-                   style="width:100%;padding:8px 12px;border:2px solid #ddd;border-radius:6px;font-size:14px;outline:none;box-sizing:border-box;"
-                   @focus="$el.style.borderColor='#1a2332'" @blur="$el.style.borderColor='#ddd'">
+            <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Tags</label>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 10px;border:2px solid #ddd;border-radius:6px;min-height:38px;align-items:center;box-sizing:border-box;background:#fff;"
+                 @click="$refs.tagIn.focus()">
+              <template x-for="(tag, ti) in editForm.tags" :key="ti">
+                <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;background:#e8ecf1;color:#4a5568;font-size:12px;font-weight:500;">
+                  <span x-text="tag"></span>
+                  <button type="button" @click="removeTag(ti)" style="background:none;border:none;color:#999;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;">&times;</button>
+                </span>
+              </template>
+              <input x-model="editForm.tagInput" x-ref="tagIn"
+                     @keydown.enter.prevent="addTag()"
+                     @keydown.comma.prevent="addTag()"
+                     @keydown.backspace="if (!editForm.tagInput && editForm.tags.length) editForm.tags.pop()"
+                     list="tag-suggestions"
+                     placeholder="Add tag..."
+                     style="border:none;outline:none;font-size:13px;min-width:80px;flex:1;padding:2px 0;background:transparent;">
+              <datalist id="tag-suggestions">
+                <template x-for="t in allTags().filter(t => !editForm.tags.includes(t))" :key="t">
+                  <option :value="t"></option>
+                </template>
+              </datalist>
+            </div>
+          </div>
+          <!-- Grouping picker (direct mode — toggles immediately) -->
+          <div x-data="{{
+            showNew: false,
+            newName: '',
+            newColor: '{GROUPING_PALETTE[0]}',
+            gpPalette: {json.dumps(GROUPING_PALETTE)},
+            async createAndAdd() {{
+              if (!this.newName.trim()) return;
+              var res = await $store.trip.addGrouping({{ name: this.newName.trim(), color: this.newColor }});
+              if (res.ok && res.grouping) {{
+                await $store.trip.toggleGroupingMember(res.grouping.id, attraction.id);
+              }}
+              this.newName = ''; this.showNew = false;
+            }}
+          }}">
+            <label style="font-size:12px;color:#666;display:block;margin-bottom:4px;">Groupings</label>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
+              <template x-for="grp in ($store.trip.groupings || [])" :key="grp.id">
+                <button type="button"
+                  @click="$store.trip.toggleGroupingMember(grp.id, attraction.id)"
+                  :style="'display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:14px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid ' + (grp.color || '#888') + ';transition:all .15s;'
+                    + ((grp.member_ids || []).includes(attraction.id) ? 'background:' + (grp.color || '#888') + ';color:#fff;' : 'background:#fff;color:' + (grp.color || '#888') + ';')"
+                  x-text="grp.name"></button>
+              </template>
+              <button type="button" @click="showNew = !showNew"
+                style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:2px dashed #aaa;background:#fff;color:#888;font-size:16px;cursor:pointer;line-height:1;"
+                title="New grouping">+</button>
+            </div>
+            <!-- Inline new grouping form -->
+            <div x-show="showNew" x-transition
+                 style="margin-top:6px;padding:8px 10px;border:1px solid #e2e5e9;border-radius:8px;background:#fafafa;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+              <input x-model="newName" placeholder="Grouping name" @keydown.enter="createAndAdd()"
+                     style="flex:1;min-width:100px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;outline:none;">
+              <div style="display:flex;gap:3px;">
+                <template x-for="c in gpPalette.slice(0, 8)" :key="c">
+                  <button type="button" @click="newColor = c"
+                    :style="'width:20px;height:20px;border-radius:50%;border:2px solid ' + (newColor === c ? '#333' : 'transparent') + ';background:' + c + ';cursor:pointer;'"></button>
+                </template>
+              </div>
+              <button type="button" @click="createAndAdd()"
+                style="padding:4px 10px;background:#27AE60;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Add</button>
+            </div>
           </div>
           <div>
             <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Tips</label>

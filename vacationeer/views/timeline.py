@@ -436,9 +436,444 @@ def render_timeline(trip: Trip) -> str:
         max-height: 400px;
     }}
 }}
+.itin-bar {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: {BG_WHITE};
+    border-bottom: 1px solid {BORDER};
+    flex-shrink: 0;
+}}
+.itin-tabs {{
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    overflow-x: auto;
+}}
+.itin-tab {{
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid {BORDER};
+    background: {BG_WHITE};
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+    white-space: nowrap;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}}
+.itin-tab:hover {{
+    border-color: {PRIMARY};
+    color: {PRIMARY};
+}}
+.itin-tab.active {{
+    background: {PRIMARY};
+    color: #fff;
+    border-color: {PRIMARY};
+}}
+.itin-tab .itin-badge {{
+    font-size: 10px;
+    opacity: 0.7;
+}}
+.itin-tab.active .itin-badge {{
+    opacity: 0.85;
+}}
+.itin-dots {{
+    margin-left: 2px;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.5;
+    cursor: pointer;
+}}
+.itin-dots:hover {{
+    opacity: 1;
+    background: rgba(0,0,0,0.1);
+}}
+.itin-tab.active .itin-dots:hover {{
+    background: rgba(255,255,255,0.2);
+}}
+.itin-add {{
+    border-style: dashed;
+    color: {TEXT_MUTED};
+}}
+.itin-add:hover {{
+    border-color: {PRIMARY};
+    color: {PRIMARY};
+}}
+.itin-actions {{
+    position: relative;
+    display: inline-block;
+}}
+.itin-menu {{
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: #fff;
+    border: 1px solid {BORDER};
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    z-index: 50;
+    min-width: 140px;
+    padding: 4px 0;
+}}
+.itin-menu button {{
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 6px 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: #333;
+}}
+.itin-menu button:hover {{
+    background: {BG_LIGHT};
+}}
+.itin-menu button.danger {{
+    color: #e74c3c;
+}}
+.compare-btn {{
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid {BORDER};
+    background: {BG_WHITE};
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    color: #555;
+    transition: all 0.15s;
+}}
+.compare-btn:hover {{
+    border-color: {PRIMARY};
+    color: {PRIMARY};
+}}
+.compare-btn.active {{
+    background: #1a2332;
+    color: #fff;
+    border-color: #1a2332;
+}}
+.compare-panel {{
+    padding: 16px;
+    overflow: auto;
+    height: calc(100vh - 250px);
+}}
+.compare-table {{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}}
+.compare-table th, .compare-table td {{
+    padding: 8px 12px;
+    border: 1px solid {BORDER_LIGHT};
+    text-align: left;
+}}
+.compare-table th {{
+    background: {BG_LIGHT};
+    font-weight: 600;
+    font-size: 12px;
+    color: #555;
+}}
+.compare-table td {{
+    vertical-align: top;
+}}
+.compare-grid {{
+    margin-top: 16px;
+}}
+.compare-grid-header {{
+    display: grid;
+    gap: 1px;
+    background: {BORDER_LIGHT};
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+}}
+.compare-grid-header > div {{
+    background: {BG_LIGHT};
+    padding: 6px 10px;
+}}
+.compare-grid-row {{
+    display: grid;
+    gap: 1px;
+    background: {BORDER_LIGHT};
+}}
+.compare-grid-row > div {{
+    background: {BG_WHITE};
+    padding: 6px 10px;
+    min-height: 40px;
+}}
+.compare-pill {{
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    margin: 1px;
+    white-space: nowrap;
+}}
+.new-itin-form {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+}}
+.new-itin-form input, .new-itin-form select {{
+    padding: 4px 8px;
+    border: 1px solid {BORDER};
+    border-radius: 6px;
+    font-size: 12px;
+}}
+.new-itin-form button {{
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+}}
 </style>
 
-<div class="kanban" x-data="kanbanTimeline()" x-init="$nextTick(function() {{ initAllSortables(); }})">
+<div x-data="{{
+    showCompare: false,
+    showNewItin: false,
+    newItinName: '',
+    newItinDesc: '',
+    newItinClone: '',
+    menuOpen: null,
+    editing: null,
+    editName: '',
+    editDesc: '',
+    catColors: {{{cat_colors_js}}},
+
+    itinStats(itin) {{
+        var total = ($store.trip.attractions || []).length + ($store.trip.day_trips || []).length;
+        var scheduled = 0;
+        var hours = 0;
+        var cost = 0;
+        var busiestDay = '';
+        var busiestHrs = 0;
+        (itin.days || []).forEach(function(d) {{
+            var dayMins = 0;
+            (d.activities || []).forEach(function(a) {{
+                scheduled++;
+                hours += (a.duration_minutes || 0);
+                cost += (a.price_eur || 0);
+                dayMins += (a.duration_minutes || 0);
+            }});
+            var dayH = dayMins / 60;
+            if (dayH > busiestHrs) {{ busiestHrs = dayH; busiestDay = d.date; }}
+        }});
+        return {{ total: total, scheduled: scheduled, hours: (hours/60).toFixed(1), cost: cost.toFixed(0), busiestDay: busiestDay, busiestHrs: busiestHrs.toFixed(1) }};
+    }},
+
+    async submitNewItin() {{
+        if (!this.newItinName.trim()) return;
+        await $store.trip.createItinerary(this.newItinName.trim(), this.newItinClone || null, this.newItinDesc.trim() || null);
+        this.showNewItin = false;
+        this.newItinName = '';
+        this.newItinDesc = '';
+        this.newItinClone = '';
+    }},
+
+    startEdit(itin) {{
+        this.editing = itin.id;
+        this.editName = itin.name;
+        this.editDesc = itin.description || '';
+        this.menuOpen = null;
+    }},
+
+    async submitEdit() {{
+        if (!this.editName.trim() || !this.editing) return;
+        await $store.trip.updateItinerary(this.editing, {{
+            name: this.editName.trim(),
+            description: this.editDesc.trim() || null
+        }});
+        this.editing = null;
+    }},
+
+    defaultNewName() {{
+        var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        var n = ($store.trip.itineraries || []).length;
+        return 'Itinerary ' + (letters[n] || String(n + 1));
+    }}
+}}"
+>
+
+<!-- Itinerary switcher bar -->
+<div class="itin-bar" x-show="($store.trip.itineraries || []).length > 0">
+    <div class="itin-tabs">
+        <template x-for="itin in ($store.trip.itineraries || [])" :key="itin.id">
+            <div class="itin-actions">
+                <button class="itin-tab"
+                        :class="itin.id === $store.trip.active_itinerary_id ? 'active' : ''"
+                        @click="$store.trip.switchItinerary(itin.id)">
+                    <span x-text="itin.name"></span>
+                    <span class="itin-badge" x-text="'(' + itinStats(itin).scheduled + '/' + itinStats(itin).total + ')'"></span>
+                    <span class="itin-dots" @click.stop="menuOpen = menuOpen === itin.id ? null : itin.id"
+                          title="Options">&#x22EF;</span>
+                </button>
+                <!-- Dropdown menu -->
+                <div class="itin-menu" x-show="menuOpen === itin.id" @click.away="menuOpen = null" x-cloak>
+                    <button @click="startEdit(itin)">Edit</button>
+                    <button @click="$store.trip.cloneItinerary(itin.id); menuOpen = null;">Duplicate</button>
+                    <button class="danger" @click="if(confirm('Delete \\'' + itin.name + '\\'?')) {{ $store.trip.deleteItinerary(itin.id); }} menuOpen = null;"
+                            x-show="($store.trip.itineraries || []).length > 1">Delete</button>
+                </div>
+            </div>
+        </template>
+        <button class="itin-tab itin-add" @click="showNewItin = !showNewItin; newItinName = defaultNewName(); newItinClone = '';">+ New</button>
+    </div>
+    <button class="compare-btn" :class="showCompare ? 'active' : ''"
+            @click="showCompare = !showCompare"
+            x-show="($store.trip.itineraries || []).length > 1">\u2194 Compare</button>
+</div>
+
+<!-- Active itinerary description -->
+<template x-for="itin in ($store.trip.itineraries || []).filter(i => i.id === $store.trip.active_itinerary_id && i.description)" :key="itin.id + '-desc'">
+    <div style="padding:4px 16px;font-size:11px;color:{TEXT_MUTED};background:{BG_LIGHT};border-bottom:1px solid {BORDER_LIGHT};"
+         @click="startEdit(itin)" title="Click to edit">
+        <span x-text="itin.description"></span>
+    </div>
+</template>
+
+<!-- Edit itinerary inline -->
+<div class="itin-bar" x-show="editing" style="background:#fffbeb;border-bottom-color:#f59e0b;flex-wrap:wrap;gap:6px;" x-cloak>
+    <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:200px;">
+        <label style="font-size:11px;color:#92400e;font-weight:600;">Name</label>
+        <input x-model="editName" @keydown.enter="submitEdit()" @keydown.escape="editing=null"
+               style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;flex:1;max-width:200px;"
+               x-ref="editNameInput" x-effect="if(editing) $nextTick(() => $refs.editNameInput && $refs.editNameInput.focus())">
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex:2;min-width:200px;">
+        <label style="font-size:11px;color:#92400e;font-weight:600;">Description</label>
+        <input x-model="editDesc" @keydown.enter="submitEdit()" @keydown.escape="editing=null"
+               placeholder="Optional description..."
+               style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;flex:1;">
+    </div>
+    <div style="display:flex;gap:4px;">
+        <button @click="submitEdit()" style="padding:4px 10px;border-radius:6px;border:none;background:{PRIMARY};color:#fff;cursor:pointer;font-size:12px;">Save</button>
+        <button @click="editing=null" style="padding:4px 10px;border-radius:6px;border:none;background:#e5e7eb;color:#374151;cursor:pointer;font-size:12px;">Cancel</button>
+    </div>
+</div>
+
+<!-- New itinerary form -->
+<div class="itin-bar" x-show="showNewItin" style="background:#f0f9ff;border-bottom-color:{PRIMARY};" x-cloak>
+    <div class="new-itin-form" style="flex-wrap:wrap;">
+        <input x-model="newItinName" placeholder="Name..." @keydown.escape="showNewItin=false"
+               x-ref="newItinInput" x-effect="if(showNewItin) $nextTick(() => $refs.newItinInput && $refs.newItinInput.focus())"
+               style="width:150px;">
+        <input x-model="newItinDesc" placeholder="Description (optional)..." @keydown.escape="showNewItin=false"
+               style="width:200px;">
+        <select x-model="newItinClone">
+            <option value="">Start empty</option>
+            <template x-for="it in ($store.trip.itineraries || [])" :key="it.id">
+                <option :value="it.id" x-text="'Clone ' + it.name"></option>
+            </template>
+        </select>
+        <button @click="submitNewItin()" style="background:{PRIMARY};color:#fff;">Create</button>
+        <button @click="showNewItin=false" style="background:#e5e7eb;color:#374151;">Cancel</button>
+    </div>
+</div>
+
+<!-- Comparison panel -->
+<div class="compare-panel" x-show="showCompare" x-cloak>
+    <table class="compare-table">
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <template x-for="itin in ($store.trip.itineraries || [])" :key="itin.id">
+                    <th x-text="itin.name"></th>
+                </template>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Scheduled</td>
+                <template x-for="itin in ($store.trip.itineraries || [])" :key="itin.id + '-sched'">
+                    <td>
+                        <span x-text="itinStats(itin).scheduled + ' / ' + itinStats(itin).total"></span>
+                        <span style="color:#999;font-size:11px;" x-text="'(' + (itinStats(itin).total ? Math.round(itinStats(itin).scheduled / itinStats(itin).total * 100) : 0) + '%)'"></span>
+                    </td>
+                </template>
+            </tr>
+            <tr>
+                <td>Total hours</td>
+                <template x-for="itin in ($store.trip.itineraries || [])" :key="itin.id + '-hrs'">
+                    <td x-text="itinStats(itin).hours + 'h'"></td>
+                </template>
+            </tr>
+            <tr>
+                <td>Total cost</td>
+                <template x-for="itin in ($store.trip.itineraries || [])" :key="itin.id + '-cost'">
+                    <td x-text="'\\u20ac' + itinStats(itin).cost"></td>
+                </template>
+            </tr>
+            <tr>
+                <td>Busiest day</td>
+                <template x-for="itin in ($store.trip.itineraries || [])" :key="itin.id + '-busy'">
+                    <td x-text="itinStats(itin).busiestDay ? (itinStats(itin).busiestDay + ' (' + itinStats(itin).busiestHrs + 'h)') : '-'"></td>
+                </template>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Day-by-day grid -->
+    <div class="compare-grid" x-show="($store.trip.itineraries || []).length > 1">
+        <h4 style="margin:16px 0 8px;font-size:13px;color:#555;">Day-by-day comparison</h4>
+        <div class="compare-grid-header" :style="'grid-template-columns: 100px repeat(' + ($store.trip.itineraries || []).length + ', 1fr)'">
+            <div>Day</div>
+            <template x-for="itin in ($store.trip.itineraries || [])" :key="itin.id + '-gh'">
+                <div x-text="itin.name"></div>
+            </template>
+        </div>
+        <template x-for="dayDate in (function() {{
+            var dates = new Set();
+            ($store.trip.itineraries || []).forEach(function(it) {{
+                (it.days || []).forEach(function(d) {{ dates.add(d.date); }});
+            }});
+            return Array.from(dates).sort();
+        }})()" :key="dayDate">
+            <div class="compare-grid-row" :style="'grid-template-columns: 100px repeat(' + ($store.trip.itineraries || []).length + ', 1fr)'">
+                <div style="font-size:11px;font-weight:600;color:#555;">
+                    <span x-text="dayDate"></span>
+                </div>
+                <template x-for="itin in ($store.trip.itineraries || [])" :key="itin.id + '-' + dayDate">
+                    <div>
+                        <template x-for="act in (function() {{
+                            var day = (itin.days || []).find(function(d) {{ return d.date === dayDate; }});
+                            return day ? (day.activities || []) : [];
+                        }})()" :key="act.id">
+                            <span class="compare-pill"
+                                  :style="'background:' + (catColors[act.category] || '#999') + '22;color:' + (catColors[act.category] || '#999') + ';border:1px solid ' + (catColors[act.category] || '#999') + '44'"
+                                  x-text="act.name.length > 20 ? act.name.substring(0,18) + '...' : act.name"></span>
+                        </template>
+                        <template x-if="!(function() {{
+                            var day = (itin.days || []).find(function(d) {{ return d.date === dayDate; }});
+                            return day && day.activities && day.activities.length > 0;
+                        }})()">
+                            <span style="color:#ccc;font-size:11px;">-</span>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+</div>
+
+<div class="kanban" x-data="kanbanTimeline()" x-init="
+    var self = this;
+    setTimeout(function() {{ self.initAllSortables(); }}, 200);
+    $watch('$store.trip.active_itinerary_id', function() {{
+        self.$nextTick(function() {{ setTimeout(function() {{ self.initAllSortables(); }}, 100); }});
+    }});
+">
 
   <!-- Left sidebar: unscheduled pool -->
   <aside class="kanban-pool">
@@ -708,6 +1143,8 @@ def render_timeline(trip: Trip) -> str:
   </template>
 </div>
 
+</div> <!-- end outer itinerary wrapper -->
+
 <script>
 function kanbanTimeline() {{
     return {{
@@ -725,7 +1162,15 @@ function kanbanTimeline() {{
 
         catColor: function(c) {{ return this.catColors[c] || '#999'; }},
 
-        get days() {{ return this.$store.trip.days || []; }},
+        get days() {{
+            var store = this.$store.trip;
+            var id = store.active_itinerary_id;
+            var itins = store.itineraries || [];
+            for (var i = 0; i < itins.length; i++) {{
+                if (itins[i].id === id) return itins[i].days || [];
+            }}
+            return itins.length ? (itins[0].days || []) : [];
+        }},
         get attractions() {{ return this.$store.trip.attractions || []; }},
         get dayTrips() {{ return this.$store.trip.day_trips || []; }},
 

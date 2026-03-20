@@ -21,6 +21,7 @@ from vacationeer.models.trip import (
     Day,
     DayTrip,
     Grouping,
+    Itinerary,
     Location,
     Preferences,
     TravelMode,
@@ -150,6 +151,15 @@ class AIPlanBody(BaseModel):
     prompt: str
 
 
+class ItineraryCreate(BaseModel):
+    name: str = "Itinerary B"
+    clone_from: Optional[str] = None
+
+
+class ItineraryPatch(BaseModel):
+    name: Optional[str] = None
+
+
 class ChatMessage(BaseModel):
     role: str  # "user" or "assistant"
     content: str
@@ -197,8 +207,10 @@ def _resolve_tool_call(tag: str, trip: Trip) -> str | None:
         return f"Attractions ({len(trip.attractions)}):\n" + "\n".join(lines)
 
     if tag == "GET_SCHEDULE":
+        itin = trip.active_itinerary
+        days = itin.days if itin else []
         lines = []
-        for day in trip.days:
+        for day in days:
             acts = ", ".join(
                 f"{a.name} ({a.start_time.strftime('%H:%M') if a.start_time else '?'})"
                 for a in day.activities
@@ -224,8 +236,10 @@ def _resolve_tool_call(tag: str, trip: Trip) -> str | None:
         return f"Day trips ({len(trip.day_trips)}):\n" + "\n".join(lines) if lines else "No day trips."
 
     if tag == "GET_UNSCHEDULED":
+        itin = trip.active_itinerary
+        itin_days = itin.days if itin else []
         scheduled_ids = set()
-        for day in trip.days:
+        for day in itin_days:
             for act in day.activities:
                 if act.attraction_id:
                     scheduled_ids.add(act.attraction_id)
@@ -268,15 +282,17 @@ def _execute_action_tag(tag_content: str, trip: Trip, trip_path: Path, output_di
             from datetime import date as _date, time as _time
             d = _date.fromisoformat(date_str)
             # Find or create day
+            itin = trip.active_itinerary
+            itin_days = itin.days if itin else []
             day = None
-            for existing in trip.days:
+            for existing in itin_days:
                 if existing.date == d:
                     day = existing
                     break
             if day is None:
                 day = Day(date=d)
-                trip.days.append(day)
-                trip.days.sort(key=lambda x: x.date)
+                itin_days.append(day)
+                itin_days.sort(key=lambda x: x.date)
             # Check not already scheduled there
             for act in day.activities:
                 if act.attraction_id == attraction.id:
@@ -309,7 +325,9 @@ def _execute_action_tag(tag_content: str, trip: Trip, trip_path: Path, output_di
         try:
             from datetime import date as _date
             d = _date.fromisoformat(date_str)
-            for day in trip.days:
+            itin = trip.active_itinerary
+            itin_days = itin.days if itin else []
+            for day in itin_days:
                 if day.date == d:
                     before = len(day.activities)
                     day.activities = [a for a in day.activities if a.attraction_id != attraction.id]
@@ -425,6 +443,13 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
 
     def _trip() -> Trip:
         return trip_state["trip"]
+
+    def _active_itin() -> Itinerary:
+        trip = _trip()
+        itin = trip.active_itinerary
+        if not itin:
+            raise HTTPException(500, "No itineraries")
+        return itin
 
     # ------------------------------------------------------------------
     # Trip list endpoint (all trips)
@@ -677,25 +702,26 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
     # ------------------------------------------------------------------
 
     def _find_day(day_date: str) -> tuple[int, Day]:
-        trip = _trip()
-        for i, d in enumerate(trip.days):
+        itin = _active_itin()
+        for i, d in enumerate(itin.days):
             if str(d.date) == day_date:
                 return i, d
         raise HTTPException(status_code=404, detail=f"Day '{day_date}' not found")
 
     @app.get("/api/days")
     def list_days():
-        return _trip().days
+        return _active_itin().days
 
     @app.post("/api/days", status_code=201)
     def add_day(day: Day, background_tasks: BackgroundTasks):
         trip = _trip()
+        itin = _active_itin()
         # Check for duplicate date
-        existing_dates = {str(d.date) for d in trip.days}
+        existing_dates = {str(d.date) for d in itin.days}
         if str(day.date) in existing_dates:
             raise HTTPException(status_code=422, detail=f"Day '{day.date}' already exists")
-        trip.days.append(day)
-        trip.days.sort(key=lambda d: d.date)
+        itin.days.append(day)
+        itin.days.sort(key=lambda d: d.date)
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         return day
 
@@ -728,8 +754,9 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         idx, day = _find_day(day_date)
 
         # Build list of unscheduled attractions
+        itin = _active_itin()
         scheduled_ids = set()
-        for d in trip.days:
+        for d in itin.days:
             for act in d.activities:
                 if act.attraction_id:
                     scheduled_ids.add(act.attraction_id)
@@ -799,7 +826,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
                 )
             day.activities.append(act)
 
-        trip.days[idx] = day
+        itin.days[idx] = day
         background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
         return day
 
@@ -814,12 +841,13 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
     def patch_day(day_date: str, updates: dict, background_tasks: BackgroundTasks):
         idx, day = _find_day(day_date)
         trip = _trip()
+        itin = _active_itin()
         for key, value in updates.items():
             if key == "date":
                 continue
             if hasattr(day, key):
                 setattr(day, key, value)
-        trip.days[idx] = day
+        itin.days[idx] = day
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         return day
 
@@ -827,7 +855,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
     def delete_day(day_date: str, background_tasks: BackgroundTasks):
         idx, _ = _find_day(day_date)
         trip = _trip()
-        trip.days.pop(idx)
+        _active_itin().days.pop(idx)
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         return {"ok": True}
 
@@ -987,7 +1015,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
             raise HTTPException(status_code=422, detail=f"Parent grouping '{body['parent_id']}' not found")
         grouping = Grouping(**body)
         trip.groupings.append(grouping)
-        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
         log.info("Created grouping: %s (%s)", grouping.name, grouping.id)
         return grouping
 
@@ -1003,7 +1031,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
             if key != "id" and hasattr(grouping, key):
                 setattr(grouping, key, val)
         trip.groupings[idx] = grouping
-        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
         log.info("Updated grouping: %s", grouping_id)
         return grouping
 
@@ -1016,7 +1044,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         for g in trip.groupings:
             if g.parent_id == grouping_id:
                 g.parent_id = None
-        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
         log.info("Deleted grouping: %s", grouping_id)
         return {"ok": True}
 
@@ -1029,7 +1057,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         if attraction_id not in grouping.member_ids:
             grouping.member_ids.append(attraction_id)
             trip.groupings[idx] = grouping
-            background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+            background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
         log.info("Added %s to grouping %s", attraction_id, grouping_id)
         return grouping
 
@@ -1040,9 +1068,101 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         if attraction_id in grouping.member_ids:
             grouping.member_ids.remove(attraction_id)
             trip.groupings[idx] = grouping
-            background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+            background_tasks.add_task(_rebuild_all, trip, trip_path, output_dir)
         log.info("Removed %s from grouping %s", attraction_id, grouping_id)
         return grouping
+
+    # ------------------------------------------------------------------
+    # Itinerary endpoints
+    # ------------------------------------------------------------------
+
+    def _find_itin(itin_id: str) -> tuple[int, Itinerary]:
+        trip = _trip()
+        for i, it in enumerate(trip.itineraries):
+            if it.id == itin_id:
+                return i, it
+        raise HTTPException(status_code=404, detail=f"Itinerary '{itin_id}' not found")
+
+    @app.get("/api/itineraries")
+    def list_itineraries():
+        return _trip().itineraries
+
+    @app.post("/api/itineraries", status_code=201)
+    async def create_itinerary(request: Request, background_tasks: BackgroundTasks):
+        import copy
+        raw = await request.json()
+        trip = _trip()
+        itin_id = uuid4().hex[:8]
+        clone_from = raw.get("clone_from")
+        if clone_from:
+            _, source = _find_itin(clone_from)
+            days = copy.deepcopy(source.days)
+        else:
+            # Create empty days for the trip date range
+            days = []
+            current = trip.start_date
+            while current <= trip.end_date:
+                days.append(Day(date=current))
+                current += timedelta(days=1)
+        itin = Itinerary(id=itin_id, name=raw.get("name", "Itinerary"), description=raw.get("description"), days=days)
+        trip.itineraries.append(itin)
+        trip.active_itinerary_id = itin.id
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Created itinerary: %s (%s)", itin.name, itin.id)
+        return itin
+
+    @app.patch("/api/itineraries/{itin_id}")
+    async def update_itinerary(itin_id: str, request: Request, background_tasks: BackgroundTasks):
+        raw = await request.json()
+        trip = _trip()
+        idx, itin = _find_itin(itin_id)
+        if raw.get("name") is not None:
+            itin.name = raw["name"]
+        if "description" in raw:
+            itin.description = raw["description"]
+        trip.itineraries[idx] = itin
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Renamed itinerary %s to '%s'", itin_id, itin.name)
+        return itin
+
+    @app.delete("/api/itineraries/{itin_id}")
+    def delete_itinerary(itin_id: str, background_tasks: BackgroundTasks):
+        trip = _trip()
+        if len(trip.itineraries) <= 1:
+            raise HTTPException(status_code=422, detail="Cannot delete the last itinerary")
+        idx, _ = _find_itin(itin_id)
+        trip.itineraries.pop(idx)
+        if trip.active_itinerary_id == itin_id:
+            trip.active_itinerary_id = trip.itineraries[0].id
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Deleted itinerary: %s", itin_id)
+        return {"ok": True}
+
+    @app.post("/api/itineraries/{itin_id}/activate")
+    def activate_itinerary(itin_id: str, background_tasks: BackgroundTasks):
+        trip = _trip()
+        _find_itin(itin_id)  # validate exists
+        trip.active_itinerary_id = itin_id
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Activated itinerary: %s", itin_id)
+        return {"ok": True, "active_itinerary_id": itin_id}
+
+    @app.post("/api/itineraries/{itin_id}/clone", status_code=201)
+    def clone_itinerary(itin_id: str, background_tasks: BackgroundTasks):
+        import copy
+        trip = _trip()
+        _, source = _find_itin(itin_id)
+        new_id = uuid4().hex[:8]
+        itin = Itinerary(
+            id=new_id,
+            name=f"{source.name} (copy)",
+            days=copy.deepcopy(source.days),
+        )
+        trip.itineraries.append(itin)
+        trip.active_itinerary_id = itin.id
+        background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
+        log.info("Cloned itinerary %s -> %s", itin_id, new_id)
+        return itin
 
     # ------------------------------------------------------------------
     # Activity endpoints (nested under days)
@@ -1074,7 +1194,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         )
 
         day.activities.append(activity)
-        trip.days[idx] = day
+        _active_itin().days[idx] = day
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         log.info("Added activity '%s' to day %s", activity.id, day_date)
         return activity
@@ -1096,7 +1216,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
                     if hasattr(act, key):
                         setattr(act, key, value)
                 day.activities[i] = act
-                trip.days[day_idx] = day
+                _active_itin().days[day_idx] = day
                 background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
                 log.info("Updated activity '%s' on day %s", activity_id, day_date)
                 return act
@@ -1111,7 +1231,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         for i, act in enumerate(day.activities):
             if act.id == activity_id:
                 day.activities.pop(i)
-                trip.days[day_idx] = day
+                _active_itin().days[day_idx] = day
                 background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
                 log.info("Deleted activity '%s' from day %s", activity_id, day_date)
                 return {"ok": True}
@@ -1127,7 +1247,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
 
         id_order = {aid: i for i, aid in enumerate(activity_ids)}
         day.activities.sort(key=lambda a: id_order.get(a.id, 999))
-        trip.days[idx] = day
+        _active_itin().days[idx] = day
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         return {"ok": True, "order": activity_ids}
 
@@ -1151,9 +1271,10 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
             raise HTTPException(status_code=404, detail=f"Attraction '{body.attraction_id}' not found")
 
         # Find or create the day
+        itin = _active_itin()
         day: Optional[Day] = None
         day_idx: Optional[int] = None
-        for i, d in enumerate(trip.days):
+        for i, d in enumerate(itin.days):
             if d.date == body.date:
                 day = d
                 day_idx = i
@@ -1161,10 +1282,10 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
 
         if day is None:
             day = Day(date=body.date)
-            trip.days.append(day)
-            trip.days.sort(key=lambda d: d.date)
+            itin.days.append(day)
+            itin.days.sort(key=lambda d: d.date)
             # Find the index after sorting
-            for i, d in enumerate(trip.days):
+            for i, d in enumerate(itin.days):
                 if d.date == body.date:
                     day_idx = i
                     break
@@ -1180,7 +1301,7 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
         )
 
         day.activities.append(activity)
-        trip.days[day_idx] = day
+        itin.days[day_idx] = day
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         log.info("Scheduled attraction '%s' on %s", attraction.id, body.date)
         return activity
@@ -1192,22 +1313,23 @@ def create_app(trip_path: Path, output_dir: Path) -> FastAPI:
     @app.post("/api/init-days", status_code=201)
     def init_days(background_tasks: BackgroundTasks):
         trip = _trip()
+        itin = _active_itin()
         log.info("POST /api/init-days for %s to %s", trip.start_date, trip.end_date)
 
-        existing_dates = {d.date for d in trip.days}
+        existing_dates = {d.date for d in itin.days}
         current = trip.start_date
         created = []
         while current <= trip.end_date:
             if current not in existing_dates:
                 day = Day(date=current)
-                trip.days.append(day)
+                itin.days.append(day)
                 created.append(str(current))
             current += timedelta(days=1)
 
-        trip.days.sort(key=lambda d: d.date)
+        itin.days.sort(key=lambda d: d.date)
         background_tasks.add_task(_rebuild_app_only, trip, trip_path, output_dir)
         log.info("Init days created %d new days: %s", len(created), created)
-        return {"created": created, "total_days": len(trip.days)}
+        return {"created": created, "total_days": len(itin.days)}
 
     # ------------------------------------------------------------------
     # Chat endpoint
