@@ -24,7 +24,7 @@
     {
       "id": "oceanografic",
       "name": "Oceanografic",
-      "description": "Europe's largest aquarium — 45,000+ animals, 500+ species, dolphin shows",
+      "description": "Europe's largest aquarium \u00e2\u20ac\u201d 45,000+ animals, 500+ species, dolphin shows",
       "location": {
         "lat": 39.4529,
         "lng": -0.3477,
@@ -46,11 +46,11 @@
     {
       "id": "bioparc",
       "name": "Bioparc",
-      "description": "Immersive African zoo — no visible cages, underwater hippo viewing",
+      "description": "Immersive African zoo \u00e2\u20ac\u201d no visible cages, underwater hippo viewing",
       "location": {
         "lat": 39.4788,
         "lng": -0.4074,
-        "address": "Av. Pío Baroja, 3"
+        "address": "Av. P\u0102\u00ado Baroja, 3"
       },
       "category": "nature",
       "price_eur": 29.5,
@@ -68,7 +68,7 @@
     {
       "id": "science-museum",
       "name": "Museu de les Ciencies",
-      "description": "3 floors of interactive science — Leonardo da Vinci exhibition, space, genetics",
+      "description": "3 floors of interactive science \u00e2\u20ac\u201d Leonardo da Vinci exhibition, space, genetics",
       "location": {
         "lat": 39.4557,
         "lng": -0.3521,
@@ -92,7 +92,7 @@
       "location": {
         "lat": 39.4753,
         "lng": -0.3753,
-        "address": "Plaça de l'Almoina, s/n"
+        "address": "Pla\u0102\u00a7a de l'Almoina, s/n"
       },
       "category": "landmark",
       "price_eur": 10.0,
@@ -108,7 +108,7 @@
     {
       "id": "la-lonja",
       "name": "La Lonja de la Seda",
-      "description": "15th-century Gothic silk exchange — UNESCO World Heritage, stunning twisted columns",
+      "description": "15th-century Gothic silk exchange \u00e2\u20ac\u201d UNESCO World Heritage, stunning twisted columns",
       "location": {
         "lat": 39.4742,
         "lng": -0.3789,
@@ -129,11 +129,11 @@
     {
       "id": "mercado-central",
       "name": "Mercado Central",
-      "description": "One of Europe's largest Art Nouveau food markets — 300+ stalls",
+      "description": "One of Europe's largest Art Nouveau food markets \u00e2\u20ac\u201d 300+ stalls",
       "location": {
         "lat": 39.4735,
         "lng": -0.3793,
-        "address": "Plaça de la Ciutat de Bruges"
+        "address": "Pla\u0102\u00a7a de la Ciutat de Bruges"
       },
       "category": "food",
       "price_eur": 0.0,
@@ -150,11 +150,11 @@
     {
       "id": "turia-gardens",
       "name": "Turia Gardens",
-      "description": "Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside",
+      "description": "Spain's largest urban park \u00e2\u20ac\u201d 9 km in a drained riverbed, Gulliver Park inside",
       "location": {
         "lat": 39.478,
         "lng": -0.37,
-        "address": "Jardín del Turia"
+        "address": "Jard\u0102\u00adn del Turia"
       },
       "category": "nature",
       "price_eur": 0.0,
@@ -171,11 +171,11 @@
     {
       "id": "almoina",
       "name": "L'Almoina Archaeological Centre",
-      "description": "2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic",
+      "description": "2,500 m\u00c2\u02db underground ruins spanning 2,000+ years \u00e2\u20ac\u201d Roman, Visigoth, Islamic",
       "location": {
         "lat": 39.4756,
         "lng": -0.3748,
-        "address": "Plaça de l'Almoina, s/n"
+        "address": "Pla\u0102\u00a7a de l'Almoina, s/n"
       },
       "category": "museum",
       "price_eur": 2.0,
@@ -196,7 +196,7 @@
       "location": {
         "lat": 39.4792,
         "lng": -0.3755,
-        "address": "Plaça dels Furs, s/n"
+        "address": "Pla\u0102\u00a7a dels Furs, s/n"
       },
       "category": "landmark",
       "price_eur": 2.0,
@@ -224,7 +224,7 @@
       "tags": [
         "included-in-combo"
       ],
-      "tips": "Pick a planetarium show over IMAX — better for adults. Check schedule at cac.es",
+      "tips": "Pick a planetarium show over IMAX \u00e2\u20ac\u201d better for adults. Check schedule at cac.es",
       "url": "https://www.cac.es/en/hemisferic/",
       "expected_score": 7.0,
       "user_score": null
@@ -232,7 +232,7 @@
     {
       "id": "liber-toy-soldiers",
       "name": "L'Iber Museum of Toy Soldiers",
-      "description": "World's largest collection of historical miniatures — 100,000+ figures in obsessively detailed dioramas",
+      "description": "World's largest collection of historical miniatures \u00e2\u20ac\u201d 100,000+ figures in obsessively detailed dioramas",
       "location": {
         "lat": 39.4748,
         "lng": -0.3769,
@@ -252,7 +252,7 @@
     {
       "id": "museum-of-illusions",
       "name": "Museum of Illusions",
-      "description": "60+ optical illusion exhibits — holograms, impossible rooms, gravity-defying perspectives",
+      "description": "60+ optical illusion exhibits \u00e2\u20ac\u201d holograms, impossible rooms, gravity-defying perspectives",
       "location": {
         "lat": 39.471,
         "lng": -0.377,
@@ -272,7 +272,7 @@
     {
       "id": "prehistoric-caves",
       "name": "Prehistoric Caves Exhibition",
-      "description": "Immersive recreation of French prehistoric cave galleries with projections and reconstructions — ending March 31",
+      "description": "Immersive recreation of French prehistoric cave galleries with projections and reconstructions \u00e2\u20ac\u201d ending March 31",
       "location": {
         "lat": 39.4717,
         "lng": -0.3837,
@@ -286,7 +286,7 @@
         "temporary",
         "ending-soon"
       ],
-      "tips": "Check availability — exhibition ends March 31, 2026",
+      "tips": "Check availability \u00e2\u20ac\u201d exhibition ends March 31, 2026",
       "url": null,
       "expected_score": 7.5,
       "user_score": null
@@ -294,7 +294,7 @@
     {
       "id": "museo-del-arroz",
       "name": "Museo del Arroz",
-      "description": "Rice cultivation and its role in Valencian cuisine — housed in a historic rice mill near the port",
+      "description": "Rice cultivation and its role in Valencian cuisine \u00e2\u20ac\u201d housed in a historic rice mill near the port",
       "location": {
         "lat": 39.462,
         "lng": -0.331,
@@ -315,7 +315,7 @@
     {
       "id": "museo-fallero",
       "name": "Museo Fallero",
-      "description": "Every pardoned Fallas ninot since 1934 — nearly a century of Valencian artistry and satire",
+      "description": "Every pardoned Fallas ninot since 1934 \u00e2\u20ac\u201d nearly a century of Valencian artistry and satire",
       "location": {
         "lat": 39.456,
         "lng": -0.354,
@@ -335,7 +335,7 @@
     {
       "id": "torres-de-quart",
       "name": "Torres de Quart",
-      "description": "Western medieval gate with visible Napoleonic cannonball damage — less crowded than Serranos",
+      "description": "Western medieval gate with visible Napoleonic cannonball damage \u00e2\u20ac\u201d less crowded than Serranos",
       "location": {
         "lat": 39.4741,
         "lng": -0.3832,
@@ -355,7 +355,7 @@
     {
       "id": "city-of-arts-exterior",
       "name": "City of Arts and Sciences (Exterior)",
-      "description": "Calatrava's futuristic complex — free to walk around, spectacular at sunset reflected in water pools",
+      "description": "Calatrava's futuristic complex \u00e2\u20ac\u201d free to walk around, spectacular at sunset reflected in water pools",
       "location": {
         "lat": 39.4545,
         "lng": -0.3505,
@@ -377,11 +377,11 @@
     {
       "id": "plaza-de-la-virgen",
       "name": "Plaza de la Virgen",
-      "description": "Historic heart of old town — Roman forum site, Turia fountain, surrounded by Cathedral and Basilica",
+      "description": "Historic heart of old town \u00e2\u20ac\u201d Roman forum site, Turia fountain, surrounded by Cathedral and Basilica",
       "location": {
         "lat": 39.4756,
         "lng": -0.3758,
-        "address": "Plaça de la Mare de Deu"
+        "address": "Pla\u0102\u00a7a de la Mare de Deu"
       },
       "category": "landmark",
       "price_eur": 0.0,
@@ -397,11 +397,11 @@
     {
       "id": "plaza-del-ayuntamiento",
       "name": "Plaza del Ayuntamiento",
-      "description": "Valencia's grand central square — ornate City Hall, fountains, flower stalls",
+      "description": "Valencia's grand central square \u00e2\u20ac\u201d ornate City Hall, fountains, flower stalls",
       "location": {
         "lat": 39.4697,
         "lng": -0.3764,
-        "address": "Plaça de l'Ajuntament"
+        "address": "Pla\u0102\u00a7a de l'Ajuntament"
       },
       "category": "landmark",
       "price_eur": 0.0,
@@ -417,7 +417,7 @@
     {
       "id": "museo-bellas-artes",
       "name": "Museo de Bellas Artes",
-      "description": "Spain's second-best art gallery — El Greco, Goya, Velazquez. Always free",
+      "description": "Spain's second-best art gallery \u00e2\u20ac\u201d El Greco, Goya, Velazquez. Always free",
       "location": {
         "lat": 39.4793,
         "lng": -0.3695,
@@ -438,7 +438,7 @@
     {
       "id": "centre-del-carme",
       "name": "Centre del Carme (CCCC)",
-      "description": "Contemporary art in a 13th-century convent — go for the beautiful medieval cloisters",
+      "description": "Contemporary art in a 13th-century convent \u00e2\u20ac\u201d go for the beautiful medieval cloisters",
       "location": {
         "lat": 39.4785,
         "lng": -0.3791,
@@ -459,7 +459,7 @@
     {
       "id": "jardin-botanico",
       "name": "Jardin Botanico",
-      "description": "16th-century botanical garden with tropical species, cacti, and greenhouses — peaceful retreat",
+      "description": "16th-century botanical garden with tropical species, cacti, and greenhouses \u00e2\u20ac\u201d peaceful retreat",
       "location": {
         "lat": 39.4732,
         "lng": -0.3856,
@@ -477,7 +477,7 @@
     {
       "id": "viveros-gardens",
       "name": "Viveros Gardens",
-      "description": "Large park with fountains next to Bellas Artes museum — free and relaxing",
+      "description": "Large park with fountains next to Bellas Artes museum \u00e2\u20ac\u201d free and relaxing",
       "location": {
         "lat": 39.481,
         "lng": -0.368,
@@ -497,7 +497,7 @@
     {
       "id": "mercado-colon",
       "name": "Mercado Colon",
-      "description": "Restored Modernist building turned upscale food court — try horchata and fartons",
+      "description": "Restored Modernist building turned upscale food court \u00e2\u20ac\u201d try horchata and fartons",
       "location": {
         "lat": 39.4672,
         "lng": -0.3712,
@@ -517,7 +517,7 @@
     {
       "id": "mercado-de-ruzafa",
       "name": "Mercado de Ruzafa",
-      "description": "Local market in trendy Ruzafa — less touristy, explore street art and tapas bars nearby",
+      "description": "Local market in trendy Ruzafa \u00e2\u20ac\u201d less touristy, explore street art and tapas bars nearby",
       "location": {
         "lat": 39.4618,
         "lng": -0.372,
@@ -538,7 +538,7 @@
     {
       "id": "el-hachazo",
       "name": "El Hachazo (Axe Throwing)",
-      "description": "Throw axes at targets — no experience needed, instructor-guided, includes a drink",
+      "description": "Throw axes at targets \u00e2\u20ac\u201d no experience needed, instructor-guided, includes a drink",
       "location": {
         "lat": 39.4665,
         "lng": -0.378,
@@ -550,7 +550,7 @@
       "tags": [
         "date-activity"
       ],
-      "tips": "Book ahead — popular on evenings and weekends",
+      "tips": "Book ahead \u00e2\u20ac\u201d popular on evenings and weekends",
       "url": null,
       "expected_score": 7.0,
       "user_score": null
@@ -558,7 +558,7 @@
     {
       "id": "virtual-zone-vr",
       "name": "Virtual Zone VR",
-      "description": "Europe's largest VR arena — free-roam multiplayer games, not a booth experience",
+      "description": "Europe's largest VR arena \u00e2\u20ac\u201d free-roam multiplayer games, not a booth experience",
       "location": {
         "lat": 39.4615,
         "lng": -0.3715,
@@ -576,11 +576,11 @@
     {
       "id": "gulliver-park",
       "name": "Gulliver Park",
-      "description": "Giant Gulliver sculpture with slides and climbing — fun even for adults, inside Turia Gardens",
+      "description": "Giant Gulliver sculpture with slides and climbing \u00e2\u20ac\u201d fun even for adults, inside Turia Gardens",
       "location": {
         "lat": 39.462,
         "lng": -0.359,
-        "address": "Jardín del Turia, tramo XII"
+        "address": "Jard\u0102\u00adn del Turia, tramo XII"
       },
       "category": "entertainment",
       "price_eur": 0.0,
@@ -597,7 +597,7 @@
     {
       "id": "cines-babel",
       "name": "Cines Babel",
-      "description": "Independent cinema showing films in original language — vintage charm, curated programme",
+      "description": "Independent cinema showing films in original language \u00e2\u20ac\u201d vintage charm, curated programme",
       "location": {
         "lat": 39.468,
         "lng": -0.371,
@@ -757,15 +757,15 @@
         "el-carmen",
         "authentic"
       ],
-      "tips": "8-15 EUR/person. Portions are huge — 2-3 tapas per person is plenty.",
+      "tips": "8-15 EUR/person. Portions are huge \u00e2\u20ac\u201d 2-3 tapas per person is plenty.",
       "url": null,
       "expected_score": 7.0,
       "user_score": null
     },
     {
       "id": "cabanyal-progres",
-      "name": "Carrer del Progres — Cabanyal Tiles",
-      "description": "Densest concentration of colourful Art Nouveau ceramic tile facades. Each house different — blues, greens, yellows, florals. Open-air architectural museum.",
+      "name": "Carrer del Progres \u00e2\u20ac\u201d Cabanyal Tiles",
+      "description": "Densest concentration of colourful Art Nouveau ceramic tile facades. Each house different \u00e2\u20ac\u201d blues, greens, yellows, florals. Open-air architectural museum.",
       "location": {
         "lat": 39.47,
         "lng": -0.331,
@@ -781,7 +781,7 @@
         "cabanyal",
         "neighbourhood"
       ],
-      "tips": "Tiles weren't just decorative — they protected from corrosive sea air. Also walk Carrer de Sant Pere and Carrer de la Reina.",
+      "tips": "Tiles weren't just decorative \u00e2\u20ac\u201d they protected from corrosive sea air. Also walk Carrer de Sant Pere and Carrer de la Reina.",
       "url": null,
       "expected_score": 7.5,
       "user_score": null
@@ -904,7 +904,7 @@
     {
       "id": "casa-vani",
       "name": "Casa Vani",
-      "description": "Michelin Bib Gourmand tapas bar in El Carmen. Award-winning quality at neighbourhood prices. Tiny — reservations needed.",
+      "description": "Michelin Bib Gourmand tapas bar in El Carmen. Award-winning quality at neighbourhood prices. Tiny \u00e2\u20ac\u201d reservations needed.",
       "location": {
         "lat": 39.4768,
         "lng": -0.38,
@@ -919,7 +919,7 @@
         "el-carmen",
         "quality"
       ],
-      "tips": "10-18 EUR/person. Book for dinner — very small.",
+      "tips": "10-18 EUR/person. Book for dinner \u00e2\u20ac\u201d very small.",
       "url": null,
       "expected_score": 7.5,
       "user_score": null
@@ -1041,7 +1041,7 @@
     {
       "id": "heladeria-llinares",
       "name": "Heladeria Llinares",
-      "description": "Traditional Valencian ice cream since 1930, facing the Cathedral. Try leche merengada — uniquely Valencian frozen cinnamon-lemon drink.",
+      "description": "Traditional Valencian ice cream since 1930, facing the Cathedral. Try leche merengada \u00e2\u20ac\u201d uniquely Valencian frozen cinnamon-lemon drink.",
       "location": {
         "lat": 39.4745,
         "lng": -0.3762,
@@ -1086,7 +1086,7 @@
     {
       "id": "horchateria-daniel",
       "name": "Horchateria Daniel",
-      "description": "Artisan horchata since 1949 in Alboraya — where tiger nuts actually grow. Third generation. Salvador Dali was a visitor. The real deal.",
+      "description": "Artisan horchata since 1949 in Alboraya \u00e2\u20ac\u201d where tiger nuts actually grow. Third generation. Salvador Dali was a visitor. The real deal.",
       "location": {
         "lat": 39.497,
         "lng": -0.354,
@@ -1101,7 +1101,7 @@
         "off-the-beaten-path",
         "must-try"
       ],
-      "tips": "Take tram Line 3/9 to Alboraya-Peris Arago (~15 min). Panach across the street is the main rival — try both.",
+      "tips": "Take tram Line 3/9 to Alboraya-Peris Arago (~15 min). Panach across the street is the main rival \u00e2\u20ac\u201d try both.",
       "url": null,
       "expected_score": 7.0,
       "user_score": null
@@ -1154,7 +1154,7 @@
     {
       "id": "jardin-monforte",
       "name": "Jardin de Monforte",
-      "description": "Hidden neoclassical garden with marble statues, fountains, and rose gardens behind high walls. One of the loveliest small gardens in Spain — almost always empty.",
+      "description": "Hidden neoclassical garden with marble statues, fountains, and rose gardens behind high walls. One of the loveliest small gardens in Spain \u00e2\u20ac\u201d almost always empty.",
       "location": {
         "lat": 39.4795,
         "lng": -0.3665,
@@ -1177,7 +1177,7 @@
     {
       "id": "jardin-polifilo",
       "name": "Jardin de Polifilo",
-      "description": "40,000 m² garden inspired by a 1499 Renaissance novel. Rose island, decorative ponds, literary zones. Almost unknown — you'll likely have it to yourselves.",
+      "description": "40,000 m\u00c2\u02db garden inspired by a 1499 Renaissance novel. Rose island, decorative ponds, literary zones. Almost unknown \u00e2\u20ac\u201d you'll likely have it to yourselves.",
       "location": {
         "lat": 39.494,
         "lng": -0.386,
@@ -1286,7 +1286,7 @@
         "drinks",
         "walking"
       ],
-      "tips": "Marina Beach Club open year-round (from 17:30 in March) — closest thing to a chiringuito in winter.",
+      "tips": "Marina Beach Club open year-round (from 17:30 in March) \u00e2\u20ac\u201d closest thing to a chiringuito in winter.",
       "url": null,
       "expected_score": 6.5,
       "user_score": null
@@ -1316,7 +1316,7 @@
     },
     {
       "id": "na-jordana-deih",
-      "name": "Deih Murals — Carrer de Na Jordana",
+      "name": "Deih Murals \u00e2\u20ac\u201d Carrer de Na Jordana",
       "description": "Building-scale surreal murals by Valencian artist Deih. Futuristic, cosmic, human-alien landscapes. Internationally recognised art on his home turf.",
       "location": {
         "lat": 39.4785,
@@ -1361,7 +1361,7 @@
     {
       "id": "palacio-cervello",
       "name": "Palacio de Cervello",
-      "description": "18th-century palace with original frescoes, period furniture. Napoleon stayed here. Free guided tours — even most locals don't know about it.",
+      "description": "18th-century palace with original frescoes, period furniture. Napoleon stayed here. Free guided tours \u00e2\u20ac\u201d even most locals don't know about it.",
       "location": {
         "lat": 39.4735,
         "lng": -0.371,
@@ -1376,7 +1376,7 @@
         "free",
         "architecture"
       ],
-      "tips": "Free guided tours — check schedule, book ahead. Houses the Municipal Archive.",
+      "tips": "Free guided tours \u00e2\u20ac\u201d check schedule, book ahead. Houses the Municipal Archive.",
       "url": null,
       "expected_score": 6.5,
       "user_score": null
@@ -1590,7 +1590,7 @@
     {
       "id": "restaurante-levante",
       "name": "Restaurante Levante",
-      "description": "Widely considered best traditional paella in Valencia city. Wood-fired, chicken, rabbit, local beans. Off the tourist path — where locals go.",
+      "description": "Widely considered best traditional paella in Valencia city. Wood-fired, chicken, rabbit, local beans. Off the tourist path \u00e2\u20ac\u201d where locals go.",
       "location": {
         "lat": 39.481,
         "lng": -0.397,
@@ -1613,7 +1613,7 @@
     {
       "id": "tallat-coffee",
       "name": "Tallat Coffee Roasters",
-      "description": "Specialty coffee heaven near the beach. Extreme precision roasting — the nerd's choice. Combine with a Cabanyal walk.",
+      "description": "Specialty coffee heaven near the beach. Extreme precision roasting \u00e2\u20ac\u201d the nerd's choice. Combine with a Cabanyal walk.",
       "location": {
         "lat": 39.465,
         "lng": -0.334,
@@ -1651,7 +1651,7 @@
         "old-town",
         "authentic"
       ],
-      "tips": "5-12 EUR per person. Packed with regulars — arrive early or late.",
+      "tips": "5-12 EUR per person. Packed with regulars \u00e2\u20ac\u201d arrive early or late.",
       "url": null,
       "expected_score": 8.0,
       "user_score": null
@@ -1731,7 +1731,7 @@
       "id": "sagunto-day-trip",
       "name": "Sagunto Day Trip",
       "destination": "Sagunto",
-      "description": "2,500 years of layered history — Roman theatre (Spain's first National Monument), 1 km hilltop castle spanning seven civilisations, Jewish quarter. All attractions free.",
+      "description": "2,500 years of layered history \u00e2\u20ac\u201d Roman theatre (Spain's first National Monument), 1 km hilltop castle spanning seven civilisations, Jewish quarter. All attractions free.",
       "location": {
         "lat": 39.68,
         "lng": -0.265,
@@ -1762,7 +1762,7 @@
         {
           "id": "sagunto-castle",
           "name": "Sagunto Castle",
-          "description": "1 km fortress along a hilltop ridge with seven sections spanning 2,500 years. Roman Forum remains, Moorish walls, panoramic 360° views of sea, mountains, and orange groves.",
+          "description": "1 km fortress along a hilltop ridge with seven sections spanning 2,500 years. Roman Forum remains, Moorish walls, panoramic 360\u00c2\u00b0 views of sea, mountains, and orange groves.",
           "location": {
             "lat": 39.683,
             "lng": -0.266,
@@ -1822,7 +1822,7 @@
         {
           "id": "sagunto-temple-diana",
           "name": "Temple of Diana Remains",
-          "description": "5th-4th century BC Iberian/Roman temple wall — one of the oldest standing structures in the Valencian Community. Survived Hannibal's 219 BC siege.",
+          "description": "5th-4th century BC Iberian/Roman temple wall \u00e2\u20ac\u201d one of the oldest standing structures in the Valencian Community. Survived Hannibal's 219 BC siege.",
           "location": {
             "lat": 39.6785,
             "lng": -0.2645,
@@ -1906,7 +1906,7 @@
         {
           "id": "albufera-paella-lunch",
           "name": "Authentic Paella Lunch in El Palmar",
-          "description": "Eat paella at its birthplace — El Palmar restaurants serve the real deal",
+          "description": "Eat paella at its birthplace \u00e2\u20ac\u201d El Palmar restaurants serve the real deal",
           "location": {
             "lat": 39.315,
             "lng": -0.342,
@@ -1927,7 +1927,7 @@
         {
           "id": "albufera-nature-walk",
           "name": "Albufera Nature Park Walk",
-          "description": "Walking trails through wetlands — birdwatching, rice fields, lagoon views",
+          "description": "Walking trails through wetlands \u00e2\u20ac\u201d birdwatching, rice fields, lagoon views",
           "location": {
             "lat": 39.337,
             "lng": -0.355,
@@ -1948,7 +1948,7 @@
         {
           "id": "el-palmar-village",
           "name": "El Palmar Village",
-          "description": "Tiny fishing village — birthplace of paella. Traditional barracas, atmospheric jetties, 20+ rice restaurants. Ground zero for authentic Valencian paella.",
+          "description": "Tiny fishing village \u00e2\u20ac\u201d birthplace of paella. Traditional barracas, atmospheric jetties, 20+ rice restaurants. Ground zero for authentic Valencian paella.",
           "location": {
             "lat": 39.3265,
             "lng": -0.3515,
@@ -2020,7 +2020,7 @@
         "duration_minutes": 50,
         "price_eur": 1.5,
         "booking_reference": null,
-        "notes": "Check last bus time — can be early"
+        "notes": "Check last bus time \u00e2\u20ac\u201d can be early"
       },
       "total_price_eur": 55.0,
       "total_duration_minutes": 480,
@@ -2048,7 +2048,7 @@
         {
           "id": "xativa-castle",
           "name": "Castell de Xativa",
-          "description": "Double castle on a mountain ridge — Castell Menor (Iberian/Roman) and Castell Major (Gothic/medieval). Prison cells, chapels, and sweeping views over the Costera valley.",
+          "description": "Double castle on a mountain ridge \u00e2\u20ac\u201d Castell Menor (Iberian/Roman) and Castell Major (Gothic/medieval). Prison cells, chapels, and sweeping views over the Costera valley.",
           "location": {
             "lat": 39.526,
             "lng": -0.522,
@@ -2061,7 +2061,7 @@
             "panoramic-views",
             "highlight"
           ],
-          "tips": "6 EUR combined ticket includes both museums. Book online — capacity limited. 25-30 min steep climb, do first when fresh.",
+          "tips": "6 EUR combined ticket includes both museums. Book online \u00e2\u20ac\u201d capacity limited. 25-30 min steep climb, do first when fresh.",
           "url": "https://xativaturismo.com/en/ticket-castle/",
           "expected_score": 9.0,
           "user_score": null
@@ -2091,7 +2091,7 @@
         {
           "id": "xativa-bellas-artes",
           "name": "Museo de Bellas Artes de Xativa",
-          "description": "Fine art museum with the famous upside-down portrait of Philip V — the city's symbolic revenge for being burned in 1707. Works by Ribera and Goya.",
+          "description": "Fine art museum with the famous upside-down portrait of Philip V \u00e2\u20ac\u201d the city's symbolic revenge for being burned in 1707. Works by Ribera and Goya.",
           "location": {
             "lat": 39.5215,
             "lng": -0.5175,
@@ -2119,7 +2119,7 @@
           "price_eur": 0.0,
           "duration_minutes": 20,
           "tags": [],
-          "tips": "Free. On the path to the castle — stop on the way up. Closed Mon.",
+          "tips": "Free. On the path to the castle \u00e2\u20ac\u201d stop on the way up. Closed Mon.",
           "url": null,
           "expected_score": 7.0,
           "user_score": null
@@ -2154,7 +2154,7 @@
         "castle",
         "borgia"
       ],
-      "tips": "Train C-2 ~50-60 min, ~4-5 EUR each way. Book castle tickets online (capacity limited). Castle climb 25-30 min — do it first while fresh. Avoid Monday. Casa la Abuela for legendary arroz al horno.",
+      "tips": "Train C-2 ~50-60 min, ~4-5 EUR each way. Book castle tickets online (capacity limited). Castle climb 25-30 min \u00e2\u20ac\u201d do it first while fresh. Avoid Monday. Casa la Abuela for legendary arroz al horno.",
       "expected_score": 8.0,
       "user_score": null
     },
@@ -2162,7 +2162,7 @@
       "id": "gandia-day-trip",
       "name": "Gandia Day Trip",
       "destination": "Gandia",
-      "description": "Borgia Ducal Palace, old town, 3 km golden beach, Marjal wetlands for birdwatching. Birthplace of fideua — the noodle version of paella.",
+      "description": "Borgia Ducal Palace, old town, 3 km golden beach, Marjal wetlands for birdwatching. Birthplace of fideua \u00e2\u20ac\u201d the noodle version of paella.",
       "location": {
         "lat": 38.968,
         "lng": -0.181,
@@ -2190,7 +2190,7 @@
         {
           "id": "gandia-maga",
           "name": "MAGa Archaeological Museum",
-          "description": "Prehistory museum in a 14th-century hospital. Pieces from Cova del Parpalló — one of Europe's key Upper Paleolithic sites. Free on Sundays.",
+          "description": "Prehistory museum in a 14th-century hospital. Pieces from Cova del Parpall\u0102\u0142 \u00e2\u20ac\u201d one of Europe's key Upper Paleolithic sites. Free on Sundays.",
           "location": {
             "lat": 38.969,
             "lng": -0.18,
@@ -2208,7 +2208,7 @@
         {
           "id": "gandia-beach-marjal",
           "name": "Gandia Beach & Marjal Wetlands",
-          "description": "3 km golden beach with 7 km promenade. The Marjal wetlands (1,300 ha) between town and beach — boardwalks, flamingos, migratory birds. March is perfect.",
+          "description": "3 km golden beach with 7 km promenade. The Marjal wetlands (1,300 ha) between town and beach \u00e2\u20ac\u201d boardwalks, flamingos, migratory birds. March is perfect.",
           "location": {
             "lat": 38.955,
             "lng": -0.165,
@@ -2229,7 +2229,7 @@
       "total_price_eur": 80.0,
       "total_duration_minutes": 510,
       "tags": [],
-      "tips": "Train C1 ~1h15, ~5.80 EUR each way. Ducal Palace ~7-8 EUR (must-see). Skip Collegiate Church (10 EUR — too pricey). Bus L2 to beach for fideua lunch. Joint monastery+palace ticket 12 EUR if visiting Cotalba.",
+      "tips": "Train C1 ~1h15, ~5.80 EUR each way. Ducal Palace ~7-8 EUR (must-see). Skip Collegiate Church (10 EUR \u00e2\u20ac\u201d too pricey). Bus L2 to beach for fideua lunch. Joint monastery+palace ticket 12 EUR if visiting Cotalba.",
       "expected_score": 7.0,
       "user_score": null
     },
@@ -2237,7 +2237,7 @@
       "id": "montanejos-day-trip",
       "name": "Montanejos Hot Springs Day Trip",
       "destination": "Montanejos",
-      "description": "Natural thermal springs at constant 25°C in a river gorge. Free access. Combine with the Ruta de los Estrechos gorge hike (8 km, 2.5-3h).",
+      "description": "Natural thermal springs at constant 25\u00c2\u00b0C in a river gorge. Free access. Combine with the Ruta de los Estrechos gorge hike (8 km, 2.5-3h).",
       "location": {
         "lat": 40.07,
         "lng": -0.52,
@@ -2247,7 +2247,7 @@
         {
           "id": "montanejos-springs",
           "name": "Fuente de los Banos Hot Springs",
-          "description": "Crystal-clear turquoise thermal pools at constant 25°C year-round in a river gorge. Blue Flag certified. 6,000 litres/min geothermal spring. Free access.",
+          "description": "Crystal-clear turquoise thermal pools at constant 25\u00c2\u00b0C year-round in a river gorge. Blue Flag certified. 6,000 litres/min geothermal spring. Free access.",
           "location": {
             "lat": 40.068,
             "lng": -0.518,
@@ -2257,7 +2257,7 @@
           "price_eur": 0.0,
           "duration_minutes": 120,
           "tags": [],
-          "tips": "Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25°C even in March. Changing facilities may be closed off-season.",
+          "tips": "Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25\u00c2\u00b0C even in March. Changing facilities may be closed off-season.",
           "url": "https://www.visitmontanejos.com/en/nature/la-fuente-de-los-banos/",
           "expected_score": 8.5,
           "user_score": null
@@ -2286,7 +2286,7 @@
       "total_price_eur": 70.0,
       "total_duration_minutes": 600,
       "tags": [],
-      "tips": "Limited bus (Mon/Thu only, ~10 EUR each way). Organized tours 60-85 EUR/pp. Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25°C even in March.",
+      "tips": "Limited bus (Mon/Thu only, ~10 EUR each way). Organized tours 60-85 EUR/pp. Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25\u00c2\u00b0C even in March.",
       "expected_score": 7.5,
       "user_score": null
     },
@@ -2343,7 +2343,7 @@
       "total_price_eur": 124.0,
       "total_duration_minutes": 720,
       "tags": [],
-      "tips": "HIFE bus recommended (~15-25 EUR each way, 2.5h, 7/day). Castle 5 EUR. Longest day trip — needs early start. March: artichokes in season in nearby Benicarlo.",
+      "tips": "HIFE bus recommended (~15-25 EUR each way, 2.5h, 7/day). Castle 5 EUR. Longest day trip \u00e2\u20ac\u201d needs early start. March: artichokes in season in nearby Benicarlo.",
       "expected_score": 6.5,
       "user_score": null
     },
@@ -2361,7 +2361,7 @@
         {
           "id": "requena-cuevas",
           "name": "Cuevas de la Villa",
-          "description": "22 interconnected underground chambers beneath the medieval quarter. Ossuary, granary, wine cellars with grape-stomping pools. 1.2 km route at constant 15-16°C.",
+          "description": "22 interconnected underground chambers beneath the medieval quarter. Ossuary, granary, wine cellars with grape-stomping pools. 1.2 km route at constant 15-16\u00c2\u00b0C.",
           "location": {
             "lat": 39.4885,
             "lng": -1.101,
@@ -2379,7 +2379,7 @@
         {
           "id": "requena-la-villa",
           "name": "La Villa (Requena Medieval Quarter)",
-          "description": "Walled medieval quarter with cobbled streets, stone mansions, Jewish Quarter, Moorish Alcazaba ruins. Authentically quiet — feels like stepping back 500 years.",
+          "description": "Walled medieval quarter with cobbled streets, stone mansions, Jewish Quarter, Moorish Alcazaba ruins. Authentically quiet \u00e2\u20ac\u201d feels like stepping back 500 years.",
           "location": {
             "lat": 39.4882,
             "lng": -1.1005,
@@ -2454,7 +2454,7 @@
       "total_price_eur": 78.0,
       "total_duration_minutes": 510,
       "tags": [],
-      "tips": "Train C-3 ~75-85 min, ~5-7 EUR each way. Caves 4 EUR, combined ticket with 4 museums just 8 EUR. Much colder than Valencia (700 m altitude) — bring layers. Avoid Mon/Tue (closed).",
+      "tips": "Train C-3 ~75-85 min, ~5-7 EUR each way. Caves 4 EUR, combined ticket with 4 museums just 8 EUR. Much colder than Valencia (700 m altitude) \u00e2\u20ac\u201d bring layers. Avoid Mon/Tue (closed).",
       "expected_score": 7.0,
       "user_score": null
     },
@@ -2476,7 +2476,7 @@
           "location": {
             "lat": 39.715,
             "lng": -0.405,
-            "address": "Start: Serra Town Hall (Plaça del Poble)"
+            "address": "Start: Serra Town Hall (Pla\u0102\u00a7a del Poble)"
           },
           "category": "landmark",
           "price_eur": 0.0,
@@ -2490,7 +2490,7 @@
         {
           "id": "garbi-viewpoint",
           "name": "Garbi Viewpoint Hike",
-          "description": "10-12 km hike to 601 m summit. Best panorama in the park — Mediterranean, Valencia skyline, Albufera lagoon, and interior mountain ranges visible.",
+          "description": "10-12 km hike to 601 m summit. Best panorama in the park \u00e2\u20ac\u201d Mediterranean, Valencia skyline, Albufera lagoon, and interior mountain ranges visible.",
           "location": {
             "lat": 39.71,
             "lng": -0.4,
@@ -2500,7 +2500,7 @@
           "price_eur": 0.0,
           "duration_minutes": 240,
           "tags": [],
-          "tips": "Moderate to demanding, ~400 m elevation gain. Late March is ideal — brutally hot in summer. Bring 1.5L water.",
+          "tips": "Moderate to demanding, ~400 m elevation gain. Late March is ideal \u00e2\u20ac\u201d brutally hot in summer. Bring 1.5L water.",
           "url": null,
           "expected_score": 7.5,
           "user_score": null
@@ -2529,7 +2529,7 @@
       "total_price_eur": 30.0,
       "total_duration_minutes": 480,
       "tags": [],
-      "tips": "Metro L1 to Betera + bus 230 to Serra. Check bus schedule — limited! Taxi from Betera ~12-18 EUR if bus doesn't work. Castell de Serra trail (7 km, 2h) is the best moderate option.",
+      "tips": "Metro L1 to Betera + bus 230 to Serra. Check bus schedule \u00e2\u20ac\u201d limited! Taxi from Betera ~12-18 EUR if bus doesn't work. Castell de Serra trail (7 km, 2h) is the best moderate option.",
       "expected_score": 7.5,
       "user_score": null
     }
@@ -2537,8 +2537,8 @@
   "groupings": [
     {
       "id": "city-center",
-      "name": "City Center",
-      "description": "Historic old town attractions within walking distance",
+      "name": "City Center / Old Town",
+      "description": "Historic core: Cathedral, La Lonja, plazas, and medieval gates",
       "color": "#e74c3c",
       "parent_id": null,
       "member_ids": [
@@ -2547,40 +2547,328 @@
         "mercado-central",
         "almoina",
         "torres-serranos",
-        "plaza-virgen",
-        "plaza-ayuntamiento",
-        "torres-quart"
+        "plaza-de-la-virgen",
+        "plaza-del-ayuntamiento",
+        "torres-de-quart",
+        "dos-aguas-courtyard",
+        "heladeria-llinares",
+        "heladeria-veneta",
+        "horchateria-santa-catalina",
+        "la-pilareta",
+        "tasca-angel",
+        "palacio-cervello"
       ]
     },
     {
       "id": "city-of-arts",
       "name": "City of Arts & Sciences",
-      "description": "The modern architectural complex in Turia riverbed",
+      "description": "Calatrava complex: Oceanografic, Science Museum, Hemisferic, and exterior walks",
       "color": "#3498db",
       "parent_id": null,
       "member_ids": [
         "oceanografic",
-        "museu-ciencies",
+        "science-museum",
         "hemisferic",
-        "city-arts-exterior"
+        "city-of-arts-exterior",
+        "pont-assut-or"
       ]
     },
     {
       "id": "free-attractions",
       "name": "Free Activities",
-      "description": "No entrance fee required",
+      "description": "No entrance fee - gardens, plazas, street art, exteriors, beaches",
       "color": "#2ecc71",
       "parent_id": null,
       "member_ids": [
         "turia-gardens",
-        "city-arts-exterior",
-        "plaza-virgen",
-        "plaza-ayuntamiento",
-        "bellas-artes",
-        "cccc",
-        "viveros",
+        "city-of-arts-exterior",
+        "plaza-de-la-virgen",
+        "plaza-del-ayuntamiento",
+        "museo-bellas-artes",
+        "centre-del-carme",
+        "viveros-gardens",
         "gulliver-park",
-        "mercado-central"
+        "mercado-central",
+        "jardin-hesperides",
+        "jardin-monforte",
+        "jardin-polifilo",
+        "playa-malvarrosa",
+        "playa-patacona",
+        "puente-del-mar",
+        "puente-flores",
+        "portal-valldigna",
+        "lope-de-rueda",
+        "veles-e-vents",
+        "cabanyal-progres",
+        "casa-gargoles",
+        "casa-judia",
+        "espai-verd",
+        "pont-assut-or",
+        "calle-colores",
+        "na-jordana-deih",
+        "pichiavo-ruzafa",
+        "plaza-tossal-art",
+        "cccc-cloisters",
+        "port-saplaya",
+        "palacio-cervello",
+        "mercado-colon"
+      ]
+    },
+    {
+      "id": "el-carmen",
+      "name": "El Carmen",
+      "description": "Bohemian old-town quarter: street art, tapas bars, medieval gates",
+      "color": "#e67e22",
+      "parent_id": null,
+      "member_ids": [
+        "torres-serranos",
+        "torres-de-quart",
+        "portal-valldigna",
+        "lope-de-rueda",
+        "calle-colores",
+        "na-jordana-deih",
+        "plaza-tossal-art",
+        "cccc-cloisters",
+        "centre-del-carme",
+        "bodega-rentaora",
+        "casa-vani",
+        "forn-del-tossal"
+      ]
+    },
+    {
+      "id": "ruzafa",
+      "name": "Ruzafa",
+      "description": "Trendy neighbourhood: craft coffee, brunch spots, street art, indie shops",
+      "color": "#9b59b6",
+      "parent_id": null,
+      "member_ids": [
+        "mercado-de-ruzafa",
+        "blackbird-cafe",
+        "bluebell-coffee",
+        "casa-fran",
+        "masusa-paella",
+        "olhops",
+        "ubik-cafe",
+        "gnomo-shop",
+        "pichiavo-ruzafa",
+        "casa-judia",
+        "mercado-colon"
+      ]
+    },
+    {
+      "id": "cabanyal",
+      "name": "Cabanyal",
+      "description": "Former fishermen quarter: colourful tiles, local tapas, beach access",
+      "color": "#1abc9c",
+      "parent_id": null,
+      "member_ids": [
+        "cabanyal-progres",
+        "casa-gargoles",
+        "casa-montana",
+        "tallat-coffee",
+        "playa-malvarrosa"
+      ]
+    },
+    {
+      "id": "waterfront",
+      "name": "Waterfront & Beaches",
+      "description": "Marina, beaches, and seaside venues",
+      "color": "#2980b9",
+      "parent_id": null,
+      "member_ids": [
+        "playa-malvarrosa",
+        "playa-patacona",
+        "marina-beach-club",
+        "marina-valencia",
+        "veles-e-vents",
+        "port-saplaya"
+      ]
+    },
+    {
+      "id": "street-art",
+      "name": "Street Art Trail",
+      "description": "Murals, graffiti, and urban art across Valencia",
+      "color": "#e91e63",
+      "parent_id": null,
+      "member_ids": [
+        "calle-colores",
+        "na-jordana-deih",
+        "pichiavo-ruzafa",
+        "plaza-tossal-art",
+        "lope-de-rueda"
+      ]
+    },
+    {
+      "id": "hidden-gardens",
+      "name": "Hidden Gardens",
+      "description": "Secret and lesser-known green spaces",
+      "color": "#4caf50",
+      "parent_id": null,
+      "member_ids": [
+        "jardin-hesperides",
+        "jardin-monforte",
+        "jardin-polifilo",
+        "jardin-botanico",
+        "viveros-gardens"
+      ]
+    },
+    {
+      "id": "sunset-spots",
+      "name": "Sunset Spots",
+      "description": "Best places to watch the sunset: rooftops, beaches, viewpoints",
+      "color": "#ff9800",
+      "parent_id": null,
+      "member_ids": [
+        "atenea-sky",
+        "terraza-270",
+        "marina-beach-club",
+        "marina-valencia",
+        "veles-e-vents",
+        "city-of-arts-exterior",
+        "playa-patacona"
+      ]
+    },
+    {
+      "id": "coffee-brunch",
+      "name": "Coffee & Brunch",
+      "description": "Specialty coffee and brunch spots",
+      "color": "#795548",
+      "parent_id": null,
+      "member_ids": [
+        "blackbird-cafe",
+        "bluebell-coffee",
+        "casa-fran",
+        "tallat-coffee",
+        "ubik-cafe"
+      ]
+    },
+    {
+      "id": "tapas-traditional",
+      "name": "Tapas & Traditional Food",
+      "description": "Authentic Valencian tapas, horchata, and traditional eateries",
+      "color": "#d35400",
+      "parent_id": null,
+      "member_ids": [
+        "bodega-rentaora",
+        "casa-montana",
+        "casa-vani",
+        "la-pilareta",
+        "tasca-angel",
+        "forn-del-tossal",
+        "horchateria-daniel",
+        "horchateria-santa-catalina",
+        "heladeria-llinares",
+        "heladeria-veneta",
+        "restaurante-levante",
+        "masusa-paella"
+      ]
+    },
+    {
+      "id": "hidden-gems",
+      "name": "Hidden Gems",
+      "description": "Off-the-beaten-path spots most tourists miss",
+      "color": "#607d8b",
+      "parent_id": null,
+      "member_ids": [
+        "liber-toy-soldiers",
+        "espai-verd",
+        "port-saplaya",
+        "jardin-polifilo",
+        "jardin-hesperides",
+        "palacio-cervello",
+        "casa-judia",
+        "casa-gargoles",
+        "cccc-cloisters",
+        "dos-aguas-courtyard",
+        "horchateria-daniel"
+      ]
+    },
+    {
+      "id": "architecture",
+      "name": "Architecture Highlights",
+      "description": "Notable buildings, facades, and structural design across eras",
+      "color": "#455a64",
+      "parent_id": null,
+      "member_ids": [
+        "city-of-arts-exterior",
+        "pont-assut-or",
+        "veles-e-vents",
+        "espai-verd",
+        "casa-gargoles",
+        "cabanyal-progres",
+        "casa-judia",
+        "dos-aguas-courtyard",
+        "cccc-cloisters",
+        "la-lonja",
+        "cathedral",
+        "torres-serranos",
+        "torres-de-quart",
+        "mercado-colon"
+      ]
+    },
+    {
+      "id": "museums",
+      "name": "Museums & Culture",
+      "description": "Museums, galleries, and cultural venues",
+      "color": "#5c6bc0",
+      "parent_id": null,
+      "member_ids": [
+        "science-museum",
+        "almoina",
+        "liber-toy-soldiers",
+        "museum-of-illusions",
+        "prehistoric-caves",
+        "museo-del-arroz",
+        "museo-fallero",
+        "museo-bellas-artes",
+        "centre-del-carme",
+        "dos-aguas-courtyard",
+        "cccc-cloisters"
+      ]
+    },
+    {
+      "id": "fun-activities",
+      "name": "Fun & Games",
+      "description": "Active entertainment: VR, axe throwing, cinema, parks",
+      "color": "#ab47bc",
+      "parent_id": null,
+      "member_ids": [
+        "el-hachazo",
+        "virtual-zone-vr",
+        "gulliver-park",
+        "cines-babel",
+        "bioparc",
+        "oceanografic"
+      ]
+    },
+    {
+      "id": "drinks-nightlife",
+      "name": "Drinks & Nightlife",
+      "description": "Rooftop bars, craft beer, and evening venues",
+      "color": "#c62828",
+      "parent_id": null,
+      "member_ids": [
+        "atenea-sky",
+        "terraza-270",
+        "marina-beach-club",
+        "olhops",
+        "marina-valencia"
+      ]
+    },
+    {
+      "id": "turia-corridor",
+      "name": "Turia Gardens Corridor",
+      "description": "Attractions along the old riverbed park running through the city",
+      "color": "#00897b",
+      "parent_id": null,
+      "member_ids": [
+        "turia-gardens",
+        "gulliver-park",
+        "bioparc",
+        "puente-del-mar",
+        "puente-flores",
+        "viveros-gardens",
+        "city-of-arts-exterior"
       ]
     }
   ],
@@ -2588,7 +2876,7 @@
   "itineraries": [
     {
       "id": "itin-a",
-      "name": "A — Balanced Explorer",
+      "name": "A \u00e2\u20ac\u201d Balanced Explorer",
       "description": "Best of everything. One day trip, all major sights, good pacing. ~360-400 EUR/pp.",
       "days": [
         {
@@ -3207,7 +3495,7 @@
               "id": "58aaee9f",
               "attraction_id": "cabanyal-progres",
               "day_trip_id": null,
-              "name": "Carrer del Progres — Cabanyal Tiles",
+              "name": "Carrer del Progres \u00e2\u20ac\u201d Cabanyal Tiles",
               "start_time": null,
               "duration_minutes": 20,
               "price_eur": 0.0,
@@ -3309,7 +3597,7 @@
     },
     {
       "id": "itin-b",
-      "name": "B — Two Day Trips",
+      "name": "B \u00e2\u20ac\u201d Two Day Trips",
       "description": "More ambitious. Sagunto morning + Albufera evening on Wed, full Xativa Thu. ~380-430 EUR/pp.",
       "days": [
         {
@@ -3876,7 +4164,7 @@
               "id": "5dc66e4f",
               "attraction_id": "cabanyal-progres",
               "day_trip_id": null,
-              "name": "Carrer del Progres — Cabanyal Tiles",
+              "name": "Carrer del Progres \u00e2\u20ac\u201d Cabanyal Tiles",
               "start_time": null,
               "duration_minutes": 20,
               "price_eur": 0.0,
@@ -3965,7 +4253,7 @@
     },
     {
       "id": "itin-c",
-      "name": "C — Relaxed & Romantic",
+      "name": "C \u00e2\u20ac\u201d Relaxed & Romantic",
       "description": "Slower pace, food focus, no day trips outside Valencia. More time at each place. ~320-370 EUR/pp.",
       "days": [
         {
@@ -4381,7 +4669,7 @@
               "id": "ae37f2d4",
               "attraction_id": "cabanyal-progres",
               "day_trip_id": null,
-              "name": "Carrer del Progres — Cabanyal Tiles",
+              "name": "Carrer del Progres \u00e2\u20ac\u201d Cabanyal Tiles",
               "start_time": null,
               "duration_minutes": 20,
               "price_eur": 0.0,

@@ -66,7 +66,7 @@ def _popup_html(a: Attraction) -> str:
         desc_html = f'<div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">{a.description}</div>'
 
     html = f"""
-<div style="font-family:{FONT_STACK_MAP};width:300px;" id="popup_{uid}">
+<div style="font-family:{FONT_STACK_MAP};width:300px;max-width:85vw;" id="popup_{uid}">
   <!-- Header -->
   <div style="background:{hex_color};color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">
     <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">{category_label(a.category)}</div>
@@ -427,6 +427,17 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     }
     .leaflet-popup-close-button:hover { color: #fff !important; opacity: 1; }
     .labels-hidden .marker-label { display: none !important; }
+    .vac-layer-toggle {
+        background: rgba(255,255,255,.95);
+        backdrop-filter: blur(4px);
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,.2);
+        width: 36px; height: 36px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 18px; border: none;
+        color: #333;
+    }
+    .vac-layer-toggle:hover { background: #fff; }
     .vac-layer-ctrl {
         background: rgba(255,255,255,.95);
         backdrop-filter: blur(4px);
@@ -438,24 +449,36 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
         min-width: 180px;
         max-height: 70vh;
         overflow-y: auto;
+        display: none;
     }
+    .vac-layer-ctrl.open { display: block; }
     .vac-layer-ctrl .section-hdr {
         display: flex; align-items: center; justify-content: space-between;
         font-weight: 700; font-size: 11px; text-transform: uppercase;
         color: #666; letter-spacing: .5px; padding: 6px 0 4px; margin-top: 4px;
         border-bottom: 1px solid #e0e0e0;
+        cursor: pointer;
     }
     .vac-layer-ctrl .section-hdr:first-child { margin-top: 0; }
     .vac-layer-ctrl .section-hdr .toggle-btns { font-weight: 400; text-transform: none; font-size: 11px; }
     .vac-layer-ctrl .toggle-btns a { cursor: pointer; color: #4ea4f6; text-decoration: none; margin-left: 4px; }
     .vac-layer-ctrl .toggle-btns a:hover { text-decoration: underline; }
+    .vac-layer-ctrl .section-body { overflow: hidden; transition: max-height 0.2s ease; }
+    .vac-layer-ctrl .section-body.collapsed { max-height: 0 !important; }
     .vac-layer-ctrl label {
         display: flex; align-items: center; gap: 6px;
-        padding: 3px 0; margin: 0; cursor: pointer; font-size: 13px;
+        padding: 4px 0; margin: 0; cursor: pointer; font-size: 13px;
+        min-height: 32px;
     }
-    .vac-layer-ctrl label input { cursor: pointer; margin: 0; }
+    .vac-layer-ctrl label input { cursor: pointer; margin: 0; width: 18px; height: 18px; }
     .vac-layer-ctrl .g-dot {
         display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    @media (max-width: 768px) {
+        .vac-layer-ctrl { min-width: 160px; font-size: 14px; max-height: 60vh; }
+        .vac-layer-ctrl label { min-height: 40px; padding: 6px 0; font-size: 14px; }
+        .vac-layer-ctrl label input { width: 20px; height: 20px; }
+        .vac-layer-ctrl .section-hdr { font-size: 12px; padding: 8px 0 6px; }
     }
     </style>
     """
@@ -509,16 +532,49 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                 var LayerPanel = L.Control.extend({
                     options: { position: 'topright' },
                     onAdd: function() {
-                        var div = L.DomUtil.create('div', 'vac-layer-ctrl');
-                        L.DomEvent.disableClickPropagation(div);
-                        L.DomEvent.disableScrollPropagation(div);
+                        var wrap = L.DomUtil.create('div', '');
+                        wrap.style.cssText = 'display:flex;flex-direction:column;align-items:flex-end;gap:6px;';
+                        L.DomEvent.disableClickPropagation(wrap);
+                        L.DomEvent.disableScrollPropagation(wrap);
 
-                        function makeSection(title, layers, useColor) {
+                        // Toggle button
+                        var btn = document.createElement('button');
+                        btn.className = 'vac-layer-toggle';
+                        btn.innerHTML = '&#x2630;';
+                        btn.title = 'Toggle layers';
+                        wrap.appendChild(btn);
+
+                        var div = document.createElement('div');
+                        div.className = 'vac-layer-ctrl';
+                        wrap.appendChild(div);
+
+                        btn.addEventListener('click', function() {
+                            div.classList.toggle('open');
+                        });
+                        // Close when clicking outside
+                        map.on('click', function() { div.classList.remove('open'); });
+
+                        function makeSection(title, layers, useColor, startCollapsed) {
                             var hdr = document.createElement('div');
                             hdr.className = 'section-hdr';
-                            hdr.innerHTML = '<span>' + title + '</span>' +
-                                '<span class="toggle-btns"><a class="sel-all">all</a> / <a class="sel-none">none</a></span>';
+                            var titleSpan = document.createElement('span');
+                            titleSpan.innerHTML = (startCollapsed ? '&#x25B6; ' : '&#x25BC; ') + title;
+                            hdr.appendChild(titleSpan);
+                            var togBtns = document.createElement('span');
+                            togBtns.className = 'toggle-btns';
+                            togBtns.innerHTML = '<a class="sel-all">all</a> / <a class="sel-none">none</a>';
+                            hdr.appendChild(togBtns);
                             div.appendChild(hdr);
+
+                            var body = document.createElement('div');
+                            body.className = 'section-body' + (startCollapsed ? ' collapsed' : '');
+                            div.appendChild(body);
+
+                            // Toggle collapse on header click (but not on all/none)
+                            titleSpan.addEventListener('click', function(e) {
+                                var isCollapsed = body.classList.toggle('collapsed');
+                                titleSpan.innerHTML = (isCollapsed ? '&#x25B6; ' : '&#x25BC; ') + title;
+                            });
 
                             var cbs = [];
                             layers.forEach(function(lyr) {
@@ -538,21 +594,23 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                                 var txt = document.createElement('span');
                                 txt.innerHTML = lyr.label;
                                 lbl.appendChild(txt);
-                                div.appendChild(lbl);
+                                body.appendChild(lbl);
                                 cbs.push(cb);
                             });
 
-                            hdr.querySelector('.sel-all').addEventListener('click', function() {
+                            togBtns.querySelector('.sel-all').addEventListener('click', function(e) {
+                                e.stopPropagation();
                                 cbs.forEach(function(cb, i) { cb.checked = true; map.addLayer(layers[i].v); });
                             });
-                            hdr.querySelector('.sel-none').addEventListener('click', function() {
+                            togBtns.querySelector('.sel-none').addEventListener('click', function(e) {
+                                e.stopPropagation();
                                 cbs.forEach(function(cb, i) { cb.checked = false; map.removeLayer(layers[i].v); });
                             });
                         }
 
-                        makeSection('Categories', catLayers, false);
-                        if (dtLayers.length) makeSection('Day Trips', dtLayers, false);
-                        if (grpLayers.length) makeSection('Groupings', grpLayers, true);
+                        makeSection('Categories', catLayers, false, false);
+                        if (dtLayers.length) makeSection('Day Trips', dtLayers, false, false);
+                        if (grpLayers.length) makeSection('Groupings', grpLayers, true, true);
 
                         // Labels toggle
                         var sep = document.createElement('div');
@@ -571,7 +629,7 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                         lbl.appendChild(s);
                         div.appendChild(lbl);
 
-                        return div;
+                        return wrap;
                     }
                 });
                 new LayerPanel().addTo(map);

@@ -124,8 +124,17 @@ A named, hierarchical collection of attractions. Lives on `trip.groupings`. Fiel
 
 An attraction can belong to multiple groupings. Hierarchy is validated for cycles (max 10 levels). Recursive member collection gathers IDs from all descendants.
 
+### Itinerary
+A named arrangement of days for the trip. Multiple itineraries allow comparing alternative schedules (e.g. "Itinerary A" with museums early vs "Itinerary B" with food focus). Fields:
+- `id`, `name`, `description` — identification and notes
+- `days: list[Day]` — the schedule for this itinerary
+
+Only one itinerary is active at a time (`trip.active_itinerary_id`). All scheduling operations (drag-and-drop, API endpoints, chat actions) operate on the active itinerary. Attractions and day trips are shared across itineraries — only their scheduling differs.
+
+**Auto-migration**: Existing trip.json files with a top-level `days` array are automatically migrated to `itineraries[0]` on load via a Pydantic `model_validator`.
+
 ### Trip
-Top-level container: destination, dates, travelers, budget, preferences, `attractions` (backlog of regular places), `day_trips` (composite day trip entities), `days` (the schedule), `groupings` (hierarchical attraction collections).
+Top-level container: destination, dates, travelers, budget, preferences, `attractions` (backlog of regular places), `day_trips` (composite day trip entities), `itineraries` (named schedule variants), `active_itinerary_id`, `groupings` (hierarchical attraction collections). Legacy `days` field is auto-migrated to itineraries.
 
 ### Preferences
 User's interests, things to avoid, pace (relaxed/moderate/packed), daily budget.
@@ -208,13 +217,15 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Rich hover tooltips (name, category, description preview, duration/price/score)
   - Inline popup editing: clickable star rating (1-10), edit duration/price, save via API
   - Map ↔ app sync: popup edits trigger store reload via postMessage
-  - Custom Leaflet layer control (no Folium LayerControl): Categories section + Groupings section, each with all/none toggles, colored dots for groupings, Labels toggle — no radio buttons
+  - Custom Leaflet layer control: collapsible toggle button (hidden by default), collapsible sections (Categories open, Groupings collapsed), all/none toggles, colored dots for groupings, Labels toggle
+  - Mobile-friendly map popups (`max-width: 85vw`), bigger touch targets for layer checkboxes on mobile
   - Grouping polygon overlays: convex hull (≥3 members), polyline (2), circle (1) per grouping, togglable via layer control
   - Auto-refresh after mutations (cache-busting iframe reload)
 - [x] **App shell** — Single HTML page with:
   - Dark navy (#1a2332) sidebar (340px) with Map/Overview/Timeline tabs
   - Always-visible chat panel in sidebar (below nav, dark-themed)
-  - Responsive (collapses to icons on mobile, chat hidden)
+  - Mobile responsive: sidebar becomes slide-out drawer with hamburger button + overlay backdrop, auto-closes on nav tap
+  - Modals go fullscreen on mobile, form rows stack vertically, toasts span full width
   - Trip header with metadata
   - Trip picker dropdown (switch between trips, shows pipeline status for in-progress trips)
   - New Trip modal with form + real-time progress tracking (Alpine.js)
@@ -229,6 +240,7 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Grouping pills on card headers (colored, from groupings the attraction belongs to)
   - Filter by grouping (dropdown alongside category filter)
   - Expanded card: groupings section with toggle checkboxes for quick add/remove
+  - Mobile responsive: summary/filters/search shrink padding, edit form stacks vertically
 - [x] **Timeline tab** — Kanban-style board with drag-and-drop:
   - Left sidebar: unscheduled attractions pool (with day trips section)
   - Horizontal scrolling day columns — all days visible at once
@@ -238,12 +250,12 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Activity cards: time, name, description, duration, notes; proportional min-height based on duration
   - Pool cards show description/english name below attraction name, with grouping pills
   - Click-to-expand detail modal: full attraction info (description, tips, 10-star rating, duration, price, address, Google Maps link, URL, tags, scheduled day/time, day-trip sub-attractions); actions: unschedule, delete
-  - Card buttons: ▼ expand + × remove, 28×28px touch targets for mobile
+  - Card buttons: ▼ expand + × remove, 28px desktop / 36px mobile touch targets
   - Whole card is draggable (no handle restriction), `user-select: none` prevents text selection; buttons excluded via SortableJS `filter`
   - Footer stats per day: total hours, cost, item count
   - Alpine.js `kanbanTimeline()` component reads from `$store.trip`, syncs via API after each drag
   - SortableJS freeze fix: dragged DOM elements removed before Alpine re-render to prevent conflicts
-  - Responsive: pool stacks on top, columns stack vertically on mobile
+  - Mobile responsive: pool stacks on top, columns full-width vertical stacking, bigger touch targets (36px buttons), itinerary bar horizontal scroll, detail modal fullscreen, 480px small-phone breakpoint
 - [x] **Sidebar chat** — Always-visible AI assistant panel in sidebar:
   - Dark-themed message bubbles with **markdown rendering** (via marked.js)
   - Connected via `POST /api/chat` using AI provider cascade (Claude Code CLI → Anthropic API)
@@ -268,7 +280,19 @@ python -m vacationeer move-activity <trip.json> <activity_id> <date> # Move acti
   - Custom Leaflet layer control: Categories + Groupings sections with all/none toggles, no radio buttons
   - Management modal: create/edit/delete groupings, color picker, parent selector, member checkboxes
   - Alpine store methods: `addGrouping`, `updateGrouping`, `deleteGrouping`, `toggleGroupingMember`, `getGroupingsForAttraction`, `getAllMemberIds`
-- [x] **Sample data** — Valencia 2026 trip with 29 attractions + 3 day trips + 3 groupings (City Center, City of Arts & Sciences, Free Activities)
+- [x] **Multiple itineraries** — Named schedule variants (A/B/C) for comparing alternatives:
+  - Data model: `Itinerary` with `id`, `name`, `description`, `days`; `Trip` has `itineraries` list + `active_itinerary_id`
+  - Auto-migration: legacy `trip.days` → `itineraries[0]` via Pydantic `model_validator`
+  - Server CRUD: 6 endpoints (`GET/POST /api/itineraries`, `PATCH/DELETE /api/itineraries/{id}`, activate, clone)
+  - New itineraries start with empty days for the full trip date range; cloning deep-copies all activities
+  - Itinerary switcher bar on timeline: pill tabs with scheduled/total count badges, dots menu (edit/duplicate/delete), "+ New" button
+  - Inline editing: name + description editable from the switcher bar
+  - Comparison panel: toggle to see side-by-side summary stats (scheduled count, total hours, cost, busiest/emptiest day) + day-by-day grid with activity pills
+  - All scheduling operations (drag-and-drop, API, chat) operate on the active itinerary
+  - Attractions and day trips are shared — only their scheduling per itinerary differs
+  - SortableJS reinits on itinerary switch via `$watch`
+  - Alpine store methods: `switchItinerary`, `createItinerary`, `updateItinerary`, `deleteItinerary`, `cloneItinerary`
+- [x] **Sample data** — Valencia 2026 trip with 78 attractions + 8 day trips + 18 groupings (neighbourhoods: City Center, El Carmen, Ruzafa, Cabanyal, Waterfront; themes: Street Art, Hidden Gardens, Architecture, Turia Corridor; activities: Coffee & Brunch, Tapas, Drinks, Sunset Spots, Museums, Fun & Games, Hidden Gems, Free Activities, City of Arts & Sciences)
 - [x] **CLI** — map, info, build, serve + scheduling commands (init-days, schedule, schedule-day-trip, unschedule, backlog, swap-days, move-activity)
 - [x] **Trip management** — `trips` (list with status), `use` (set active trip), `.active-trip` file
 - [x] **Pipeline** — New trip creation flow:
@@ -431,7 +455,7 @@ python -m vacationeer build trips/valencia-2026/trip.json
 `TripStore` Protocol in `storage/base.py` defines `load()` / `save()`. Currently only `JsonTripStore` (JSON files) implements it. To add a database backend, implement the Protocol — no business logic changes needed.
 
 ### Planning module
-All scheduling functions in `planning/scheduler.py` are **pure**: they take a Trip, mutate it, and return it. The caller is responsible for loading and saving via a store. This keeps planning logic framework-independent and testable.
+All scheduling functions in `planning/scheduler.py` are **pure**: they take a Trip, mutate it, and return it. The caller is responsible for loading and saving via a store. This keeps planning logic framework-independent and testable. All scheduler functions operate on the **active itinerary's** days via the `_itin_days(trip)` helper (returns a mutable reference to `trip.active_itinerary.days`).
 
 ### DayTrip → Activity expansion
 When `schedule_day_trip()` is called, it expands a DayTrip into individual Activities on a Day:
@@ -487,6 +511,15 @@ AI features (chat, day planning, new trip pipeline) require the server and are g
 - `utils.py` has general utilities like `slugify()`.
 - `Trip.dest_slug` property returns a URL-friendly slug derived from the destination name (used for output filenames).
 
+### Mobile responsiveness
+Three breakpoints: default (desktop), 768px (tablet), 480px (small phone). Key patterns:
+- Sidebar: slide-out drawer with hamburger button + overlay on mobile (not collapsed strip)
+- Map layer control: hidden behind toggle button, collapsible sections inside
+- Kanban: columns go full-width and stack vertically on mobile
+- Modals/detail panels: fullscreen on mobile
+- Touch targets: minimum 36px on mobile (buttons, checkboxes)
+- Overview: filter bars, search, edit forms all have mobile-specific sizing
+
 ### Tests
 Tests live in `tests/` and use pytest. Run with `python -m pytest tests/ -v`. Currently covers theme constants, view helpers, utility functions, and model behavior.
 
@@ -505,6 +538,8 @@ Tests live in `tests/` and use pytest. Run with `python -m pytest tests/ -v`. Cu
 - Chat tool-use: AI outputs `<<GET_*>>` for data, `<<SCHEDULE:..>>` / `<<UNSCHEDULE:..>>` for actions — server resolves tags and re-sends or executes
 - Chat uses marked.js for markdown rendering; system prompt delivered via stdin `<instructions>` tags (not `--system-prompt` CLI flag)
 - In plain JS functions (not Alpine templates), use `Alpine.store('trip')` not `$store.trip`
+- **Object.assign pitfall**: `Object.assign({}, src, { get foo() {...} })` evaluates getters once and copies the static result. Use regular methods or compute inline from `$store.trip` in Alpine components instead of relying on getters in the store.
+- **Itineraries**: All day/activity endpoints use `_active_itin().days` (not `trip.days`). The `_active_itin()` helper resolves the current itinerary. Scheduler uses `_itin_days(trip)` for the same purpose.
 - Map uses Folium — tiles must work without Referer header (no OSM tiles)
 - Map CSS: inject via `folium.Element` into `get_root().html`, NOT via `MacroElement` (Jinja2 header macro doesn't render reliably for CSS)
 - Map custom controls: inject via `MacroElement` with Jinja2 `{% macro script %}` template — renders in the script section AFTER Folium's map/layer initialization (unlike `folium.Element` which renders in `<body>` before map init)

@@ -414,11 +414,12 @@ def render_timeline(trip: Trip) -> str:
 .detail-actions .btn-danger:hover {{
     background: #fef2f2;
 }}
-/* Mobile */
+/* Mobile — tablet */
 @media (max-width: 768px) {{
     .kanban {{
         flex-direction: column;
         height: auto;
+        min-height: 0;
     }}
     .kanban-pool {{
         width: 100%;
@@ -429,11 +430,109 @@ def render_timeline(trip: Trip) -> str:
     }}
     .kanban-days-scroll {{
         flex-direction: column;
+        padding: 8px;
+        gap: 8px;
     }}
     .day-col {{
         width: 100%;
         min-width: 100%;
-        max-height: 400px;
+        max-height: none;
+    }}
+    /* Bigger touch targets on mobile */
+    .card-btn, .day-col-actions button {{
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }}
+    .pool-card, .act-card {{
+        padding: 10px 12px;
+        gap: 10px;
+    }}
+    .pool-card .card-name, .act-card .card-name {{
+        font-size: 14px;
+    }}
+    /* Itinerary bar: scroll on mobile */
+    .itin-bar {{
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px 8px;
+        gap: 4px;
+    }}
+    .itin-tab {{
+        padding: 7px 14px;
+        font-size: 13px;
+        min-height: 36px;
+    }}
+    .compare-btn {{
+        padding: 7px 12px;
+        font-size: 12px;
+        min-height: 36px;
+        white-space: nowrap;
+    }}
+    .itin-add {{
+        white-space: nowrap;
+    }}
+    /* Compare panel */
+    .compare-panel {{
+        height: auto;
+        max-height: calc(100vh - 200px);
+    }}
+    .compare-table {{
+        font-size: 12px;
+    }}
+    .compare-table th, .compare-table td {{
+        padding: 6px 8px;
+    }}
+    /* Detail modal fullscreen */
+    .detail-modal {{
+        max-width: 100%;
+        width: 100%;
+        border-radius: 0;
+        max-height: 100vh;
+    }}
+    .detail-header {{
+        border-radius: 0;
+    }}
+    .detail-actions {{
+        flex-wrap: wrap;
+    }}
+    .detail-actions button {{
+        flex: 1;
+        min-width: 100px;
+        min-height: 44px;
+    }}
+    /* New itinerary form responsive */
+    .new-itin-form {{
+        flex-wrap: wrap;
+    }}
+    .new-itin-form input, .new-itin-form select {{
+        min-width: 0;
+        flex: 1 1 100%;
+    }}
+}}
+/* Mobile — small phone */
+@media (max-width: 480px) {{
+    .kanban-pool {{
+        max-height: 160px;
+        padding: 8px;
+    }}
+    .kanban-days-scroll {{
+        padding: 6px;
+        gap: 6px;
+    }}
+    .day-col-header {{
+        padding: 8px 10px;
+    }}
+    .day-col-list {{
+        padding: 6px;
+    }}
+    .itin-bar {{
+        padding: 6px;
+    }}
+    .itin-tab {{
+        padding: 6px 10px;
+        font-size: 12px;
     }}
 }}
 .itin-bar {{

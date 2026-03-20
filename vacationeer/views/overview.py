@@ -43,7 +43,30 @@ def render_overview(trip: Trip) -> str:
     )
 
     return f"""
-<div style="background:#f5f6f8;padding:20px;border-radius:12px;
+<style>
+@media (max-width: 768px) {{
+    .ov-wrap {{ padding: 10px !important; }}
+    .ov-summary {{ padding: 16px !important; }}
+    .ov-summary h2 {{ font-size: 20px !important; }}
+    .ov-summary .ov-meta {{ font-size: 12px !important; gap: 10px !important; }}
+    .ov-filter-bar {{ padding: 10px !important; }}
+    .ov-filter-bar button {{ padding: 6px 12px !important; font-size: 12px !important; min-height: 36px !important; }}
+    .ov-search-bar {{ gap: 8px !important; }}
+    .ov-search-bar input {{ min-width: 0 !important; width: 100% !important; }}
+    .ov-card-header {{ padding: 12px !important; }}
+    .ov-card-body {{ padding: 12px !important; }}
+    .ov-edit-row {{ flex-direction: column !important; }}
+    .ov-edit-row > div {{ min-width: 0 !important; }}
+}}
+@media (max-width: 480px) {{
+    .ov-wrap {{ padding: 6px !important; }}
+    .ov-summary {{ padding: 12px 14px !important; margin-bottom: 12px !important; }}
+    .ov-summary h2 {{ font-size: 18px !important; }}
+    .ov-filter-bar {{ padding: 8px !important; margin-bottom: 10px !important; }}
+    .ov-filter-bar button {{ padding: 5px 10px !important; font-size: 11px !important; }}
+}}
+</style>
+<div class="ov-wrap" style="background:#f5f6f8;padding:20px;border-radius:12px;
             font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;"
      x-data="{{
        filter: 'all',
@@ -136,9 +159,9 @@ def render_overview(trip: Trip) -> str:
      }}">
 
   <!-- ===== Trip summary header ===== -->
-  <div style="background:#1a2332;color:#fff;padding:24px 28px;border-radius:12px;margin-bottom:20px;">
+  <div class="ov-summary" style="background:#1a2332;color:#fff;padding:24px 28px;border-radius:12px;margin-bottom:20px;">
     <h2 style="margin:0 0 8px 0;font-size:24px;" x-text="$store.trip.destination"></h2>
-    <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:14px;opacity:0.9;">
+    <div class="ov-meta" style="display:flex;gap:24px;flex-wrap:wrap;font-size:14px;opacity:0.9;">
       <span>&#x1f4c5; <span x-text="$store.trip.start_date + ' &ndash; ' + $store.trip.end_date"></span></span>
       <span>&#x1f465; <span x-text="$store.trip.travelers"></span> traveler<span x-show="$store.trip.travelers !== 1">s</span></span>
       <span>&#x1f4b0; Budget: <span x-text="$store.trip.budget_eur ? fmtPrice($store.trip.budget_eur) : 'Not set'"></span></span>
@@ -147,7 +170,7 @@ def render_overview(trip: Trip) -> str:
   </div>
 
   <!-- ===== Category filter bar ===== -->
-  <div style="margin-bottom:16px;padding:16px;background:#fff;border-radius:10px;
+  <div class="ov-filter-bar" style="margin-bottom:16px;padding:16px;background:#fff;border-radius:10px;
               box-shadow:0 1px 4px rgba(0,0,0,0.06);">
     <div style="font-size:13px;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">
       Filter by Category
@@ -170,7 +193,7 @@ def render_overview(trip: Trip) -> str:
   </div>
 
   <!-- ===== Grouping filter bar ===== -->
-  <div x-show="($store.trip.groupings || []).length"
+  <div class="ov-filter-bar" x-show="($store.trip.groupings || []).length"
        style="margin-bottom:16px;padding:16px;background:#fff;border-radius:10px;
               box-shadow:0 1px 4px rgba(0,0,0,0.06);">
     <div style="font-size:13px;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">
@@ -194,7 +217,7 @@ def render_overview(trip: Trip) -> str:
   </div>
 
   <!-- ===== Search & Sort bar ===== -->
-  <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+  <div class="ov-search-bar" style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
     <input type="text" x-model="search" placeholder="Search attractions..."
            style="flex:1;min-width:200px;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;
                   outline:none;transition:border-color .15s;"
@@ -433,7 +456,7 @@ def render_overview(trip: Trip) -> str:
 {cat_options}
             </select>
           </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div class="ov-edit-row" style="display:flex;gap:10px;flex-wrap:wrap;">
             <div style="flex:1;min-width:120px;">
               <label style="font-size:12px;color:#666;display:block;margin-bottom:2px;">Price (&euro;)</label>
               <input type="number" x-model="editForm.price_eur" placeholder="0" min="0" step="0.01"

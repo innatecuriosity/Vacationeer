@@ -738,40 +738,60 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
 .loc-tab.active {{ background: #1a2332; color: #fff; }}
 .loc-map-container {{ width: 100%; height: 250px; border-radius: 8px; border: 2px solid #d1d5db; margin-bottom: 8px; }}
 
-/* ---- responsive ---- */
+/* ---- mobile hamburger ---- */
+.mobile-hamburger {{
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: {PRIMARY};
+    padding: 8px;
+    margin-right: 8px;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+}}
+.sidebar-overlay {{
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1999;
+}}
+.sidebar-overlay.open {{ display: block; }}
+
+/* ---- responsive: tablet ---- */
 @media (max-width: 768px) {{
     .sidebar {{
-        width: 60px;
-        min-width: 60px;
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        z-index: 2000;
+        width: 300px;
+        min-width: 300px;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
     }}
-    .sidebar-header .brand,
-    .sidebar-header .trip-name,
-    .trip-picker,
-    .nav-btn .label,
-    .sidebar-footer,
-    .sidebar-chat {{
-        display: none;
+    .sidebar.open {{
+        transform: translateX(0);
     }}
-    .sidebar-header {{
-        padding: 16px 0;
-        text-align: center;
-    }}
-    .nav-btn {{
-        justify-content: center;
-        padding: 14px 0;
-    }}
-    .nav-btn.active {{
-        border-left: 3px solid #4ea4f6;
-        padding-left: 0;
+    .mobile-hamburger {{
+        display: flex;
     }}
     .header {{
-        padding: 14px 16px;
+        padding: 10px 16px;
     }}
     .header h1 {{
         font-size: 17px;
     }}
+    .header .meta {{
+        font-size: 12px;
+        gap: 8px;
+    }}
     #tab-overview, #tab-timeline {{
-        padding: 16px;
+        padding: 12px;
     }}
     .fab {{
         bottom: 20px;
@@ -779,6 +799,66 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
         width: 48px;
         height: 48px;
         font-size: 24px;
+    }}
+    /* Modal fullscreen on mobile */
+    .modal {{
+        max-width: 100%;
+        width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+        height: 100vh;
+    }}
+    .modal-header {{
+        border-radius: 0;
+    }}
+    /* Detail modal fullscreen */
+    .detail-modal {{
+        max-width: 100%;
+        width: 100%;
+        border-radius: 0;
+        max-height: 100vh;
+    }}
+    .detail-header {{
+        border-radius: 0;
+    }}
+    /* Toasts: full width on mobile */
+    .toast-container {{
+        left: 12px;
+        right: 12px;
+    }}
+    .toast {{
+        font-size: 13px;
+        padding: 10px 16px;
+    }}
+    /* Form rows stack on mobile */
+    .form-row {{
+        flex-direction: column;
+        gap: 0;
+    }}
+}}
+
+/* ---- responsive: small phone ---- */
+@media (max-width: 480px) {{
+    .header {{
+        padding: 8px 12px;
+    }}
+    .header h1 {{
+        font-size: 15px;
+    }}
+    .header .meta {{
+        font-size: 11px;
+        gap: 6px;
+    }}
+    #tab-overview, #tab-timeline {{
+        padding: 8px;
+    }}
+    .fab-container {{
+        bottom: 16px;
+        right: 16px;
+    }}
+    .sidebar {{
+        width: 280px;
+        min-width: 280px;
     }}
 }}
 </style>
@@ -1901,6 +1981,7 @@ document.addEventListener('alpine:init', function() {{
 
 <div class="app">
 
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('open');"></div>
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="brand">Vacationeer</div>
@@ -1957,10 +2038,13 @@ document.addEventListener('alpine:init', function() {{
 
     <div class="main">
         <header class="header">
-            <div class="header-title-row" onclick="window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'edit-trip'}}))">
+            <div style="display:flex;align-items:center;">
+            <button class="mobile-hamburger" onclick="document.querySelector('.sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('open');">&#9776;</button>
+            <div class="header-title-row" style="flex:1;" onclick="window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'edit-trip'}}))">
                 <h1>{esc(trip.name)}</h1>
                 <span class="edit-icon">\u270f\ufe0f</span>
             </div>
+            </div><!-- /flex wrapper -->
             <div class="meta" style="cursor:pointer" onclick="window.dispatchEvent(new CustomEvent('open-modal', {{detail: 'edit-trip'}}))">
                 <span>\U0001f4cd {esc(trip.destination)}</span>
                 <span>\U0001f4c6 {start} &ndash; {end} ({num_days} days)</span>
@@ -2929,6 +3013,10 @@ document.addEventListener('alpine:init', function() {{
     buttons.forEach(function(btn) {{
         btn.addEventListener('click', function() {{
             activateTab(btn.getAttribute('data-tab'));
+            // Close sidebar on mobile
+            document.querySelector('.sidebar').classList.remove('open');
+            var overlay = document.getElementById('sidebar-overlay');
+            if (overlay) overlay.classList.remove('open');
         }});
     }});
 }})();
