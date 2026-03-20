@@ -24,7 +24,7 @@
     {
       "id": "oceanografic",
       "name": "Oceanografic",
-      "description": "Europe's largest aquarium \u00e2\u20ac\u201d 45,000+ animals, 500+ species, dolphin shows",
+      "description": "Europe's largest aquarium — 45,000+ animals, 500+ species, dolphin shows",
       "location": {
         "lat": 39.4529,
         "lng": -0.3477,
@@ -41,16 +41,18 @@
       "tips": "Start at Arctic end (belugas), arrive 20 min early for dolphin show",
       "url": "https://www.oceanografic.org/en/",
       "expected_score": 8.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "bioparc",
       "name": "Bioparc",
-      "description": "Immersive African zoo \u00e2\u20ac\u201d no visible cages, underwater hippo viewing",
+      "description": "Immersive African zoo — no visible cages, underwater hippo viewing",
       "location": {
         "lat": 39.4788,
         "lng": -0.4074,
-        "address": "Av. P\u0102\u00ado Baroja, 3"
+        "address": "Av. Pío Baroja, 3"
       },
       "category": "nature",
       "price_eur": 29.5,
@@ -63,12 +65,14 @@
       "tips": "Start with savanna. Don't miss underwater hippo window",
       "url": "https://bioparcvalencia.es/en/",
       "expected_score": 8.0,
-      "user_score": 10.0
+      "user_score": 10.0,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "science-museum",
       "name": "Museu de les Ciencies",
-      "description": "3 floors of interactive science \u00e2\u20ac\u201d Leonardo da Vinci exhibition, space, genetics",
+      "description": "3 floors of interactive science — Leonardo da Vinci exhibition, space, genetics",
       "location": {
         "lat": 39.4557,
         "lng": -0.3521,
@@ -83,7 +87,9 @@
       "tips": "Go weekday morning to avoid school groups",
       "url": null,
       "expected_score": 9.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "cathedral",
@@ -92,7 +98,7 @@
       "location": {
         "lat": 39.4753,
         "lng": -0.3753,
-        "address": "Pla\u0102\u00a7a de l'Almoina, s/n"
+        "address": "Plaça de l'Almoina, s/n"
       },
       "category": "landmark",
       "price_eur": 10.0,
@@ -103,12 +109,14 @@
       "tips": "Free during mass hours",
       "url": null,
       "expected_score": 8.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "la-lonja",
       "name": "La Lonja de la Seda",
-      "description": "15th-century Gothic silk exchange \u00e2\u20ac\u201d UNESCO World Heritage, stunning twisted columns",
+      "description": "15th-century Gothic silk exchange — UNESCO World Heritage, stunning twisted columns",
       "location": {
         "lat": 39.4742,
         "lng": -0.3789,
@@ -124,16 +132,18 @@
       "tips": null,
       "url": null,
       "expected_score": 9.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "mercado-central",
       "name": "Mercado Central",
-      "description": "One of Europe's largest Art Nouveau food markets \u00e2\u20ac\u201d 300+ stalls",
+      "description": "One of Europe's largest Art Nouveau food markets — 300+ stalls",
       "location": {
         "lat": 39.4735,
         "lng": -0.3793,
-        "address": "Pla\u0102\u00a7a de la Ciutat de Bruges"
+        "address": "Plaça de la Ciutat de Bruges"
       },
       "category": "food",
       "price_eur": 0.0,
@@ -145,16 +155,18 @@
       "tips": "Go early 8-10am. Mon-Sat 7:30-15:00, closed Sun",
       "url": null,
       "expected_score": 9.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "turia-gardens",
       "name": "Turia Gardens",
-      "description": "Spain's largest urban park \u00e2\u20ac\u201d 9 km in a drained riverbed, Gulliver Park inside",
+      "description": "Spain's largest urban park — 9 km in a drained riverbed, Gulliver Park inside",
       "location": {
         "lat": 39.478,
         "lng": -0.37,
-        "address": "Jard\u0102\u00adn del Turia"
+        "address": "Jardín del Turia"
       },
       "category": "nature",
       "price_eur": 0.0,
@@ -166,16 +178,18 @@
       "tips": null,
       "url": null,
       "expected_score": 8.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "almoina",
       "name": "L'Almoina Archaeological Centre",
-      "description": "2,500 m\u00c2\u02db underground ruins spanning 2,000+ years \u00e2\u20ac\u201d Roman, Visigoth, Islamic",
+      "description": "2,500 m² underground ruins spanning 2,000+ years — Roman, Visigoth, Islamic",
       "location": {
         "lat": 39.4756,
         "lng": -0.3748,
-        "address": "Pla\u0102\u00a7a de l'Almoina, s/n"
+        "address": "Plaça de l'Almoina, s/n"
       },
       "category": "museum",
       "price_eur": 2.0,
@@ -187,7 +201,9 @@
       "tips": null,
       "url": null,
       "expected_score": 9.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "torres-serranos",
@@ -196,7 +212,7 @@
       "location": {
         "lat": 39.4792,
         "lng": -0.3755,
-        "address": "Pla\u0102\u00a7a dels Furs, s/n"
+        "address": "Plaça dels Furs, s/n"
       },
       "category": "landmark",
       "price_eur": 2.0,
@@ -207,7 +223,9 @@
       "tips": null,
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "hemisferic",
@@ -224,15 +242,17 @@
       "tags": [
         "included-in-combo"
       ],
-      "tips": "Pick a planetarium show over IMAX \u00e2\u20ac\u201d better for adults. Check schedule at cac.es",
+      "tips": "Pick a planetarium show over IMAX — better for adults. Check schedule at cac.es",
       "url": "https://www.cac.es/en/hemisferic/",
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "liber-toy-soldiers",
       "name": "L'Iber Museum of Toy Soldiers",
-      "description": "World's largest collection of historical miniatures \u00e2\u20ac\u201d 100,000+ figures in obsessively detailed dioramas",
+      "description": "World's largest collection of historical miniatures — 100,000+ figures in obsessively detailed dioramas",
       "location": {
         "lat": 39.4748,
         "lng": -0.3769,
@@ -247,12 +267,14 @@
       "tips": "Adults enjoy it more than kids. Tue-Sat 11-14 & 16-19, Sun 11-14",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "museum-of-illusions",
       "name": "Museum of Illusions",
-      "description": "60+ optical illusion exhibits \u00e2\u20ac\u201d holograms, impossible rooms, gravity-defying perspectives",
+      "description": "60+ optical illusion exhibits — holograms, impossible rooms, gravity-defying perspectives",
       "location": {
         "lat": 39.471,
         "lng": -0.377,
@@ -267,12 +289,14 @@
       "tips": "Fun lighthearted break from history. Daily 10-21",
       "url": null,
       "expected_score": 5.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "prehistoric-caves",
       "name": "Prehistoric Caves Exhibition",
-      "description": "Immersive recreation of French prehistoric cave galleries with projections and reconstructions \u00e2\u20ac\u201d ending March 31",
+      "description": "Immersive recreation of French prehistoric cave galleries with projections and reconstructions — ending March 31",
       "location": {
         "lat": 39.4717,
         "lng": -0.3837,
@@ -286,15 +310,17 @@
         "temporary",
         "ending-soon"
       ],
-      "tips": "Check availability \u00e2\u20ac\u201d exhibition ends March 31, 2026",
+      "tips": "Check availability — exhibition ends March 31, 2026",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "museo-del-arroz",
       "name": "Museo del Arroz",
-      "description": "Rice cultivation and its role in Valencian cuisine \u00e2\u20ac\u201d housed in a historic rice mill near the port",
+      "description": "Rice cultivation and its role in Valencian cuisine — housed in a historic rice mill near the port",
       "location": {
         "lat": 39.462,
         "lng": -0.331,
@@ -310,12 +336,14 @@
       "tips": "Pair with paella lunch nearby. Free on Sundays",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "museo-fallero",
       "name": "Museo Fallero",
-      "description": "Every pardoned Fallas ninot since 1934 \u00e2\u20ac\u201d nearly a century of Valencian artistry and satire",
+      "description": "Every pardoned Fallas ninot since 1934 — nearly a century of Valencian artistry and satire",
       "location": {
         "lat": 39.456,
         "lng": -0.354,
@@ -330,12 +358,14 @@
       "tips": "Better post-festival when it's quiet. Pair with City of Arts and Sciences nearby",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "torres-de-quart",
       "name": "Torres de Quart",
-      "description": "Western medieval gate with visible Napoleonic cannonball damage \u00e2\u20ac\u201d less crowded than Serranos",
+      "description": "Western medieval gate with visible Napoleonic cannonball damage — less crowded than Serranos",
       "location": {
         "lat": 39.4741,
         "lng": -0.3832,
@@ -350,12 +380,14 @@
       "tips": null,
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "city-of-arts-exterior",
       "name": "City of Arts and Sciences (Exterior)",
-      "description": "Calatrava's futuristic complex \u00e2\u20ac\u201d free to walk around, spectacular at sunset reflected in water pools",
+      "description": "Calatrava's futuristic complex — free to walk around, spectacular at sunset reflected in water pools",
       "location": {
         "lat": 39.4545,
         "lng": -0.3505,
@@ -372,16 +404,18 @@
       "tips": "Best at sunset when the buildings reflect in the water pools",
       "url": null,
       "expected_score": 8.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "plaza-de-la-virgen",
       "name": "Plaza de la Virgen",
-      "description": "Historic heart of old town \u00e2\u20ac\u201d Roman forum site, Turia fountain, surrounded by Cathedral and Basilica",
+      "description": "Historic heart of old town — Roman forum site, Turia fountain, surrounded by Cathedral and Basilica",
       "location": {
         "lat": 39.4756,
         "lng": -0.3758,
-        "address": "Pla\u0102\u00a7a de la Mare de Deu"
+        "address": "Plaça de la Mare de Deu"
       },
       "category": "landmark",
       "price_eur": 0.0,
@@ -392,16 +426,18 @@
       "tips": null,
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "plaza-del-ayuntamiento",
       "name": "Plaza del Ayuntamiento",
-      "description": "Valencia's grand central square \u00e2\u20ac\u201d ornate City Hall, fountains, flower stalls",
+      "description": "Valencia's grand central square — ornate City Hall, fountains, flower stalls",
       "location": {
         "lat": 39.4697,
         "lng": -0.3764,
-        "address": "Pla\u0102\u00a7a de l'Ajuntament"
+        "address": "Plaça de l'Ajuntament"
       },
       "category": "landmark",
       "price_eur": 0.0,
@@ -412,12 +448,14 @@
       "tips": null,
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "museo-bellas-artes",
       "name": "Museo de Bellas Artes",
-      "description": "Spain's second-best art gallery \u00e2\u20ac\u201d El Greco, Goya, Velazquez. Always free",
+      "description": "Spain's second-best art gallery — El Greco, Goya, Velazquez. Always free",
       "location": {
         "lat": 39.4793,
         "lng": -0.3695,
@@ -433,12 +471,14 @@
       "tips": "Worth a walk-through for the building and garden setting even if galleries aren't your thing",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "centre-del-carme",
       "name": "Centre del Carme (CCCC)",
-      "description": "Contemporary art in a 13th-century convent \u00e2\u20ac\u201d go for the beautiful medieval cloisters",
+      "description": "Contemporary art in a 13th-century convent — go for the beautiful medieval cloisters",
       "location": {
         "lat": 39.4785,
         "lng": -0.3791,
@@ -454,12 +494,14 @@
       "tips": null,
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "jardin-botanico",
       "name": "Jardin Botanico",
-      "description": "16th-century botanical garden with tropical species, cacti, and greenhouses \u00e2\u20ac\u201d peaceful retreat",
+      "description": "16th-century botanical garden with tropical species, cacti, and greenhouses — peaceful retreat",
       "location": {
         "lat": 39.4732,
         "lng": -0.3856,
@@ -472,12 +514,14 @@
       "tips": null,
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "viveros-gardens",
       "name": "Viveros Gardens",
-      "description": "Large park with fountains next to Bellas Artes museum \u00e2\u20ac\u201d free and relaxing",
+      "description": "Large park with fountains next to Bellas Artes museum — free and relaxing",
       "location": {
         "lat": 39.481,
         "lng": -0.368,
@@ -492,12 +536,14 @@
       "tips": null,
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "mercado-colon",
       "name": "Mercado Colon",
-      "description": "Restored Modernist building turned upscale food court \u00e2\u20ac\u201d try horchata and fartons",
+      "description": "Restored Modernist building turned upscale food court — try horchata and fartons",
       "location": {
         "lat": 39.4672,
         "lng": -0.3712,
@@ -512,12 +558,14 @@
       "tips": "Must try horchata and fartons here",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "mercado-de-ruzafa",
       "name": "Mercado de Ruzafa",
-      "description": "Local market in trendy Ruzafa \u00e2\u20ac\u201d less touristy, explore street art and tapas bars nearby",
+      "description": "Local market in trendy Ruzafa — less touristy, explore street art and tapas bars nearby",
       "location": {
         "lat": 39.4618,
         "lng": -0.372,
@@ -533,12 +581,14 @@
       "tips": null,
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "el-hachazo",
       "name": "El Hachazo (Axe Throwing)",
-      "description": "Throw axes at targets \u00e2\u20ac\u201d no experience needed, instructor-guided, includes a drink",
+      "description": "Throw axes at targets — no experience needed, instructor-guided, includes a drink",
       "location": {
         "lat": 39.4665,
         "lng": -0.378,
@@ -550,15 +600,17 @@
       "tags": [
         "date-activity"
       ],
-      "tips": "Book ahead \u00e2\u20ac\u201d popular on evenings and weekends",
+      "tips": "Book ahead — popular on evenings and weekends",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "virtual-zone-vr",
       "name": "Virtual Zone VR",
-      "description": "Europe's largest VR arena \u00e2\u20ac\u201d free-roam multiplayer games, not a booth experience",
+      "description": "Europe's largest VR arena — free-roam multiplayer games, not a booth experience",
       "location": {
         "lat": 39.4615,
         "lng": -0.3715,
@@ -571,16 +623,18 @@
       "tips": "Combine with Ruzafa tapas and street art",
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "gulliver-park",
       "name": "Gulliver Park",
-      "description": "Giant Gulliver sculpture with slides and climbing \u00e2\u20ac\u201d fun even for adults, inside Turia Gardens",
+      "description": "Giant Gulliver sculpture with slides and climbing — fun even for adults, inside Turia Gardens",
       "location": {
         "lat": 39.462,
         "lng": -0.359,
-        "address": "Jard\u0102\u00adn del Turia, tramo XII"
+        "address": "Jardín del Turia, tramo XII"
       },
       "category": "entertainment",
       "price_eur": 0.0,
@@ -592,12 +646,14 @@
       "tips": null,
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "cines-babel",
       "name": "Cines Babel",
-      "description": "Independent cinema showing films in original language \u00e2\u20ac\u201d vintage charm, curated programme",
+      "description": "Independent cinema showing films in original language — vintage charm, curated programme",
       "location": {
         "lat": 39.468,
         "lng": -0.371,
@@ -613,61 +669,9 @@
       "tips": "Check programme at cinesbabel.com. Perfect for a rainy evening",
       "url": "https://www.cinesbabel.com/",
       "expected_score": 6.0,
-      "user_score": 3.0
-    },
-    {
-      "id": "flet",
-      "name": "flet",
-      "description": "we sleep here",
-      "location": {
-        "lat": 0.0,
-        "lng": -0.383757,
-        "address": null
-      },
-      "category": "landmark",
-      "price_eur": null,
-      "duration_minutes": null,
-      "tags": [],
-      "tips": null,
-      "url": null,
-      "expected_score": null,
-      "user_score": null
-    },
-    {
-      "id": "another-flat",
-      "name": "another flat",
-      "description": "Check-in: 2026-03-19 / Check-out: 2026-03-28",
-      "location": {
-        "lat": 39.461609,
-        "lng": -0.394993,
-        "address": null
-      },
-      "category": "accommodation",
-      "price_eur": null,
-      "duration_minutes": null,
-      "tags": [],
-      "tips": null,
-      "url": null,
-      "expected_score": null,
-      "user_score": null
-    },
-    {
-      "id": "cute-cat",
-      "name": "cute cat",
-      "description": null,
-      "location": {
-        "lat": 39.452736,
-        "lng": -0.364522,
-        "address": null
-      },
-      "category": "landmark",
-      "price_eur": null,
-      "duration_minutes": null,
-      "tags": [],
-      "tips": null,
-      "url": null,
-      "expected_score": null,
-      "user_score": null
+      "user_score": 3.0,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "atenea-sky",
@@ -690,7 +694,9 @@
       "tips": "Go around 7-7:30 PM in late March for golden hour. 8 EUR partially deductible from drinks. Cocktails 8-14 EUR.",
       "url": "https://ateneasky.com/en/",
       "expected_score": 8.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "blackbird-cafe",
@@ -713,7 +719,9 @@
       "tips": "Also \"Little Blackbird\" at Carrer de les Danses, 2 (old town).",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "bluebell-coffee",
@@ -736,7 +744,9 @@
       "tips": "3-5 EUR coffee, 8-14 EUR brunch.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "bodega-rentaora",
@@ -757,15 +767,17 @@
         "el-carmen",
         "authentic"
       ],
-      "tips": "8-15 EUR/person. Portions are huge \u00e2\u20ac\u201d 2-3 tapas per person is plenty.",
+      "tips": "8-15 EUR/person. Portions are huge — 2-3 tapas per person is plenty.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "cabanyal-progres",
-      "name": "Carrer del Progres \u00e2\u20ac\u201d Cabanyal Tiles",
-      "description": "Densest concentration of colourful Art Nouveau ceramic tile facades. Each house different \u00e2\u20ac\u201d blues, greens, yellows, florals. Open-air architectural museum.",
+      "name": "Carrer del Progres — Cabanyal Tiles",
+      "description": "Densest concentration of colourful Art Nouveau ceramic tile facades. Each house different — blues, greens, yellows, florals. Open-air architectural museum.",
       "location": {
         "lat": 39.47,
         "lng": -0.331,
@@ -781,10 +793,12 @@
         "cabanyal",
         "neighbourhood"
       ],
-      "tips": "Tiles weren't just decorative \u00e2\u20ac\u201d they protected from corrosive sea air. Also walk Carrer de Sant Pere and Carrer de la Reina.",
+      "tips": "Tiles weren't just decorative — they protected from corrosive sea air. Also walk Carrer de Sant Pere and Carrer de la Reina.",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "calle-colores",
@@ -806,7 +820,9 @@
       "tips": "Best in morning light.",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "casa-fran",
@@ -829,7 +845,9 @@
       "tips": "3-5 EUR coffee, 8-12 EUR breakfast.",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "casa-gargoles",
@@ -852,7 +870,9 @@
       "tips": null,
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "casa-judia",
@@ -875,7 +895,9 @@
       "tips": "Exterior only (private building).",
       "url": null,
       "expected_score": 5.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "casa-montana",
@@ -899,12 +921,14 @@
       "tips": "Nearly 200 years old. Pair with a Cabanyal neighbourhood walk. 12-20 EUR/person.",
       "url": null,
       "expected_score": 8.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "casa-vani",
       "name": "Casa Vani",
-      "description": "Michelin Bib Gourmand tapas bar in El Carmen. Award-winning quality at neighbourhood prices. Tiny \u00e2\u20ac\u201d reservations needed.",
+      "description": "Michelin Bib Gourmand tapas bar in El Carmen. Award-winning quality at neighbourhood prices. Tiny — reservations needed.",
       "location": {
         "lat": 39.4768,
         "lng": -0.38,
@@ -919,10 +943,12 @@
         "el-carmen",
         "quality"
       ],
-      "tips": "10-18 EUR/person. Book for dinner \u00e2\u20ac\u201d very small.",
+      "tips": "10-18 EUR/person. Book for dinner — very small.",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "cccc-cloisters",
@@ -945,7 +971,9 @@
       "tips": "Always free. Go for the medieval cloisters, stay for the art.",
       "url": "https://www.consorcimuseus.gva.es/centro-del-carmen/",
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "dos-aguas-courtyard",
@@ -968,7 +996,9 @@
       "tips": "Free Saturday afternoons and Sundays. The facade alone is worth seeing from outside.",
       "url": "https://www.cultura.gob.es/mnceramica/en/home.html",
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "espai-verd",
@@ -991,7 +1021,9 @@
       "tips": "Exterior only (private residence). 10-min tram ride to Benimaclet. Combine with Benimaclet neighbourhood walk.",
       "url": null,
       "expected_score": 5.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "forn-del-tossal",
@@ -1014,7 +1046,9 @@
       "tips": "1-4 EUR per item. Perfect morning stop before exploring El Carmen street art.",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "gnomo-shop",
@@ -1036,12 +1070,14 @@
       "tips": "Free to browse. The facade is Instagram-worthy.",
       "url": null,
       "expected_score": 5.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "heladeria-llinares",
       "name": "Heladeria Llinares",
-      "description": "Traditional Valencian ice cream since 1930, facing the Cathedral. Try leche merengada \u00e2\u20ac\u201d uniquely Valencian frozen cinnamon-lemon drink.",
+      "description": "Traditional Valencian ice cream since 1930, facing the Cathedral. Try leche merengada — uniquely Valencian frozen cinnamon-lemon drink.",
       "location": {
         "lat": 39.4745,
         "lng": -0.3762,
@@ -1059,7 +1095,9 @@
       "tips": "3-5 EUR for 2 scoops. Almost 100 years old.",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "heladeria-veneta",
@@ -1081,12 +1119,14 @@
       "tips": "3-5 EUR for 2 scoops. Best Ice Cream in Spain (2013, 2015), Best in Europe (2019).",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "horchateria-daniel",
       "name": "Horchateria Daniel",
-      "description": "Artisan horchata since 1949 in Alboraya \u00e2\u20ac\u201d where tiger nuts actually grow. Third generation. Salvador Dali was a visitor. The real deal.",
+      "description": "Artisan horchata since 1949 in Alboraya — where tiger nuts actually grow. Third generation. Salvador Dali was a visitor. The real deal.",
       "location": {
         "lat": 39.497,
         "lng": -0.354,
@@ -1101,10 +1141,12 @@
         "off-the-beaten-path",
         "must-try"
       ],
-      "tips": "Take tram Line 3/9 to Alboraya-Peris Arago (~15 min). Panach across the street is the main rival \u00e2\u20ac\u201d try both.",
+      "tips": "Take tram Line 3/9 to Alboraya-Peris Arago (~15 min). Panach across the street is the main rival — try both.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "horchateria-santa-catalina",
@@ -1127,7 +1169,9 @@
       "tips": "~5 EUR for horchata + fartons combo. Open daily 8:30-21:30.",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "jardin-hesperides",
@@ -1149,12 +1193,14 @@
       "tips": "Tiny, literary, almost unknown to tourists. Near the Botanical Garden.",
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "jardin-monforte",
       "name": "Jardin de Monforte",
-      "description": "Hidden neoclassical garden with marble statues, fountains, and rose gardens behind high walls. One of the loveliest small gardens in Spain \u00e2\u20ac\u201d almost always empty.",
+      "description": "Hidden neoclassical garden with marble statues, fountains, and rose gardens behind high walls. One of the loveliest small gardens in Spain — almost always empty.",
       "location": {
         "lat": 39.4795,
         "lng": -0.3665,
@@ -1172,12 +1218,14 @@
       "tips": "Almost empty on weekday mornings. Time feels suspended.",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "jardin-polifilo",
       "name": "Jardin de Polifilo",
-      "description": "40,000 m\u00c2\u02db garden inspired by a 1499 Renaissance novel. Rose island, decorative ponds, literary zones. Almost unknown \u00e2\u20ac\u201d you'll likely have it to yourselves.",
+      "description": "40,000 m² garden inspired by a 1499 Renaissance novel. Rose island, decorative ponds, literary zones. Almost unknown — you'll likely have it to yourselves.",
       "location": {
         "lat": 39.494,
         "lng": -0.386,
@@ -1195,7 +1243,9 @@
       "tips": "3 km from centre, worth it if in the area. Spring/summer 9:00-21:00.",
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "la-pilareta",
@@ -1219,7 +1269,9 @@
       "tips": "Clochinas in season May-Aug but great year-round tapas. 6-12 EUR/person.",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "lope-de-rueda",
@@ -1242,7 +1294,9 @@
       "tips": null,
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "marina-beach-club",
@@ -1265,7 +1319,9 @@
       "tips": "Book ahead for Friday/Saturday. Cocktails 10-14 EUR.",
       "url": "https://marinabeachclub.com/en/home/",
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "marina-valencia",
@@ -1286,10 +1342,12 @@
         "drinks",
         "walking"
       ],
-      "tips": "Marina Beach Club open year-round (from 17:30 in March) \u00e2\u20ac\u201d closest thing to a chiringuito in winter.",
+      "tips": "Marina Beach Club open year-round (from 17:30 in March) — closest thing to a chiringuito in winter.",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "masusa-paella",
@@ -1312,11 +1370,13 @@
       "tips": "12-18 EUR/person. No pretense, just excellent rice. Lunch.",
       "url": null,
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "na-jordana-deih",
-      "name": "Deih Murals \u00e2\u20ac\u201d Carrer de Na Jordana",
+      "name": "Deih Murals — Carrer de Na Jordana",
       "description": "Building-scale surreal murals by Valencian artist Deih. Futuristic, cosmic, human-alien landscapes. Internationally recognised art on his home turf.",
       "location": {
         "lat": 39.4785,
@@ -1334,7 +1394,9 @@
       "tips": null,
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "olhops",
@@ -1356,12 +1418,14 @@
       "tips": "3-5 EUR/beer, tasting flight ~12-15 EUR. No booking needed.",
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "palacio-cervello",
       "name": "Palacio de Cervello",
-      "description": "18th-century palace with original frescoes, period furniture. Napoleon stayed here. Free guided tours \u00e2\u20ac\u201d even most locals don't know about it.",
+      "description": "18th-century palace with original frescoes, period furniture. Napoleon stayed here. Free guided tours — even most locals don't know about it.",
       "location": {
         "lat": 39.4735,
         "lng": -0.371,
@@ -1376,10 +1440,12 @@
         "free",
         "architecture"
       ],
-      "tips": "Free guided tours \u00e2\u20ac\u201d check schedule, book ahead. Houses the Municipal Archive.",
+      "tips": "Free guided tours — check schedule, book ahead. Houses the Municipal Archive.",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "pichiavo-ruzafa",
@@ -1401,7 +1467,9 @@
       "tips": "PichiAvo exhibit internationally but this is their home turf.",
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "playa-malvarrosa",
@@ -1423,7 +1491,9 @@
       "tips": "Casa Carmela nearby for legendary traditional paella (book ahead).",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "playa-patacona",
@@ -1447,7 +1517,9 @@
       "tips": "La Mas Bonita Patacona is the standout beachfront restaurant. Combine with horchata in Alboraya.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "plaza-tossal-art",
@@ -1469,7 +1541,9 @@
       "tips": "Walk Carrer de Dalt, Carrer de Baix, Carrer de Lliria for densest murals.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "pont-assut-or",
@@ -1492,7 +1566,9 @@
       "tips": "Best at night when illuminated. Reflections in Agora pools are stunning.",
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "port-saplaya",
@@ -1516,7 +1592,9 @@
       "tips": "~8 km from centre. Bus L112A/L112B (40-60 min, 1.50 EUR) or taxi ~15 EUR. Restaurante Mosquetero has Menu del Dia ~16 EUR with views.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "portal-valldigna",
@@ -1539,7 +1617,9 @@
       "tips": "Morning light is best for photos.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "puente-del-mar",
@@ -1562,7 +1642,9 @@
       "tips": "Evening light is best.",
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "puente-flores",
@@ -1585,12 +1667,14 @@
       "tips": "Spring blooms at their best in late March.",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "restaurante-levante",
       "name": "Restaurante Levante",
-      "description": "Widely considered best traditional paella in Valencia city. Wood-fired, chicken, rabbit, local beans. Off the tourist path \u00e2\u20ac\u201d where locals go.",
+      "description": "Widely considered best traditional paella in Valencia city. Wood-fired, chicken, rabbit, local beans. Off the tourist path — where locals go.",
       "location": {
         "lat": 39.481,
         "lng": -0.397,
@@ -1608,12 +1692,14 @@
       "tips": "Book a few days ahead. Lunch only (paella is a lunch dish). 15-25 EUR/person.",
       "url": null,
       "expected_score": 8.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "tallat-coffee",
       "name": "Tallat Coffee Roasters",
-      "description": "Specialty coffee heaven near the beach. Extreme precision roasting \u00e2\u20ac\u201d the nerd's choice. Combine with a Cabanyal walk.",
+      "description": "Specialty coffee heaven near the beach. Extreme precision roasting — the nerd's choice. Combine with a Cabanyal walk.",
       "location": {
         "lat": 39.465,
         "lng": -0.334,
@@ -1630,7 +1716,9 @@
       "tips": "3-5 EUR coffee.",
       "url": null,
       "expected_score": 6.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "tasca-angel",
@@ -1651,10 +1739,12 @@
         "old-town",
         "authentic"
       ],
-      "tips": "5-12 EUR per person. Packed with regulars \u00e2\u20ac\u201d arrive early or late.",
+      "tips": "5-12 EUR per person. Packed with regulars — arrive early or late.",
       "url": null,
       "expected_score": 8.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "terraza-270",
@@ -1677,7 +1767,9 @@
       "tips": "Perfect after an afternoon at the City of Arts and Sciences.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "ubik-cafe",
@@ -1700,7 +1792,9 @@
       "tips": "Free entry. Creative, unpretentious atmosphere.",
       "url": null,
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "veles-e-vents",
@@ -1723,7 +1817,9 @@
       "tips": "Nobody recommends this in tourist guides. Great sunset spot. Varadero bar inside for drinks.",
       "url": null,
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     }
   ],
   "day_trips": [
@@ -1731,7 +1827,7 @@
       "id": "sagunto-day-trip",
       "name": "Sagunto Day Trip",
       "destination": "Sagunto",
-      "description": "2,500 years of layered history \u00e2\u20ac\u201d Roman theatre (Spain's first National Monument), 1 km hilltop castle spanning seven civilisations, Jewish quarter. All attractions free.",
+      "description": "2,500 years of layered history — Roman theatre (Spain's first National Monument), 1 km hilltop castle spanning seven civilisations, Jewish quarter. All attractions free.",
       "location": {
         "lat": 39.68,
         "lng": -0.265,
@@ -1757,12 +1853,14 @@
           "tips": "Free. Tue-Sat 10:00-18:00, Sun 10:00-14:00. Closed Mon.",
           "url": null,
           "expected_score": 8.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "sagunto-castle",
           "name": "Sagunto Castle",
-          "description": "1 km fortress along a hilltop ridge with seven sections spanning 2,500 years. Roman Forum remains, Moorish walls, panoramic 360\u00c2\u00b0 views of sea, mountains, and orange groves.",
+          "description": "1 km fortress along a hilltop ridge with seven sections spanning 2,500 years. Roman Forum remains, Moorish walls, panoramic 360Â° views of sea, mountains, and orange groves.",
           "location": {
             "lat": 39.683,
             "lng": -0.266,
@@ -1778,7 +1876,9 @@
           "tips": "Free. 15-20 min steep climb. Bring water. Best views in the region.",
           "url": null,
           "expected_score": 8.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "sagunto-jewish-quarter",
@@ -1799,7 +1899,9 @@
           "tips": null,
           "url": null,
           "expected_score": null,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "sagunto-juderia",
@@ -1817,12 +1919,14 @@
           "tips": "Free. Enter through the Portalet de la Juderia on Calle del Castillo.",
           "url": null,
           "expected_score": 6.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "sagunto-temple-diana",
           "name": "Temple of Diana Remains",
-          "description": "5th-4th century BC Iberian/Roman temple wall \u00e2\u20ac\u201d one of the oldest standing structures in the Valencian Community. Survived Hannibal's 219 BC siege.",
+          "description": "5th-4th century BC Iberian/Roman temple wall — one of the oldest standing structures in the Valencian Community. Survived Hannibal's 219 BC siege.",
           "location": {
             "lat": 39.6785,
             "lng": -0.2645,
@@ -1835,7 +1939,9 @@
           "tips": "Free. Visible from the street, next to Church of Santa Maria.",
           "url": null,
           "expected_score": 5.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         }
       ],
       "outbound": {
@@ -1869,7 +1975,9 @@
       ],
       "tips": "All attractions free. Don't visit Monday (closed). Train 30 min, ~3.50 EUR each way.",
       "expected_score": 8.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "albufera-day-trip",
@@ -1901,12 +2009,14 @@
           "tips": "5 EUR shared, 6 EUR sunset (Albumar.es). Arrive 30 min before sunset for best light.",
           "url": "https://albumar.es/?lang=en",
           "expected_score": 9.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "albufera-paella-lunch",
           "name": "Authentic Paella Lunch in El Palmar",
-          "description": "Eat paella at its birthplace \u00e2\u20ac\u201d El Palmar restaurants serve the real deal",
+          "description": "Eat paella at its birthplace — El Palmar restaurants serve the real deal",
           "location": {
             "lat": 39.315,
             "lng": -0.342,
@@ -1922,12 +2032,14 @@
           "tips": null,
           "url": null,
           "expected_score": null,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "albufera-nature-walk",
           "name": "Albufera Nature Park Walk",
-          "description": "Walking trails through wetlands \u00e2\u20ac\u201d birdwatching, rice fields, lagoon views",
+          "description": "Walking trails through wetlands — birdwatching, rice fields, lagoon views",
           "location": {
             "lat": 39.337,
             "lng": -0.355,
@@ -1943,12 +2055,14 @@
           "tips": null,
           "url": null,
           "expected_score": null,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "el-palmar-village",
           "name": "El Palmar Village",
-          "description": "Tiny fishing village \u00e2\u20ac\u201d birthplace of paella. Traditional barracas, atmospheric jetties, 20+ rice restaurants. Ground zero for authentic Valencian paella.",
+          "description": "Tiny fishing village — birthplace of paella. Traditional barracas, atmospheric jetties, 20+ rice restaurants. Ground zero for authentic Valencian paella.",
           "location": {
             "lat": 39.3265,
             "lng": -0.3515,
@@ -1961,7 +2075,9 @@
           "tips": "Arroceria Maribel (Michelin Bib Gourmand) and Bon Aire (international paella winner) are the best. Menu del dia ~18 EUR weekdays.",
           "url": null,
           "expected_score": 7.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "raco-olla",
@@ -1979,7 +2095,9 @@
           "tips": "Free. Mon-Sun 9:00-14:00. Bring binoculars. Up to 100 species on a good March day.",
           "url": null,
           "expected_score": 6.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "la-devesa",
@@ -1997,7 +2115,9 @@
           "tips": "Free. The 4 km Scenic Trail is the most rewarding. Flat and accessible.",
           "url": null,
           "expected_score": 7.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         }
       ],
       "outbound": {
@@ -2020,7 +2140,7 @@
         "duration_minutes": 50,
         "price_eur": 1.5,
         "booking_reference": null,
-        "notes": "Check last bus time \u00e2\u20ac\u201d can be early"
+        "notes": "Check last bus time — can be early"
       },
       "total_price_eur": 55.0,
       "total_duration_minutes": 480,
@@ -2032,7 +2152,9 @@
       ],
       "tips": "Bus #24 from Porta de la Mar (1.50 EUR, 50 min). Boat ride 5 EUR/pp. Go afternoon for sunset. Paella is a lunch dish.",
       "expected_score": 9.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "xativa-day-trip",
@@ -2048,7 +2170,7 @@
         {
           "id": "xativa-castle",
           "name": "Castell de Xativa",
-          "description": "Double castle on a mountain ridge \u00e2\u20ac\u201d Castell Menor (Iberian/Roman) and Castell Major (Gothic/medieval). Prison cells, chapels, and sweeping views over the Costera valley.",
+          "description": "Double castle on a mountain ridge — Castell Menor (Iberian/Roman) and Castell Major (Gothic/medieval). Prison cells, chapels, and sweeping views over the Costera valley.",
           "location": {
             "lat": 39.526,
             "lng": -0.522,
@@ -2061,10 +2183,12 @@
             "panoramic-views",
             "highlight"
           ],
-          "tips": "6 EUR combined ticket includes both museums. Book online \u00e2\u20ac\u201d capacity limited. 25-30 min steep climb, do first when fresh.",
+          "tips": "6 EUR combined ticket includes both museums. Book online — capacity limited. 25-30 min steep climb, do first when fresh.",
           "url": "https://xativaturismo.com/en/ticket-castle/",
           "expected_score": 9.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "xativa-old-town",
@@ -2086,12 +2210,14 @@
           "tips": "Free to walk. Casa la Abuela for legendary arroz al horno (~17 EUR menu del dia).",
           "url": null,
           "expected_score": 7.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "xativa-bellas-artes",
           "name": "Museo de Bellas Artes de Xativa",
-          "description": "Fine art museum with the famous upside-down portrait of Philip V \u00e2\u20ac\u201d the city's symbolic revenge for being burned in 1707. Works by Ribera and Goya.",
+          "description": "Fine art museum with the famous upside-down portrait of Philip V — the city's symbolic revenge for being burned in 1707. Works by Ribera and Goya.",
           "location": {
             "lat": 39.5215,
             "lng": -0.5175,
@@ -2104,7 +2230,9 @@
           "tips": "Included in 6 EUR castle ticket. The upside-down Philip V is the unofficial symbol of Xativa.",
           "url": null,
           "expected_score": 7.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "xativa-sant-feliu",
@@ -2119,10 +2247,12 @@
           "price_eur": 0.0,
           "duration_minutes": 20,
           "tags": [],
-          "tips": "Free. On the path to the castle \u00e2\u20ac\u201d stop on the way up. Closed Mon.",
+          "tips": "Free. On the path to the castle — stop on the way up. Closed Mon.",
           "url": null,
           "expected_score": 7.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         }
       ],
       "outbound": {
@@ -2154,15 +2284,17 @@
         "castle",
         "borgia"
       ],
-      "tips": "Train C-2 ~50-60 min, ~4-5 EUR each way. Book castle tickets online (capacity limited). Castle climb 25-30 min \u00e2\u20ac\u201d do it first while fresh. Avoid Monday. Casa la Abuela for legendary arroz al horno.",
+      "tips": "Train C-2 ~50-60 min, ~4-5 EUR each way. Book castle tickets online (capacity limited). Castle climb 25-30 min — do it first while fresh. Avoid Monday. Casa la Abuela for legendary arroz al horno.",
       "expected_score": 8.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "gandia-day-trip",
       "name": "Gandia Day Trip",
       "destination": "Gandia",
-      "description": "Borgia Ducal Palace, old town, 3 km golden beach, Marjal wetlands for birdwatching. Birthplace of fideua \u00e2\u20ac\u201d the noodle version of paella.",
+      "description": "Borgia Ducal Palace, old town, 3 km golden beach, Marjal wetlands for birdwatching. Birthplace of fideua — the noodle version of paella.",
       "location": {
         "lat": 38.968,
         "lng": -0.181,
@@ -2185,12 +2317,14 @@
           "tips": "Book online. Joint ticket with Monastery of Cotalba = 12 EUR (great value). Mon-Sat 10:00-14:00 / 15:00-19:00, Sun 10:00-14:00.",
           "url": "https://www.palauducal.com/en/",
           "expected_score": 8.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "gandia-maga",
           "name": "MAGa Archaeological Museum",
-          "description": "Prehistory museum in a 14th-century hospital. Pieces from Cova del Parpall\u0102\u0142 \u00e2\u20ac\u201d one of Europe's key Upper Paleolithic sites. Free on Sundays.",
+          "description": "Prehistory museum in a 14th-century hospital. Pieces from Cova del ParpallĂł — one of Europe's key Upper Paleolithic sites. Free on Sundays.",
           "location": {
             "lat": 38.969,
             "lng": -0.18,
@@ -2203,12 +2337,14 @@
           "tips": "2 EUR, free Sundays. The building itself is worth seeing.",
           "url": null,
           "expected_score": 6.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "gandia-beach-marjal",
           "name": "Gandia Beach & Marjal Wetlands",
-          "description": "3 km golden beach with 7 km promenade. The Marjal wetlands (1,300 ha) between town and beach \u00e2\u20ac\u201d boardwalks, flamingos, migratory birds. March is perfect.",
+          "description": "3 km golden beach with 7 km promenade. The Marjal wetlands (1,300 ha) between town and beach — boardwalks, flamingos, migratory birds. March is perfect.",
           "location": {
             "lat": 38.955,
             "lng": -0.165,
@@ -2221,7 +2357,9 @@
           "tips": "Bus L2 from old town to beach (~20 min, 1.60 EUR). Eat fideua at one of the beachfront restaurants.",
           "url": null,
           "expected_score": 7.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         }
       ],
       "outbound": null,
@@ -2229,15 +2367,17 @@
       "total_price_eur": 80.0,
       "total_duration_minutes": 510,
       "tags": [],
-      "tips": "Train C1 ~1h15, ~5.80 EUR each way. Ducal Palace ~7-8 EUR (must-see). Skip Collegiate Church (10 EUR \u00e2\u20ac\u201d too pricey). Bus L2 to beach for fideua lunch. Joint monastery+palace ticket 12 EUR if visiting Cotalba.",
+      "tips": "Train C1 ~1h15, ~5.80 EUR each way. Ducal Palace ~7-8 EUR (must-see). Skip Collegiate Church (10 EUR — too pricey). Bus L2 to beach for fideua lunch. Joint monastery+palace ticket 12 EUR if visiting Cotalba.",
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "montanejos-day-trip",
       "name": "Montanejos Hot Springs Day Trip",
       "destination": "Montanejos",
-      "description": "Natural thermal springs at constant 25\u00c2\u00b0C in a river gorge. Free access. Combine with the Ruta de los Estrechos gorge hike (8 km, 2.5-3h).",
+      "description": "Natural thermal springs at constant 25Â°C in a river gorge. Free access. Combine with the Ruta de los Estrechos gorge hike (8 km, 2.5-3h).",
       "location": {
         "lat": 40.07,
         "lng": -0.52,
@@ -2247,7 +2387,7 @@
         {
           "id": "montanejos-springs",
           "name": "Fuente de los Banos Hot Springs",
-          "description": "Crystal-clear turquoise thermal pools at constant 25\u00c2\u00b0C year-round in a river gorge. Blue Flag certified. 6,000 litres/min geothermal spring. Free access.",
+          "description": "Crystal-clear turquoise thermal pools at constant 25Â°C year-round in a river gorge. Blue Flag certified. 6,000 litres/min geothermal spring. Free access.",
           "location": {
             "lat": 40.068,
             "lng": -0.518,
@@ -2257,10 +2397,12 @@
           "price_eur": 0.0,
           "duration_minutes": 120,
           "tags": [],
-          "tips": "Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25\u00c2\u00b0C even in March. Changing facilities may be closed off-season.",
+          "tips": "Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25Â°C even in March. Changing facilities may be closed off-season.",
           "url": "https://www.visitmontanejos.com/en/nature/la-fuente-de-los-banos/",
           "expected_score": 8.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "montanejos-estrechos",
@@ -2278,7 +2420,9 @@
           "tips": "2.5-3 hours, moderate difficulty. Wear proper shoes. Best done in morning, then hot springs in afternoon.",
           "url": "https://www.visitmontanejos.com/en/nature/los-estrechos/",
           "expected_score": 8.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         }
       ],
       "outbound": null,
@@ -2286,9 +2430,11 @@
       "total_price_eur": 70.0,
       "total_duration_minutes": 600,
       "tags": [],
-      "tips": "Limited bus (Mon/Thu only, ~10 EUR each way). Organized tours 60-85 EUR/pp. Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25\u00c2\u00b0C even in March.",
+      "tips": "Limited bus (Mon/Thu only, ~10 EUR each way). Organized tours 60-85 EUR/pp. Bring swimwear, towel, and water shoes (rocky riverbed). Water is 25Â°C even in March.",
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "peniscola-day-trip",
@@ -2317,7 +2463,9 @@
           "tips": "5 EUR. Winter hours 10:30-17:30. The views from the battlements are spectacular.",
           "url": "https://castillodepeniscola.dipcas.es/en/",
           "expected_score": 7.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "peniscola-old-town",
@@ -2335,7 +2483,9 @@
           "tips": "Free to walk. El Bufador (blowhole) is best at high tide. 2-3 hours for a thorough explore.",
           "url": null,
           "expected_score": 7.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         }
       ],
       "outbound": null,
@@ -2343,9 +2493,11 @@
       "total_price_eur": 124.0,
       "total_duration_minutes": 720,
       "tags": [],
-      "tips": "HIFE bus recommended (~15-25 EUR each way, 2.5h, 7/day). Castle 5 EUR. Longest day trip \u00e2\u20ac\u201d needs early start. March: artichokes in season in nearby Benicarlo.",
+      "tips": "HIFE bus recommended (~15-25 EUR each way, 2.5h, 7/day). Castle 5 EUR. Longest day trip — needs early start. March: artichokes in season in nearby Benicarlo.",
       "expected_score": 6.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "requena-day-trip",
@@ -2361,7 +2513,7 @@
         {
           "id": "requena-cuevas",
           "name": "Cuevas de la Villa",
-          "description": "22 interconnected underground chambers beneath the medieval quarter. Ossuary, granary, wine cellars with grape-stomping pools. 1.2 km route at constant 15-16\u00c2\u00b0C.",
+          "description": "22 interconnected underground chambers beneath the medieval quarter. Ossuary, granary, wine cellars with grape-stomping pools. 1.2 km route at constant 15-16Â°C.",
           "location": {
             "lat": 39.4885,
             "lng": -1.101,
@@ -2374,12 +2526,14 @@
           "tips": "4 EUR or combined ticket with 4 museums for 8 EUR. Wed-Sun 10:30-14:00 & 16:00-19:00. Closed Mon/Tue.",
           "url": "https://www.requena.es/cuevas-villa",
           "expected_score": 8.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "requena-la-villa",
           "name": "La Villa (Requena Medieval Quarter)",
-          "description": "Walled medieval quarter with cobbled streets, stone mansions, Jewish Quarter, Moorish Alcazaba ruins. Authentically quiet \u00e2\u20ac\u201d feels like stepping back 500 years.",
+          "description": "Walled medieval quarter with cobbled streets, stone mansions, Jewish Quarter, Moorish Alcazaba ruins. Authentically quiet — feels like stepping back 500 years.",
           "location": {
             "lat": 39.4882,
             "lng": -1.1005,
@@ -2392,7 +2546,9 @@
           "tips": "Free to walk. Enter through medieval gates.",
           "url": null,
           "expected_score": 7.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "requena-salvador",
@@ -2410,7 +2566,9 @@
           "tips": "Check locally for visiting hours. Adjacent to the caves.",
           "url": null,
           "expected_score": 6.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "requena-wine-museum",
@@ -2428,7 +2586,9 @@
           "tips": "2 EUR or included in combined ticket (8 EUR with caves + 3 other museums).",
           "url": "https://www.turismorequena.es/en/museo-del-vino",
           "expected_score": 6.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "requena-silk-museum",
@@ -2446,7 +2606,9 @@
           "tips": "Included in combined ticket.",
           "url": "https://www.turismorequena.es/en/content/house-silk-art-0",
           "expected_score": 5.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         }
       ],
       "outbound": null,
@@ -2454,9 +2616,11 @@
       "total_price_eur": 78.0,
       "total_duration_minutes": 510,
       "tags": [],
-      "tips": "Train C-3 ~75-85 min, ~5-7 EUR each way. Caves 4 EUR, combined ticket with 4 museums just 8 EUR. Much colder than Valencia (700 m altitude) \u00e2\u20ac\u201d bring layers. Avoid Mon/Tue (closed).",
+      "tips": "Train C-3 ~75-85 min, ~5-7 EUR each way. Caves 4 EUR, combined ticket with 4 museums just 8 EUR. Much colder than Valencia (700 m altitude) — bring layers. Avoid Mon/Tue (closed).",
       "expected_score": 7.0,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     },
     {
       "id": "sierra-calderona-day-trip",
@@ -2476,7 +2640,7 @@
           "location": {
             "lat": 39.715,
             "lng": -0.405,
-            "address": "Start: Serra Town Hall (Pla\u0102\u00a7a del Poble)"
+            "address": "Start: Serra Town Hall (Plaça del Poble)"
           },
           "category": "landmark",
           "price_eur": 0.0,
@@ -2485,12 +2649,14 @@
           "tips": "Moderate difficulty, 207 m elevation gain. Best all-round trail. Combine with village lunch.",
           "url": null,
           "expected_score": 8.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "garbi-viewpoint",
           "name": "Garbi Viewpoint Hike",
-          "description": "10-12 km hike to 601 m summit. Best panorama in the park \u00e2\u20ac\u201d Mediterranean, Valencia skyline, Albufera lagoon, and interior mountain ranges visible.",
+          "description": "10-12 km hike to 601 m summit. Best panorama in the park — Mediterranean, Valencia skyline, Albufera lagoon, and interior mountain ranges visible.",
           "location": {
             "lat": 39.71,
             "lng": -0.4,
@@ -2500,10 +2666,12 @@
           "price_eur": 0.0,
           "duration_minutes": 240,
           "tags": [],
-          "tips": "Moderate to demanding, ~400 m elevation gain. Late March is ideal \u00e2\u20ac\u201d brutally hot in summer. Bring 1.5L water.",
+          "tips": "Moderate to demanding, ~400 m elevation gain. Late March is ideal — brutally hot in summer. Bring 1.5L water.",
           "url": null,
           "expected_score": 7.5,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         },
         {
           "id": "serra-village",
@@ -2521,7 +2689,9 @@
           "tips": "Casa Granero for a sit-down lunch. Bar Domingo on the square for post-hike beers.",
           "url": null,
           "expected_score": 6.0,
-          "user_score": null
+          "user_score": null,
+          "visited": false,
+          "hidden": false
         }
       ],
       "outbound": null,
@@ -2529,9 +2699,11 @@
       "total_price_eur": 30.0,
       "total_duration_minutes": 480,
       "tags": [],
-      "tips": "Metro L1 to Betera + bus 230 to Serra. Check bus schedule \u00e2\u20ac\u201d limited! Taxi from Betera ~12-18 EUR if bus doesn't work. Castell de Serra trail (7 km, 2h) is the best moderate option.",
+      "tips": "Metro L1 to Betera + bus 230 to Serra. Check bus schedule — limited! Taxi from Betera ~12-18 EUR if bus doesn't work. Castell de Serra trail (7 km, 2h) is the best moderate option.",
       "expected_score": 7.5,
-      "user_score": null
+      "user_score": null,
+      "visited": false,
+      "hidden": false
     }
   ],
   "groupings": [
@@ -2876,94 +3048,29 @@
   "itineraries": [
     {
       "id": "itin-a",
-      "name": "A \u00e2\u20ac\u201d Balanced Explorer",
-      "description": "Best of everything. One day trip, all major sights, good pacing. ~360-400 EUR/pp.",
+      "name": "A — Balanced Explorer",
+      "description": "Best of everything. One day trip, all major sights, good pacing. ~345-390 EUR/pp.",
       "days": [
         {
           "date": "2026-03-21",
-          "label": "Arrival + First Impressions",
+          "label": "Arrival",
           "start_time": null,
           "activities": [
             {
-              "id": "dc4067a5",
-              "attraction_id": "plaza-del-ayuntamiento",
+              "id": "736edf16",
+              "attraction_id": "bodega-rentaora",
               "day_trip_id": null,
-              "name": "Plaza del Ayuntamiento",
-              "start_time": null,
-              "duration_minutes": 20,
-              "price_eur": 0.0,
-              "category": "landmark",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "5d9539cd",
-              "attraction_id": "horchateria-santa-catalina",
-              "day_trip_id": null,
-              "name": "Horchateria de Santa Catalina",
-              "start_time": null,
-              "duration_minutes": 20,
-              "price_eur": 5.0,
-              "category": "food",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "e7f9ca91",
-              "attraction_id": "portal-valldigna",
-              "day_trip_id": null,
-              "name": "Portal de Valldigna",
-              "start_time": null,
-              "duration_minutes": 10,
-              "price_eur": 0.0,
-              "category": "landmark",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "b3c7bd8c",
-              "attraction_id": "plaza-tossal-art",
-              "day_trip_id": null,
-              "name": "Plaza del Tossal Street Art",
-              "start_time": null,
-              "duration_minutes": 15,
-              "price_eur": 0.0,
-              "category": "museum",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "b6eafabe",
-              "attraction_id": "atenea-sky",
-              "day_trip_id": null,
-              "name": "Atenea Sky Rooftop",
+              "name": "Bodega La Rentaora",
               "start_time": null,
               "duration_minutes": 45,
-              "price_eur": 8.0,
-              "category": "food",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "2e0ddbaa",
-              "attraction_id": "tasca-angel",
-              "day_trip_id": null,
-              "name": "Tasca Angel",
-              "start_time": null,
-              "duration_minutes": 45,
-              "price_eur": 10.0,
+              "price_eur": 12.0,
               "category": "food",
               "travel_from_prev_minutes": null,
               "status": "planned",
               "notes": null
             }
           ],
-          "notes": "Light day. Walk old town, street art, rooftop sunset, tapas dinner."
+          "notes": "Land at 20:00. Metro to city, settle in, grab dinner nearby."
         },
         {
           "date": "2026-03-22",
@@ -2971,7 +3078,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "9550a6bd",
+              "id": "2c8f0f7f",
               "attraction_id": "la-lonja",
               "day_trip_id": null,
               "name": "La Lonja de la Seda",
@@ -2984,7 +3091,7 @@
               "notes": null
             },
             {
-              "id": "27dfc0e7",
+              "id": "dd96ccf8",
               "attraction_id": "mercado-central",
               "day_trip_id": null,
               "name": "Mercado Central",
@@ -2997,7 +3104,7 @@
               "notes": null
             },
             {
-              "id": "fab393f0",
+              "id": "43accb6b",
               "attraction_id": "torres-serranos",
               "day_trip_id": null,
               "name": "Torres de Serranos",
@@ -3010,7 +3117,7 @@
               "notes": null
             },
             {
-              "id": "787e209d",
+              "id": "df91ae5d",
               "attraction_id": "torres-de-quart",
               "day_trip_id": null,
               "name": "Torres de Quart",
@@ -3023,7 +3130,7 @@
               "notes": null
             },
             {
-              "id": "b610cc64",
+              "id": "78777d24",
               "attraction_id": "almoina",
               "day_trip_id": null,
               "name": "L'Almoina Archaeological Centre",
@@ -3036,7 +3143,7 @@
               "notes": null
             },
             {
-              "id": "1a3f20b2",
+              "id": "0898f47b",
               "attraction_id": "dos-aguas-courtyard",
               "day_trip_id": null,
               "name": "Palacio de Dos Aguas (Courtyards)",
@@ -3049,7 +3156,7 @@
               "notes": null
             },
             {
-              "id": "556e2b4b",
+              "id": "6c2b645d",
               "attraction_id": "pichiavo-ruzafa",
               "day_trip_id": null,
               "name": "PichiAvo Bacchus Mural",
@@ -3062,7 +3169,7 @@
               "notes": null
             },
             {
-              "id": "1a9cda61",
+              "id": "a3691193",
               "attraction_id": "heladeria-veneta",
               "day_trip_id": null,
               "name": "Heladeria Veneta",
@@ -3083,7 +3190,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "23e2a142",
+              "id": "da71f784",
               "attraction_id": "bioparc",
               "day_trip_id": null,
               "name": "Bioparc",
@@ -3096,7 +3203,7 @@
               "notes": null
             },
             {
-              "id": "78d567aa",
+              "id": "f98b0f43",
               "attraction_id": "gulliver-park",
               "day_trip_id": null,
               "name": "Gulliver Park",
@@ -3109,7 +3216,7 @@
               "notes": null
             },
             {
-              "id": "9797e357",
+              "id": "20b1c6a7",
               "attraction_id": "city-of-arts-exterior",
               "day_trip_id": null,
               "name": "City of Arts and Sciences (Exterior)",
@@ -3122,7 +3229,7 @@
               "notes": null
             },
             {
-              "id": "d750eeef",
+              "id": "c2b24f1b",
               "attraction_id": "playa-malvarrosa",
               "day_trip_id": null,
               "name": "Playa de la Malvarrosa",
@@ -3135,7 +3242,7 @@
               "notes": null
             },
             {
-              "id": "05521ba6",
+              "id": "5fb8f581",
               "attraction_id": "casa-montana",
               "day_trip_id": null,
               "name": "Casa Montana",
@@ -3156,7 +3263,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "8a9532d6",
+              "id": "91ca73fc",
               "attraction_id": "oceanografic",
               "day_trip_id": null,
               "name": "Oceanografic",
@@ -3169,7 +3276,7 @@
               "notes": null
             },
             {
-              "id": "c5ad0c62",
+              "id": "5ff41f8d",
               "attraction_id": "science-museum",
               "day_trip_id": null,
               "name": "Museu de les Ciencies",
@@ -3182,7 +3289,7 @@
               "notes": null
             },
             {
-              "id": "d1b80fc4",
+              "id": "268bc04d",
               "attraction_id": "hemisferic",
               "day_trip_id": null,
               "name": "L'Hemisferic",
@@ -3195,7 +3302,7 @@
               "notes": null
             },
             {
-              "id": "0b217a09",
+              "id": "eabfde3d",
               "attraction_id": "museo-fallero",
               "day_trip_id": null,
               "name": "Museo Fallero",
@@ -3208,7 +3315,7 @@
               "notes": null
             },
             {
-              "id": "fdf76e8c",
+              "id": "5f46b812",
               "attraction_id": "masusa-paella",
               "day_trip_id": null,
               "name": "Masusa Paella Bar",
@@ -3229,7 +3336,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "0f5cb5e8",
+              "id": "a796b2dc",
               "attraction_id": null,
               "day_trip_id": "albufera-day-trip",
               "name": "Travel to Albufera Natural Park (bus)",
@@ -3242,7 +3349,7 @@
               "notes": null
             },
             {
-              "id": "4d96ba1e",
+              "id": "cd9f46be",
               "attraction_id": "albufera-boat-ride",
               "day_trip_id": "albufera-day-trip",
               "name": "Albufera Boat Ride",
@@ -3255,7 +3362,7 @@
               "notes": null
             },
             {
-              "id": "5ecf21be",
+              "id": "2e777cf4",
               "attraction_id": "albufera-paella-lunch",
               "day_trip_id": "albufera-day-trip",
               "name": "Authentic Paella Lunch in El Palmar",
@@ -3268,7 +3375,7 @@
               "notes": null
             },
             {
-              "id": "cba605f1",
+              "id": "9b1f5ac0",
               "attraction_id": "albufera-nature-walk",
               "day_trip_id": "albufera-day-trip",
               "name": "Albufera Nature Park Walk",
@@ -3281,7 +3388,7 @@
               "notes": null
             },
             {
-              "id": "681d8c72",
+              "id": "763dd5fe",
               "attraction_id": "el-palmar-village",
               "day_trip_id": "albufera-day-trip",
               "name": "El Palmar Village",
@@ -3294,7 +3401,7 @@
               "notes": null
             },
             {
-              "id": "ac3654d1",
+              "id": "96f47c03",
               "attraction_id": "raco-olla",
               "day_trip_id": "albufera-day-trip",
               "name": "Raco de l'Olla Visitor Centre",
@@ -3307,7 +3414,7 @@
               "notes": null
             },
             {
-              "id": "ffbb5343",
+              "id": "564f42f3",
               "attraction_id": "la-devesa",
               "day_trip_id": "albufera-day-trip",
               "name": "La Devesa (Dehesa del Saler)",
@@ -3320,7 +3427,7 @@
               "notes": null
             },
             {
-              "id": "a83218a3",
+              "id": "bd82a5a7",
               "attraction_id": null,
               "day_trip_id": "albufera-day-trip",
               "name": "Return from Albufera Natural Park (bus)",
@@ -3341,7 +3448,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "1add5e20",
+              "id": "13c8fdab",
               "attraction_id": null,
               "day_trip_id": "sagunto-day-trip",
               "name": "Travel to Sagunto (train)",
@@ -3354,7 +3461,7 @@
               "notes": null
             },
             {
-              "id": "9822247a",
+              "id": "145eb96a",
               "attraction_id": "sagunto-roman-theatre",
               "day_trip_id": "sagunto-day-trip",
               "name": "Roman Theatre (Teatro Romano)",
@@ -3367,7 +3474,7 @@
               "notes": null
             },
             {
-              "id": "e404a039",
+              "id": "dd1d5869",
               "attraction_id": "sagunto-castle",
               "day_trip_id": "sagunto-day-trip",
               "name": "Sagunto Castle",
@@ -3380,7 +3487,7 @@
               "notes": null
             },
             {
-              "id": "d09fb65e",
+              "id": "9657a486",
               "attraction_id": "sagunto-jewish-quarter",
               "day_trip_id": "sagunto-day-trip",
               "name": "Jewish Quarter (Juderia)",
@@ -3393,7 +3500,7 @@
               "notes": null
             },
             {
-              "id": "a1a3855f",
+              "id": "d87c6a77",
               "attraction_id": "sagunto-juderia",
               "day_trip_id": "sagunto-day-trip",
               "name": "Sagunto Jewish Quarter",
@@ -3406,7 +3513,7 @@
               "notes": null
             },
             {
-              "id": "b7e9044b",
+              "id": "ed1977c7",
               "attraction_id": "sagunto-temple-diana",
               "day_trip_id": "sagunto-day-trip",
               "name": "Temple of Diana Remains",
@@ -3419,7 +3526,7 @@
               "notes": null
             },
             {
-              "id": "8f91876d",
+              "id": "9dff78d4",
               "attraction_id": null,
               "day_trip_id": "sagunto-day-trip",
               "name": "Return from Sagunto (train)",
@@ -3432,7 +3539,7 @@
               "notes": null
             },
             {
-              "id": "5c6f967e",
+              "id": "78f630ea",
               "attraction_id": "cathedral",
               "day_trip_id": null,
               "name": "Valencia Cathedral + Miguelete Tower",
@@ -3449,11 +3556,11 @@
         },
         {
           "date": "2026-03-27",
-          "label": "Hidden Gems + Chill Day",
+          "label": "Hidden Gems + Old Town Walk + Last Evening",
           "start_time": null,
           "activities": [
             {
-              "id": "efc22933",
+              "id": "1ab1e25f",
               "attraction_id": "jardin-monforte",
               "day_trip_id": null,
               "name": "Jardin de Monforte",
@@ -3466,7 +3573,7 @@
               "notes": null
             },
             {
-              "id": "66927ea1",
+              "id": "f7fd7af1",
               "attraction_id": "museo-bellas-artes",
               "day_trip_id": null,
               "name": "Museo de Bellas Artes",
@@ -3479,7 +3586,7 @@
               "notes": null
             },
             {
-              "id": "51a708e4",
+              "id": "6dae853c",
               "attraction_id": "viveros-gardens",
               "day_trip_id": null,
               "name": "Viveros Gardens",
@@ -3492,10 +3599,10 @@
               "notes": null
             },
             {
-              "id": "58aaee9f",
+              "id": "fd8b7ff2",
               "attraction_id": "cabanyal-progres",
               "day_trip_id": null,
-              "name": "Carrer del Progres \u00e2\u20ac\u201d Cabanyal Tiles",
+              "name": "Carrer del Progres — Cabanyal Tiles",
               "start_time": null,
               "duration_minutes": 20,
               "price_eur": 0.0,
@@ -3505,7 +3612,7 @@
               "notes": null
             },
             {
-              "id": "eb85fb2b",
+              "id": "f9cef9bc",
               "attraction_id": "tallat-coffee",
               "day_trip_id": null,
               "name": "Tallat Coffee Roasters",
@@ -3518,7 +3625,7 @@
               "notes": null
             },
             {
-              "id": "0704d81a",
+              "id": "040f1248",
               "attraction_id": "jardin-botanico",
               "day_trip_id": null,
               "name": "Jardin Botanico",
@@ -3531,95 +3638,7 @@
               "notes": null
             },
             {
-              "id": "5ba8f14b",
-              "attraction_id": "jardin-hesperides",
-              "day_trip_id": null,
-              "name": "Jardin de las Hesperides",
-              "start_time": null,
-              "duration_minutes": 20,
-              "price_eur": 0.0,
-              "category": "nature",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "6c3467b8",
-              "attraction_id": "veles-e-vents",
-              "day_trip_id": null,
-              "name": "Veles e Vents Building",
-              "start_time": null,
-              "duration_minutes": 30,
-              "price_eur": 0.0,
-              "category": "landmark",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            }
-          ],
-          "notes": "Slower pace. Secret gardens, Cabanyal tiles, botanical garden, Marina sunset."
-        },
-        {
-          "date": "2026-03-28",
-          "label": "Departure",
-          "start_time": null,
-          "activities": [
-            {
-              "id": "17004e3a",
-              "attraction_id": "bluebell-coffee",
-              "day_trip_id": null,
-              "name": "Bluebell Coffee Co.",
-              "start_time": null,
-              "duration_minutes": 45,
-              "price_eur": 10.0,
-              "category": "food",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "da0fd512",
-              "attraction_id": "mercado-central",
-              "day_trip_id": null,
-              "name": "Mercado Central",
-              "start_time": null,
-              "duration_minutes": 60,
-              "price_eur": 0.0,
-              "category": "food",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            }
-          ],
-          "notes": "Last coffee at Bluebell. Souvenirs at Mercado Central. Metro to airport."
-        }
-      ]
-    },
-    {
-      "id": "itin-b",
-      "name": "B \u00e2\u20ac\u201d Two Day Trips",
-      "description": "More ambitious. Sagunto morning + Albufera evening on Wed, full Xativa Thu. ~380-430 EUR/pp.",
-      "days": [
-        {
-          "date": "2026-03-21",
-          "label": "Arrival + First Impressions",
-          "start_time": null,
-          "activities": [
-            {
-              "id": "46c5c614",
-              "attraction_id": "plaza-del-ayuntamiento",
-              "day_trip_id": null,
-              "name": "Plaza del Ayuntamiento",
-              "start_time": null,
-              "duration_minutes": 20,
-              "price_eur": 0.0,
-              "category": "landmark",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "d8390ecd",
+              "id": "a329eb21",
               "attraction_id": "horchateria-santa-catalina",
               "day_trip_id": null,
               "name": "Horchateria de Santa Catalina",
@@ -3632,7 +3651,7 @@
               "notes": null
             },
             {
-              "id": "c3e9513a",
+              "id": "4acbc6ae",
               "attraction_id": "portal-valldigna",
               "day_trip_id": null,
               "name": "Portal de Valldigna",
@@ -3645,7 +3664,7 @@
               "notes": null
             },
             {
-              "id": "ab621099",
+              "id": "c16fbfdc",
               "attraction_id": "plaza-tossal-art",
               "day_trip_id": null,
               "name": "Plaza del Tossal Street Art",
@@ -3658,7 +3677,7 @@
               "notes": null
             },
             {
-              "id": "dee2f51a",
+              "id": "844f6f3c",
               "attraction_id": "atenea-sky",
               "day_trip_id": null,
               "name": "Atenea Sky Rooftop",
@@ -3669,12 +3688,20 @@
               "travel_from_prev_minutes": null,
               "status": "planned",
               "notes": null
-            },
+            }
+          ],
+          "notes": "Gardens, Cabanyal tiles, old town walk (moved from arrival), rooftop sunset farewell, splurge dinner."
+        },
+        {
+          "date": "2026-03-28",
+          "label": "Departure",
+          "start_time": null,
+          "activities": [
             {
-              "id": "81056730",
-              "attraction_id": "tasca-angel",
+              "id": "8edf7844",
+              "attraction_id": "bluebell-coffee",
               "day_trip_id": null,
-              "name": "Tasca Angel",
+              "name": "Bluebell Coffee Co.",
               "start_time": null,
               "duration_minutes": 45,
               "price_eur": 10.0,
@@ -3682,9 +3709,50 @@
               "travel_from_prev_minutes": null,
               "status": "planned",
               "notes": null
+            },
+            {
+              "id": "2a001b1c",
+              "attraction_id": "mercado-central",
+              "day_trip_id": null,
+              "name": "Mercado Central",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 0.0,
+              "category": "food",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
             }
           ],
-          "notes": "Same as A."
+          "notes": "At airport by 12:00. Quick coffee + Mercado Central souvenirs, then metro."
+        }
+      ]
+    },
+    {
+      "id": "itin-b",
+      "name": "B — Two Day Trips",
+      "description": "More ambitious. Sagunto morning + Albufera evening on Wed, full Xativa Thu. ~370-420 EUR/pp.",
+      "days": [
+        {
+          "date": "2026-03-21",
+          "label": "Arrival",
+          "start_time": null,
+          "activities": [
+            {
+              "id": "7c7ab9ca",
+              "attraction_id": "bodega-rentaora",
+              "day_trip_id": null,
+              "name": "Bodega La Rentaora",
+              "start_time": null,
+              "duration_minutes": 45,
+              "price_eur": 12.0,
+              "category": "food",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            }
+          ],
+          "notes": "Land at 20:00. Settle in, dinner nearby."
         },
         {
           "date": "2026-03-22",
@@ -3692,7 +3760,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "77a30414",
+              "id": "c145c3e1",
               "attraction_id": "la-lonja",
               "day_trip_id": null,
               "name": "La Lonja de la Seda",
@@ -3705,7 +3773,7 @@
               "notes": null
             },
             {
-              "id": "d346359d",
+              "id": "e59f0e06",
               "attraction_id": "mercado-central",
               "day_trip_id": null,
               "name": "Mercado Central",
@@ -3718,7 +3786,7 @@
               "notes": null
             },
             {
-              "id": "90c9566d",
+              "id": "c8b95261",
               "attraction_id": "torres-serranos",
               "day_trip_id": null,
               "name": "Torres de Serranos",
@@ -3731,7 +3799,7 @@
               "notes": null
             },
             {
-              "id": "fa196d80",
+              "id": "e5e7b5b0",
               "attraction_id": "torres-de-quart",
               "day_trip_id": null,
               "name": "Torres de Quart",
@@ -3744,7 +3812,7 @@
               "notes": null
             },
             {
-              "id": "cabd7613",
+              "id": "bff5818a",
               "attraction_id": "almoina",
               "day_trip_id": null,
               "name": "L'Almoina Archaeological Centre",
@@ -3757,7 +3825,7 @@
               "notes": null
             },
             {
-              "id": "82902533",
+              "id": "508c172c",
               "attraction_id": "dos-aguas-courtyard",
               "day_trip_id": null,
               "name": "Palacio de Dos Aguas (Courtyards)",
@@ -3770,7 +3838,7 @@
               "notes": null
             },
             {
-              "id": "cfd241d4",
+              "id": "f5c488fb",
               "attraction_id": "pichiavo-ruzafa",
               "day_trip_id": null,
               "name": "PichiAvo Bacchus Mural",
@@ -3783,7 +3851,7 @@
               "notes": null
             },
             {
-              "id": "2574880a",
+              "id": "3f6f900d",
               "attraction_id": "heladeria-veneta",
               "day_trip_id": null,
               "name": "Heladeria Veneta",
@@ -3804,7 +3872,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "4ccbf490",
+              "id": "71b027c6",
               "attraction_id": "bioparc",
               "day_trip_id": null,
               "name": "Bioparc",
@@ -3817,7 +3885,7 @@
               "notes": null
             },
             {
-              "id": "3a695d35",
+              "id": "1018f92f",
               "attraction_id": "gulliver-park",
               "day_trip_id": null,
               "name": "Gulliver Park",
@@ -3830,7 +3898,7 @@
               "notes": null
             },
             {
-              "id": "ee552e3f",
+              "id": "b18a437f",
               "attraction_id": "city-of-arts-exterior",
               "day_trip_id": null,
               "name": "City of Arts and Sciences (Exterior)",
@@ -3843,7 +3911,7 @@
               "notes": null
             },
             {
-              "id": "cfe480d3",
+              "id": "55e6224b",
               "attraction_id": "playa-malvarrosa",
               "day_trip_id": null,
               "name": "Playa de la Malvarrosa",
@@ -3856,7 +3924,7 @@
               "notes": null
             },
             {
-              "id": "404b178e",
+              "id": "5c976416",
               "attraction_id": "casa-montana",
               "day_trip_id": null,
               "name": "Casa Montana",
@@ -3877,7 +3945,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "7dd40b5b",
+              "id": "22ba9fd8",
               "attraction_id": "oceanografic",
               "day_trip_id": null,
               "name": "Oceanografic",
@@ -3890,7 +3958,7 @@
               "notes": null
             },
             {
-              "id": "41ea7e6a",
+              "id": "e1a9c517",
               "attraction_id": "science-museum",
               "day_trip_id": null,
               "name": "Museu de les Ciencies",
@@ -3903,7 +3971,7 @@
               "notes": null
             },
             {
-              "id": "f22bfb90",
+              "id": "9e785589",
               "attraction_id": "hemisferic",
               "day_trip_id": null,
               "name": "L'Hemisferic",
@@ -3916,7 +3984,7 @@
               "notes": null
             },
             {
-              "id": "e409a4a0",
+              "id": "c549fbcb",
               "attraction_id": "museo-fallero",
               "day_trip_id": null,
               "name": "Museo Fallero",
@@ -3929,7 +3997,7 @@
               "notes": null
             },
             {
-              "id": "7fb2efd2",
+              "id": "8556a4e0",
               "attraction_id": "masusa-paella",
               "day_trip_id": null,
               "name": "Masusa Paella Bar",
@@ -3950,7 +4018,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "e811d4cd",
+              "id": "9749e276",
               "attraction_id": null,
               "day_trip_id": "sagunto-day-trip",
               "name": "Travel to Sagunto (train)",
@@ -3963,7 +4031,7 @@
               "notes": null
             },
             {
-              "id": "19c9c1fa",
+              "id": "53630b71",
               "attraction_id": "sagunto-roman-theatre",
               "day_trip_id": "sagunto-day-trip",
               "name": "Roman Theatre (Teatro Romano)",
@@ -3976,7 +4044,7 @@
               "notes": null
             },
             {
-              "id": "e343802f",
+              "id": "029680fe",
               "attraction_id": "sagunto-castle",
               "day_trip_id": "sagunto-day-trip",
               "name": "Sagunto Castle",
@@ -3989,7 +4057,7 @@
               "notes": null
             },
             {
-              "id": "beafe097",
+              "id": "7adf5102",
               "attraction_id": "sagunto-jewish-quarter",
               "day_trip_id": "sagunto-day-trip",
               "name": "Jewish Quarter (Juderia)",
@@ -4002,7 +4070,7 @@
               "notes": null
             },
             {
-              "id": "069f92ea",
+              "id": "9f2f5d57",
               "attraction_id": "sagunto-juderia",
               "day_trip_id": "sagunto-day-trip",
               "name": "Sagunto Jewish Quarter",
@@ -4015,7 +4083,7 @@
               "notes": null
             },
             {
-              "id": "6fb1a422",
+              "id": "a553d112",
               "attraction_id": "sagunto-temple-diana",
               "day_trip_id": "sagunto-day-trip",
               "name": "Temple of Diana Remains",
@@ -4028,7 +4096,7 @@
               "notes": null
             },
             {
-              "id": "72cc1270",
+              "id": "c115ecc1",
               "attraction_id": null,
               "day_trip_id": "sagunto-day-trip",
               "name": "Return from Sagunto (train)",
@@ -4049,7 +4117,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "02c70e98",
+              "id": "f639140b",
               "attraction_id": null,
               "day_trip_id": "xativa-day-trip",
               "name": "Travel to Xativa (train)",
@@ -4062,7 +4130,7 @@
               "notes": null
             },
             {
-              "id": "d1fce764",
+              "id": "70d4ec4a",
               "attraction_id": "xativa-castle",
               "day_trip_id": "xativa-day-trip",
               "name": "Castell de Xativa",
@@ -4075,7 +4143,7 @@
               "notes": null
             },
             {
-              "id": "1b77a856",
+              "id": "b5d6ca62",
               "attraction_id": "xativa-old-town",
               "day_trip_id": "xativa-day-trip",
               "name": "Xativa Old Town & Fountains",
@@ -4088,7 +4156,7 @@
               "notes": null
             },
             {
-              "id": "2ca60dce",
+              "id": "8d84fb9b",
               "attraction_id": "xativa-bellas-artes",
               "day_trip_id": "xativa-day-trip",
               "name": "Museo de Bellas Artes de Xativa",
@@ -4101,7 +4169,7 @@
               "notes": null
             },
             {
-              "id": "fc1093f0",
+              "id": "8090ba7e",
               "attraction_id": "xativa-sant-feliu",
               "day_trip_id": "xativa-day-trip",
               "name": "Ermita de Sant Feliu",
@@ -4114,7 +4182,7 @@
               "notes": null
             },
             {
-              "id": "279dfe74",
+              "id": "03075c84",
               "attraction_id": null,
               "day_trip_id": "xativa-day-trip",
               "name": "Return from Xativa (train)",
@@ -4131,11 +4199,11 @@
         },
         {
           "date": "2026-03-27",
-          "label": "Hidden Gems + Cabanyal + Chill",
+          "label": "Hidden Gems + Old Town Walk + Chill",
           "start_time": null,
           "activities": [
             {
-              "id": "2b65ff5f",
+              "id": "55fde03d",
               "attraction_id": "jardin-monforte",
               "day_trip_id": null,
               "name": "Jardin de Monforte",
@@ -4148,7 +4216,7 @@
               "notes": null
             },
             {
-              "id": "466d02f4",
+              "id": "f91d529f",
               "attraction_id": "museo-bellas-artes",
               "day_trip_id": null,
               "name": "Museo de Bellas Artes",
@@ -4161,10 +4229,10 @@
               "notes": null
             },
             {
-              "id": "5dc66e4f",
+              "id": "ce224f4c",
               "attraction_id": "cabanyal-progres",
               "day_trip_id": null,
-              "name": "Carrer del Progres \u00e2\u20ac\u201d Cabanyal Tiles",
+              "name": "Carrer del Progres — Cabanyal Tiles",
               "start_time": null,
               "duration_minutes": 20,
               "price_eur": 0.0,
@@ -4174,7 +4242,7 @@
               "notes": null
             },
             {
-              "id": "a88c2dc1",
+              "id": "93256fcb",
               "attraction_id": "jardin-botanico",
               "day_trip_id": null,
               "name": "Jardin Botanico",
@@ -4187,95 +4255,7 @@
               "notes": null
             },
             {
-              "id": "cbfbddf3",
-              "attraction_id": "ubik-cafe",
-              "day_trip_id": null,
-              "name": "Ubik Cafe",
-              "start_time": null,
-              "duration_minutes": 30,
-              "price_eur": 4.0,
-              "category": "food",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "678437cb",
-              "attraction_id": "terraza-270",
-              "day_trip_id": null,
-              "name": "Terraza 270",
-              "start_time": null,
-              "duration_minutes": 60,
-              "price_eur": 12.0,
-              "category": "food",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            }
-          ],
-          "notes": "Slower pace. Gardens, Cabanyal tiles, Ruzafa, City of Arts sunset from Terraza 270."
-        },
-        {
-          "date": "2026-03-28",
-          "label": "Departure",
-          "start_time": null,
-          "activities": [
-            {
-              "id": "6fe57ae3",
-              "attraction_id": "bluebell-coffee",
-              "day_trip_id": null,
-              "name": "Bluebell Coffee Co.",
-              "start_time": null,
-              "duration_minutes": 45,
-              "price_eur": 10.0,
-              "category": "food",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "ccc2ea25",
-              "attraction_id": "mercado-central",
-              "day_trip_id": null,
-              "name": "Mercado Central",
-              "start_time": null,
-              "duration_minutes": 60,
-              "price_eur": 0.0,
-              "category": "food",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            }
-          ],
-          "notes": "Last coffee. Souvenirs. Metro to airport."
-        }
-      ]
-    },
-    {
-      "id": "itin-c",
-      "name": "C \u00e2\u20ac\u201d Relaxed & Romantic",
-      "description": "Slower pace, food focus, no day trips outside Valencia. More time at each place. ~320-370 EUR/pp.",
-      "days": [
-        {
-          "date": "2026-03-21",
-          "label": "Arrival + Old Town Evening",
-          "start_time": null,
-          "activities": [
-            {
-              "id": "58605921",
-              "attraction_id": "plaza-del-ayuntamiento",
-              "day_trip_id": null,
-              "name": "Plaza del Ayuntamiento",
-              "start_time": null,
-              "duration_minutes": 20,
-              "price_eur": 0.0,
-              "category": "landmark",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "91bb8c1f",
+              "id": "3e55ac41",
               "attraction_id": "horchateria-santa-catalina",
               "day_trip_id": null,
               "name": "Horchateria de Santa Catalina",
@@ -4288,7 +4268,20 @@
               "notes": null
             },
             {
-              "id": "4fcfdcae",
+              "id": "82ada070",
+              "attraction_id": "portal-valldigna",
+              "day_trip_id": null,
+              "name": "Portal de Valldigna",
+              "start_time": null,
+              "duration_minutes": 10,
+              "price_eur": 0.0,
+              "category": "landmark",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "28f0a68d",
               "attraction_id": "atenea-sky",
               "day_trip_id": null,
               "name": "Atenea Sky Rooftop",
@@ -4301,7 +4294,69 @@
               "notes": null
             },
             {
-              "id": "475cd6fa",
+              "id": "b7e7a96d",
+              "attraction_id": "terraza-270",
+              "day_trip_id": null,
+              "name": "Terraza 270",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 12.0,
+              "category": "food",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            }
+          ],
+          "notes": "Gardens, Cabanyal tiles, old town walk, rooftop farewell sunset."
+        },
+        {
+          "date": "2026-03-28",
+          "label": "Departure",
+          "start_time": null,
+          "activities": [
+            {
+              "id": "fa7eca04",
+              "attraction_id": "bluebell-coffee",
+              "day_trip_id": null,
+              "name": "Bluebell Coffee Co.",
+              "start_time": null,
+              "duration_minutes": 45,
+              "price_eur": 10.0,
+              "category": "food",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "2019eee4",
+              "attraction_id": "mercado-central",
+              "day_trip_id": null,
+              "name": "Mercado Central",
+              "start_time": null,
+              "duration_minutes": 60,
+              "price_eur": 0.0,
+              "category": "food",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            }
+          ],
+          "notes": "At airport by 12:00. Quick coffee + souvenirs, then metro."
+        }
+      ]
+    },
+    {
+      "id": "itin-c",
+      "name": "C — Relaxed & Romantic",
+      "description": "Slower pace, food focus, no day trips outside Valencia. More time at each place. ~310-360 EUR/pp.",
+      "days": [
+        {
+          "date": "2026-03-21",
+          "label": "Arrival",
+          "start_time": null,
+          "activities": [
+            {
+              "id": "44bbc231",
               "attraction_id": "bodega-rentaora",
               "day_trip_id": null,
               "name": "Bodega La Rentaora",
@@ -4314,7 +4369,7 @@
               "notes": null
             }
           ],
-          "notes": "Light arrival day. Old town walk, horchata, rooftop sunset, old-school tapas."
+          "notes": "Land at 20:00. Settle in, dinner nearby."
         },
         {
           "date": "2026-03-22",
@@ -4322,7 +4377,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "7fcbafcd",
+              "id": "d51c6aaa",
               "attraction_id": "la-lonja",
               "day_trip_id": null,
               "name": "La Lonja de la Seda",
@@ -4335,7 +4390,7 @@
               "notes": null
             },
             {
-              "id": "a30653f7",
+              "id": "798e2a60",
               "attraction_id": "mercado-central",
               "day_trip_id": null,
               "name": "Mercado Central",
@@ -4348,7 +4403,7 @@
               "notes": null
             },
             {
-              "id": "53b75dcb",
+              "id": "3df1aa52",
               "attraction_id": "torres-serranos",
               "day_trip_id": null,
               "name": "Torres de Serranos",
@@ -4361,7 +4416,7 @@
               "notes": null
             },
             {
-              "id": "67ff1fd8",
+              "id": "4dd05401",
               "attraction_id": "almoina",
               "day_trip_id": null,
               "name": "L'Almoina Archaeological Centre",
@@ -4374,7 +4429,7 @@
               "notes": null
             },
             {
-              "id": "738066d6",
+              "id": "49dfbbec",
               "attraction_id": "dos-aguas-courtyard",
               "day_trip_id": null,
               "name": "Palacio de Dos Aguas (Courtyards)",
@@ -4387,7 +4442,7 @@
               "notes": null
             },
             {
-              "id": "c8037e56",
+              "id": "e12d3fb5",
               "attraction_id": "heladeria-veneta",
               "day_trip_id": null,
               "name": "Heladeria Veneta",
@@ -4400,7 +4455,7 @@
               "notes": null
             },
             {
-              "id": "b778ee76",
+              "id": "2895e215",
               "attraction_id": "olhops",
               "day_trip_id": null,
               "name": "Olhops Craft Beer",
@@ -4421,7 +4476,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "c7dd6d74",
+              "id": "79666227",
               "attraction_id": null,
               "day_trip_id": "albufera-day-trip",
               "name": "Travel to Albufera Natural Park (bus)",
@@ -4434,7 +4489,7 @@
               "notes": null
             },
             {
-              "id": "38051b5b",
+              "id": "6a5b3be8",
               "attraction_id": "albufera-boat-ride",
               "day_trip_id": "albufera-day-trip",
               "name": "Albufera Boat Ride",
@@ -4447,7 +4502,7 @@
               "notes": null
             },
             {
-              "id": "348685db",
+              "id": "dfe9bec1",
               "attraction_id": "albufera-paella-lunch",
               "day_trip_id": "albufera-day-trip",
               "name": "Authentic Paella Lunch in El Palmar",
@@ -4460,7 +4515,7 @@
               "notes": null
             },
             {
-              "id": "d219b34e",
+              "id": "3c42eec5",
               "attraction_id": "albufera-nature-walk",
               "day_trip_id": "albufera-day-trip",
               "name": "Albufera Nature Park Walk",
@@ -4473,7 +4528,7 @@
               "notes": null
             },
             {
-              "id": "f03fc91e",
+              "id": "788dc701",
               "attraction_id": "el-palmar-village",
               "day_trip_id": "albufera-day-trip",
               "name": "El Palmar Village",
@@ -4486,7 +4541,7 @@
               "notes": null
             },
             {
-              "id": "f3dc62a7",
+              "id": "c53154d6",
               "attraction_id": "raco-olla",
               "day_trip_id": "albufera-day-trip",
               "name": "Raco de l'Olla Visitor Centre",
@@ -4499,7 +4554,7 @@
               "notes": null
             },
             {
-              "id": "5f10f7ba",
+              "id": "33afa39b",
               "attraction_id": "la-devesa",
               "day_trip_id": "albufera-day-trip",
               "name": "La Devesa (Dehesa del Saler)",
@@ -4512,7 +4567,7 @@
               "notes": null
             },
             {
-              "id": "1fa58a4d",
+              "id": "894a5370",
               "attraction_id": null,
               "day_trip_id": "albufera-day-trip",
               "name": "Return from Albufera Natural Park (bus)",
@@ -4533,7 +4588,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "0666055c",
+              "id": "b20f0da6",
               "attraction_id": "bioparc",
               "day_trip_id": null,
               "name": "Bioparc",
@@ -4546,7 +4601,7 @@
               "notes": null
             },
             {
-              "id": "c0440d6a",
+              "id": "1f24fac1",
               "attraction_id": "turia-gardens",
               "day_trip_id": null,
               "name": "Turia Gardens",
@@ -4559,7 +4614,7 @@
               "notes": null
             },
             {
-              "id": "34b686cd",
+              "id": "8534ac0f",
               "attraction_id": "puente-flores",
               "day_trip_id": null,
               "name": "Puente de las Flores",
@@ -4572,7 +4627,7 @@
               "notes": null
             },
             {
-              "id": "9db809bc",
+              "id": "d2c75149",
               "attraction_id": "cathedral",
               "day_trip_id": null,
               "name": "Valencia Cathedral + Miguelete Tower",
@@ -4593,7 +4648,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "9c002607",
+              "id": "3f498a56",
               "attraction_id": "oceanografic",
               "day_trip_id": null,
               "name": "Oceanografic",
@@ -4606,7 +4661,7 @@
               "notes": null
             },
             {
-              "id": "47a42010",
+              "id": "151da215",
               "attraction_id": "pont-assut-or",
               "day_trip_id": null,
               "name": "Pont de l'Assut de l'Or (The Harp)",
@@ -4619,7 +4674,7 @@
               "notes": null
             },
             {
-              "id": "7b0fdb59",
+              "id": "02d7fdb5",
               "attraction_id": "terraza-270",
               "day_trip_id": null,
               "name": "Terraza 270",
@@ -4640,7 +4695,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "5fcd552d",
+              "id": "b4f4c613",
               "attraction_id": "science-museum",
               "day_trip_id": null,
               "name": "Museu de les Ciencies",
@@ -4653,7 +4708,7 @@
               "notes": null
             },
             {
-              "id": "58156fa0",
+              "id": "ab179a28",
               "attraction_id": "hemisferic",
               "day_trip_id": null,
               "name": "L'Hemisferic",
@@ -4666,10 +4721,10 @@
               "notes": null
             },
             {
-              "id": "ae37f2d4",
+              "id": "4f26c235",
               "attraction_id": "cabanyal-progres",
               "day_trip_id": null,
-              "name": "Carrer del Progres \u00e2\u20ac\u201d Cabanyal Tiles",
+              "name": "Carrer del Progres — Cabanyal Tiles",
               "start_time": null,
               "duration_minutes": 20,
               "price_eur": 0.0,
@@ -4679,7 +4734,7 @@
               "notes": null
             },
             {
-              "id": "da442cc0",
+              "id": "82faa768",
               "attraction_id": "casa-gargoles",
               "day_trip_id": null,
               "name": "Casa de les Gargoles",
@@ -4692,7 +4747,7 @@
               "notes": null
             },
             {
-              "id": "cda0c3fc",
+              "id": "18de61c6",
               "attraction_id": "playa-patacona",
               "day_trip_id": null,
               "name": "Playa de la Patacona",
@@ -4705,7 +4760,7 @@
               "notes": null
             },
             {
-              "id": "b18f49d8",
+              "id": "db3c1335",
               "attraction_id": "casa-montana",
               "day_trip_id": null,
               "name": "Casa Montana",
@@ -4722,11 +4777,11 @@
         },
         {
           "date": "2026-03-27",
-          "label": "Gardens + Ruzafa Food Crawl",
+          "label": "Gardens + Old Town + Ruzafa Food Crawl",
           "start_time": null,
           "activities": [
             {
-              "id": "eeac41c4",
+              "id": "57c7ea87",
               "attraction_id": "jardin-monforte",
               "day_trip_id": null,
               "name": "Jardin de Monforte",
@@ -4739,7 +4794,7 @@
               "notes": null
             },
             {
-              "id": "f766c7fe",
+              "id": "6bedfa11",
               "attraction_id": "jardin-botanico",
               "day_trip_id": null,
               "name": "Jardin Botanico",
@@ -4752,7 +4807,7 @@
               "notes": null
             },
             {
-              "id": "573f51f4",
+              "id": "20a1b095",
               "attraction_id": "cccc-cloisters",
               "day_trip_id": null,
               "name": "Centre del Carme Cloisters",
@@ -4765,7 +4820,33 @@
               "notes": null
             },
             {
-              "id": "20b9d953",
+              "id": "76fc015a",
+              "attraction_id": "horchateria-santa-catalina",
+              "day_trip_id": null,
+              "name": "Horchateria de Santa Catalina",
+              "start_time": null,
+              "duration_minutes": 20,
+              "price_eur": 5.0,
+              "category": "food",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "dcf22bde",
+              "attraction_id": "portal-valldigna",
+              "day_trip_id": null,
+              "name": "Portal de Valldigna",
+              "start_time": null,
+              "duration_minutes": 10,
+              "price_eur": 0.0,
+              "category": "landmark",
+              "travel_from_prev_minutes": null,
+              "status": "planned",
+              "notes": null
+            },
+            {
+              "id": "ccd66790",
               "attraction_id": "blackbird-cafe",
               "day_trip_id": null,
               "name": "Blackbird Cafe",
@@ -4778,7 +4859,7 @@
               "notes": null
             },
             {
-              "id": "4dbd86dc",
+              "id": "d0dc3703",
               "attraction_id": "ubik-cafe",
               "day_trip_id": null,
               "name": "Ubik Cafe",
@@ -4791,20 +4872,7 @@
               "notes": null
             },
             {
-              "id": "6e0f1c5d",
-              "attraction_id": "gnomo-shop",
-              "day_trip_id": null,
-              "name": "GNOMO Design Shop",
-              "start_time": null,
-              "duration_minutes": 15,
-              "price_eur": 0.0,
-              "category": "shopping",
-              "travel_from_prev_minutes": null,
-              "status": "planned",
-              "notes": null
-            },
-            {
-              "id": "56975bb3",
+              "id": "4747968c",
               "attraction_id": "marina-beach-club",
               "day_trip_id": null,
               "name": "Marina Beach Club",
@@ -4817,7 +4885,7 @@
               "notes": null
             }
           ],
-          "notes": "Morning: secret gardens. Afternoon: Ruzafa neighbourhood crawl. Evening: Marina Beach Club sunset."
+          "notes": "Morning: gardens + old town walk. Afternoon: Ruzafa crawl. Evening: Marina Beach Club sunset."
         },
         {
           "date": "2026-03-28",
@@ -4825,7 +4893,7 @@
           "start_time": null,
           "activities": [
             {
-              "id": "82e38b79",
+              "id": "7ba74357",
               "attraction_id": "casa-fran",
               "day_trip_id": null,
               "name": "Casa Fran",
@@ -4838,7 +4906,7 @@
               "notes": null
             },
             {
-              "id": "2bb69d66",
+              "id": "fa5f72a7",
               "attraction_id": "mercado-central",
               "day_trip_id": null,
               "name": "Mercado Central",
@@ -4851,7 +4919,7 @@
               "notes": null
             }
           ],
-          "notes": "Coffee at Casa Fran. Souvenirs at Mercado Central."
+          "notes": "At airport by 12:00. Coffee at Casa Fran. Souvenirs at Mercado Central. Metro by 11:00."
         }
       ]
     }

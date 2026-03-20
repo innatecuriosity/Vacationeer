@@ -1,10 +1,10 @@
 # Valencia Itineraries — March 21-28, 2026
 
 **Key constraints:**
-- **Sat Mar 21** = Arrival day (flight, settle in, light exploring)
+- **Sat Mar 21** = Arrival at 20:00. Settle in, grab dinner nearby. No sightseeing.
 - **Sun Mar 22** = FREE museum day (La Lonja, towers, IVAM, Ceramics, Almoina — save ~12 EUR/pp)
 - **Mon Mar 23** = Many attractions CLOSED (Sagunto, Xativa, Requena, most museums). Good for: Bioparc, beach, cycling, Albufera
-- **Sat Mar 28** = Departure day (morning packing, flight)
+- **Sat Mar 28** = Must be at airport by 12:00. Morning only — quick coffee + last stop, then metro.
 - Tourist Card 72h = activate on a day you use transport + paid museums heavily
 - Paella = lunch dish only. Menu del dia = weekday lunchtimes only.
 
@@ -14,20 +14,16 @@
 
 The "best of everything" itinerary. One day trip, all major sights, good pacing.
 
-### Day 1 — Saturday Mar 21: Arrival + First Impressions
-*Light day, get oriented*
+### Day 1 — Saturday Mar 21: Arrival
+*Land at 20:00. Settle in, grab dinner nearby.*
 
 | Time | Activity |
 |------|----------|
-| Arrive | Flight lands, metro to city (~20 min, 4.80 EUR or free with Tourist Card) |
-| 15:00 | Drop bags, freshen up |
-| 16:00 | **Walk: Plaza del Ayuntamiento → Mercado Central (exterior)** → Plaza de la Virgen → Cathedral exterior |
-| 17:00 | **Horchata + fartons** at Horchateria de Santa Catalina |
-| 17:30 | **Stroll El Carmen** — Portal de Valldigna, Carrer de Lope de Rueda, street art around Plaza del Tossal |
-| 19:00 | **Sunset drinks** at Atenea Sky rooftop (8 EUR entry, cocktails 8-14 EUR) — 360° views |
-| 21:00 | **Dinner** — tapas at Tasca Angel or Bodega La Rentaora (8-15 EUR/pp) |
+| 20:00 | Flight lands. Metro to city (~20 min, 4.80 EUR) |
+| 20:30 | Drop bags at accommodation |
+| 21:00 | **Dinner** — find a tapas bar near your hotel. Bodega La Rentaora or La Pilareta if in old town (both open late) |
 
-**Spend:** ~25-35 EUR/pp | **Steps:** ~8,000
+**Spend:** ~15 EUR/pp | **Steps:** ~2,000
 
 ---
 
@@ -137,8 +133,8 @@ The "best of everything" itinerary. One day trip, all major sights, good pacing.
 
 ---
 
-### Day 7 — Friday Mar 27: Hidden Gems + Chill Day
-*Slower pace. Things you haven't done yet. Mix and match.*
+### Day 7 — Friday Mar 27: Hidden Gems + First Impressions Walk + Last Evening
+*Mix of things you haven't done yet + the old town walk you missed on arrival night.*
 
 | Time | Activity |
 |------|----------|
@@ -149,25 +145,24 @@ The "best of everything" itinerary. One day trip, all major sights, good pacing.
 | 12:30 | **Coffee** at Tallat Coffee Roasters (nerd-level specialty coffee) |
 | 13:00 | **Lunch** — beachfront restaurant on Malvarrosa or walk to Patacona |
 | 15:00 | **Jardin Botanico** (4 EUR) — peaceful, great cactus section |
-| 16:00 | **Jardin de las Hesperides** (free, tiny, mythological) — right nearby |
-| 16:30 | **Last Ruzafa wander** — Ubik Cafe, any shops or street art you missed |
-| 17:30 | **Fallas workshop** at ArtValencia or Valencia&Go (25-40 EUR/pp, optional) — carve your own ninot |
-| 19:00 | **Sunset** — Veles e Vents terraces at the Marina (free) or Terraza 270 (cocktails, City of Arts views) |
-| 21:30 | **Last dinner** — splurge at Canalla Bistro by Ricard Camarena (Michelin chef, 20-35 EUR/pp) |
+| 16:00 | **Old town walk** — Plaza del Ayuntamiento → Mercado Central exterior → Plaza de la Virgen → Cathedral exterior → **Horchata** at Santa Catalina |
+| 17:00 | **Stroll El Carmen** — Portal de Valldigna, Carrer de Lope de Rueda, street art around Plaza del Tossal |
+| 18:30 | **Sunset drinks** at Atenea Sky rooftop (8 EUR entry, cocktails 8-14 EUR) — 360° farewell views |
+| 21:00 | **Last dinner** — splurge at Canalla Bistro by Ricard Camarena (Michelin chef, 20-35 EUR/pp) |
 
-**Spend:** ~25-55 EUR/pp | **Steps:** ~10,000
+**Spend:** ~35-60 EUR/pp | **Steps:** ~14,000
 
 ---
 
 ### Day 8 — Saturday Mar 28: Departure
-*Morning depending on flight time*
+*At airport by 12:00. Tight morning — pick one stop.*
 
 | Time | Activity |
 |------|----------|
 | 9:00 | Last coffee at Bluebell (Ruzafa) or Casa Fran (near Central Market) |
-| 9:45 | **Mercado Central** — pick up olive oil, Xixona nougat, saffron as souvenirs |
-| 10:30 | Any quick stops you missed — L'Iber Toy Soldiers museum (1 hr), or a final old town walk |
-| 12:00 | Metro to airport (~20 min) |
+| 9:45 | **Mercado Central** — pick up olive oil, Xixona nougat, saffron as souvenirs. Opens 7:30. |
+| 10:45 | Head to metro. Pack up if not done. |
+| 11:00 | **Metro to airport** (~20 min). Arrive by 11:30 for 12:00 check-in. |
 
 ---
 
@@ -175,19 +170,19 @@ The "best of everything" itinerary. One day trip, all major sights, good pacing.
 
 | Day | Main spend | Est. cost |
 |-----|-----------|-----------|
-| Sat 21 | Arrival, rooftop, dinner | ~35 EUR |
+| Sat 21 | Arrival at 20:00, dinner only | ~15 EUR |
 | **Sun 22** | **Free museum day + walking tour** | **~20 EUR** |
 | Mon 23 | Bioparc + cycling + beach | ~50 EUR |
 | Tue 24 | Oceanografic + Science + Hemisferic (combo card) | ~25 EUR |
 | Wed 25 | Albufera (bus + boat + paella) | ~40 EUR |
 | Thu 26 | Day trip (varies) | ~25-45 EUR |
-| Fri 27 | Hidden gems + chill | ~35 EUR |
-| Sat 28 | Departure | ~15 EUR |
+| Fri 27 | Hidden gems + old town walk + last dinner | ~45 EUR |
+| Sat 28 | Departure (morning only, airport by 12:00) | ~10 EUR |
 | **72h Tourist Card combo** | Covers Tue-Thu transport + Oceanografic + Science + Hemisferic + Bioparc | **~100 EUR** |
 | **Valenbisi** | Weekly bike pass | ~13 EUR |
-| **TOTAL** | | **~360-400 EUR/pp** |
+| **TOTAL** | | **~345-390 EUR/pp** |
 
-> That's ~45-50 EUR/pp/day including ALL attractions, food, and transport. Well within your 30-50 EUR food budget since the Tourist Card covers the big tickets.
+> That's ~43-49 EUR/pp/day including ALL attractions, food, and transport.
 
 ---
 ---
@@ -198,14 +193,14 @@ Same structure but swaps the chill day for a second day trip. More ambitious.
 
 | Day | Plan | Difference from A |
 |-----|------|-------------------|
-| Sat 21 | Arrival + first impressions | Same |
+| Sat 21 | Arrival at 20:00, dinner only | Same |
 | Sun 22 | Free museum Sunday | Same |
 | Mon 23 | Bioparc + Turia cycling + beach | Same |
 | Tue 24 | Oceanografic + City of Arts | Same |
-| **Wed 25** | **Day trip: Sagunto** (morning castle/theatre, back by 15:00) → **Albufera sunset** (bus to El Palmar, paella dinner, sunset boat) | Combined half-day trip + Albufera evening |
+| **Wed 25** | **Day trip: Sagunto** (morning castle/theatre, back by 15:00) + **Albufera sunset** (bus to El Palmar, paella dinner, sunset boat) | Combined half-day trip + Albufera evening |
 | **Thu 26** | **Day trip: Xativa or Montanejos** (full day) | Second full day trip |
-| Fri 27 | Hidden gems + Cabanyal + chill | Same |
-| Sat 28 | Departure | Same |
+| Fri 27 | Hidden gems + Cabanyal + old town walk | Same |
+| Sat 28 | Departure (airport by 12:00) | Same |
 
 **Pro:** Two day trips + Albufera. See more of the region.
 **Con:** Wed is a long day. Less downtime.
@@ -219,14 +214,14 @@ Slower pace, more food focus, fewer packed days. Skip the second day trip.
 
 | Day | Plan | Difference from A |
 |-----|------|-------------------|
-| Sat 21 | Arrival + old town walk + rooftop sunset | Same |
+| Sat 21 | Arrival at 20:00, dinner only | Same |
 | Sun 22 | Free museums (pick 3-4, don't rush) + walking tour | Fewer museums, longer lunch |
-| Mon 23 | **Albufera by bike** — cycle 20 km to El Palmar through rice fields. Paella lunch. Boat ride. Cycle back. | Swap Bioparc to another day |
+| Mon 23 | **Albufera by bike** — cycle 20 km to El Palmar. Paella lunch. Boat ride. Cycle back. | Swap Bioparc to another day |
 | Tue 24 | **Bioparc** (morning) + Turia Gardens + **Cathedral** (afternoon) | Bioparc moved here |
 | Wed 25 | **Oceanografic** (full day, no rush) | Same but more relaxed |
 | Thu 26 | **Science Museum + Hemisferic** (morning) + **Cabanyal tiles** (afternoon) + **beach walk** | Split City of Arts across 2 days |
-| Fri 27 | **Fallas workshop** (morning) + **Ruzafa food crawl** (afternoon) + **Marina sunset** | Food & culture focus |
-| Sat 28 | Departure | Same |
+| Fri 27 | **Gardens + old town walk** (morning) + **Ruzafa food crawl** (afternoon) + **Marina sunset** | Food & culture focus |
+| Sat 28 | Departure (airport by 12:00) | Same |
 
 **Pro:** Never rushed. More time at each place. More food experiences.
 **Con:** No day trip outside Valencia. Miss Sagunto/Xativa.
@@ -362,6 +357,6 @@ East end: Gulliver Park → City of Arts and Sciences
 - Mon: Bioparc (covered) + metro/bus
 - Tue: Oceanografic + Science Museum + Hemisferic (all covered) + metro
 - Wed: Albufera bus #24 (covered)
-- Card expires Wed evening → Thu onward use Valenbisi bikes + walking
+- Card expires Wed evening. Thu onward: Valenbisi bikes + walking
 
-This covers your 3 most expensive days.
+This covers your 3 most expensive days. Don't waste it on Sat arrival (you land at 20:00).

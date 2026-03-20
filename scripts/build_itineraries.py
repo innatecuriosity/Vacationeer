@@ -64,13 +64,12 @@ def make_day(d, label, attraction_ids, day_trip_id=None, notes=None):
 itin_a = Itinerary(
     id="itin-a",
     name="A \u2014 Balanced Explorer",
-    description="Best of everything. One day trip, all major sights, good pacing. ~360-400 EUR/pp.",
+    description="Best of everything. One day trip, all major sights, good pacing. ~345-390 EUR/pp.",
 )
 itin_a.days = [
-    make_day(date(2026, 3, 21), "Arrival + First Impressions",
-        ["plaza-del-ayuntamiento", "horchateria-santa-catalina", "portal-valldigna",
-         "plaza-tossal-art", "atenea-sky", "tasca-angel"],
-        notes="Light day. Walk old town, street art, rooftop sunset, tapas dinner."),
+    make_day(date(2026, 3, 21), "Arrival",
+        ["bodega-rentaora"],
+        notes="Land at 20:00. Metro to city, settle in, grab dinner nearby."),
 
     make_day(date(2026, 3, 22), "Free Museum Sunday",
         ["la-lonja", "mercado-central", "torres-serranos", "torres-de-quart",
@@ -94,14 +93,15 @@ itin_a.days = [
         day_trip_id="sagunto-day-trip",
         notes="Morning: castle + Roman theatre + Jewish quarter (all free). Back by 15:00. Evening: Cathedral + bell tower."),
 
-    make_day(date(2026, 3, 27), "Hidden Gems + Chill Day",
+    make_day(date(2026, 3, 27), "Hidden Gems + Old Town Walk + Last Evening",
         ["jardin-monforte", "museo-bellas-artes", "viveros-gardens", "cabanyal-progres",
-         "tallat-coffee", "jardin-botanico", "jardin-hesperides", "veles-e-vents"],
-        notes="Slower pace. Secret gardens, Cabanyal tiles, botanical garden, Marina sunset."),
+         "tallat-coffee", "jardin-botanico", "horchateria-santa-catalina", "portal-valldigna",
+         "plaza-tossal-art", "atenea-sky"],
+        notes="Gardens, Cabanyal tiles, old town walk (moved from arrival), rooftop sunset farewell, splurge dinner."),
 
     make_day(date(2026, 3, 28), "Departure",
         ["bluebell-coffee", "mercado-central"],
-        notes="Last coffee at Bluebell. Souvenirs at Mercado Central. Metro to airport."),
+        notes="At airport by 12:00. Quick coffee + Mercado Central souvenirs, then metro."),
 ]
 
 # ================================================================
@@ -110,13 +110,12 @@ itin_a.days = [
 itin_b = Itinerary(
     id="itin-b",
     name="B \u2014 Two Day Trips",
-    description="More ambitious. Sagunto morning + Albufera evening on Wed, full Xativa Thu. ~380-430 EUR/pp.",
+    description="More ambitious. Sagunto morning + Albufera evening on Wed, full Xativa Thu. ~370-420 EUR/pp.",
 )
 itin_b.days = [
-    make_day(date(2026, 3, 21), "Arrival + First Impressions",
-        ["plaza-del-ayuntamiento", "horchateria-santa-catalina", "portal-valldigna",
-         "plaza-tossal-art", "atenea-sky", "tasca-angel"],
-        notes="Same as A."),
+    make_day(date(2026, 3, 21), "Arrival",
+        ["bodega-rentaora"],
+        notes="Land at 20:00. Settle in, dinner nearby."),
 
     make_day(date(2026, 3, 22), "Free Museum Sunday",
         ["la-lonja", "mercado-central", "torres-serranos", "torres-de-quart",
@@ -140,14 +139,14 @@ itin_b.days = [
         day_trip_id="xativa-day-trip",
         notes="Full day. Double castle, Borgia history, upside-down king. Train ~50 min. Book castle tickets online!"),
 
-    make_day(date(2026, 3, 27), "Hidden Gems + Cabanyal + Chill",
+    make_day(date(2026, 3, 27), "Hidden Gems + Old Town Walk + Chill",
         ["jardin-monforte", "museo-bellas-artes", "cabanyal-progres", "jardin-botanico",
-         "ubik-cafe", "terraza-270"],
-        notes="Slower pace. Gardens, Cabanyal tiles, Ruzafa, City of Arts sunset from Terraza 270."),
+         "horchateria-santa-catalina", "portal-valldigna", "atenea-sky", "terraza-270"],
+        notes="Gardens, Cabanyal tiles, old town walk, rooftop farewell sunset."),
 
     make_day(date(2026, 3, 28), "Departure",
         ["bluebell-coffee", "mercado-central"],
-        notes="Last coffee. Souvenirs. Metro to airport."),
+        notes="At airport by 12:00. Quick coffee + souvenirs, then metro."),
 ]
 
 # ================================================================
@@ -156,12 +155,12 @@ itin_b.days = [
 itin_c = Itinerary(
     id="itin-c",
     name="C \u2014 Relaxed & Romantic",
-    description="Slower pace, food focus, no day trips outside Valencia. More time at each place. ~320-370 EUR/pp.",
+    description="Slower pace, food focus, no day trips outside Valencia. More time at each place. ~310-360 EUR/pp.",
 )
 itin_c.days = [
-    make_day(date(2026, 3, 21), "Arrival + Old Town Evening",
-        ["plaza-del-ayuntamiento", "horchateria-santa-catalina", "atenea-sky", "bodega-rentaora"],
-        notes="Light arrival day. Old town walk, horchata, rooftop sunset, old-school tapas."),
+    make_day(date(2026, 3, 21), "Arrival",
+        ["bodega-rentaora"],
+        notes="Land at 20:00. Settle in, dinner nearby."),
 
     make_day(date(2026, 3, 22), "Free Museum Sunday (Relaxed)",
         ["la-lonja", "mercado-central", "torres-serranos", "almoina",
@@ -185,14 +184,14 @@ itin_c.days = [
          "playa-patacona", "casa-montana"],
         notes="Science Museum morning. Cabanyal tile walk afternoon. Beach stroll to Patacona. Casa Montana dinner."),
 
-    make_day(date(2026, 3, 27), "Gardens + Ruzafa Food Crawl",
-        ["jardin-monforte", "jardin-botanico", "cccc-cloisters", "blackbird-cafe",
-         "ubik-cafe", "gnomo-shop", "marina-beach-club"],
-        notes="Morning: secret gardens. Afternoon: Ruzafa neighbourhood crawl. Evening: Marina Beach Club sunset."),
+    make_day(date(2026, 3, 27), "Gardens + Old Town + Ruzafa Food Crawl",
+        ["jardin-monforte", "jardin-botanico", "cccc-cloisters", "horchateria-santa-catalina",
+         "portal-valldigna", "blackbird-cafe", "ubik-cafe", "marina-beach-club"],
+        notes="Morning: gardens + old town walk. Afternoon: Ruzafa crawl. Evening: Marina Beach Club sunset."),
 
     make_day(date(2026, 3, 28), "Departure",
         ["casa-fran", "mercado-central"],
-        notes="Coffee at Casa Fran. Souvenirs at Mercado Central."),
+        notes="At airport by 12:00. Coffee at Casa Fran. Souvenirs at Mercado Central. Metro by 11:00."),
 ]
 
 # ================================================================
