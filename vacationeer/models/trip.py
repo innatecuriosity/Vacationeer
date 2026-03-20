@@ -53,6 +53,8 @@ class Attraction(BaseModel):
     url: Optional[str] = None
     expected_score: Optional[float] = None
     user_score: Optional[float] = None
+    visited: bool = False
+    hidden: bool = False
 
 
 class TravelSegment(BaseModel):
@@ -104,6 +106,8 @@ class DayTrip(BaseModel):
     tips: Optional[str] = None
     expected_score: Optional[float] = None
     user_score: Optional[float] = None
+    visited: bool = False
+    hidden: bool = False
 
 
 class Grouping(BaseModel):

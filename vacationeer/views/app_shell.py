@@ -128,6 +128,13 @@ def generate_app(
     timeline_inner = tab_contents.get("timeline-content", "")
     grouping_palette = GROUPING_PALETTE
 
+    cat_colors_modal_js = "{" + ", ".join(
+        f"'{c.value}': '{info.color}'" for c, info in CATEGORY_META.items()
+    ) + "}"
+    cat_labels_modal_js = "{" + ", ".join(
+        f"'{c.value}': '{info.label}'" for c, info in CATEGORY_META.items()
+    ) + "}"
+
     trip_json = json.dumps(
         trip.model_dump(mode="json"),
         default=_json_serializer,
@@ -883,8 +890,38 @@ window.__TRIP_DATA__ = {trip_json};
             var local = JSON.parse(saved);
             // Only use local if it has a _localTs (was saved by offline layer)
             if (local._localTs) {{
-                // Merge: keep local mutations over embedded data
-                Object.assign(window.__TRIP_DATA__, local);
+                // Merge local mutations INTO embedded data (embedded is source of truth for structure)
+                var embedded = window.__TRIP_DATA__;
+                // Merge per-attraction mutable fields (scores, visited, hidden) from local into embedded
+                if (local.attractions && embedded.attractions) {{
+                    var localById = {{}};
+                    local.attractions.forEach(function(a) {{ if (a.id) localById[a.id] = a; }});
+                    embedded.attractions.forEach(function(a) {{
+                        var la = localById[a.id];
+                        if (la) {{
+                            if (la.user_score != null) a.user_score = la.user_score;
+                            if (la.visited) a.visited = la.visited;
+                            if (la.hidden) a.hidden = la.hidden;
+                        }}
+                    }});
+                }}
+                if (local.day_trips && embedded.day_trips) {{
+                    var localDtById = {{}};
+                    local.day_trips.forEach(function(d) {{ if (d.id) localDtById[d.id] = d; }});
+                    embedded.day_trips.forEach(function(d) {{
+                        var ld = localDtById[d.id];
+                        if (ld) {{
+                            if (ld.user_score != null) d.user_score = ld.user_score;
+                            if (ld.visited) d.visited = ld.visited;
+                            if (ld.hidden) d.hidden = ld.hidden;
+                        }}
+                    }});
+                }}
+                // Merge non-structural fields (preferences, days/itineraries, groupings)
+                if (local.preferences) embedded.preferences = local.preferences;
+                if (local.days) embedded.days = local.days;
+                if (local.itineraries) embedded.itineraries = local.itineraries;
+                if (local.groupings) embedded.groupings = local.groupings;
             }}
         }} catch(e) {{ /* ignore corrupt data */ }}
     }}
@@ -946,11 +983,21 @@ function reloadMap() {{
     }}, 1500);
 }}
 
+function googleMapsUrl(loc, name) {{
+    if (loc && loc.lat && !(Math.abs(loc.lat) < 0.01 && Math.abs(loc.lng) < 0.01)) {{
+        return 'https://www.google.com/maps/search/?api=1&query=' + loc.lat + ',' + loc.lng;
+    }}
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name || '');
+}}
+
 /* Listen for messages from map iframe (e.g. after inline edit) */
 window.addEventListener('message', function(e) {{
     if (e.data && e.data.type === 'attraction-updated') {{
         var store = Alpine.store('trip');
         if (store && store.reload) store.reload();
+    }}
+    if (e.data && e.data.type === 'open-attraction') {{
+        window.dispatchEvent(new CustomEvent('open-attraction', {{detail: {{id: e.data.id}}}}));
     }}
 }});
 
@@ -1413,6 +1460,189 @@ function sidebarChat() {{
                 }}
             }}
             return results.length ? results.join('\\n') : '';
+        }}
+    }};
+}}
+
+/* Attraction detail modal component */
+function attractionModal() {{
+    return {{
+        open: false,
+        item: null,
+        isDayTrip: false,
+        editing: false,
+        editForm: {{}},
+        _dayDate: null,
+        _activityId: null,
+        catColors: {cat_colors_modal_js},
+        catLabels: {cat_labels_modal_js},
+        catColor: function(c) {{ return this.catColors[c] || '#888'; }},
+        catLabel: function(c) {{ return this.catLabels[c] || c; }},
+
+        openById: function(id, ctx) {{
+            var store = Alpine.store('trip');
+            ctx = ctx || {{}};
+            var attr = (store.attractions || []).find(function(a) {{ return a.id === id; }});
+            if (attr) {{
+                this.item = JSON.parse(JSON.stringify(attr));
+                this.isDayTrip = false;
+            }} else {{
+                var dt = (store.day_trips || []).find(function(d) {{ return d.id === id; }});
+                if (dt) {{
+                    this.item = JSON.parse(JSON.stringify(dt));
+                    this.isDayTrip = true;
+                }} else {{
+                    // Search sub-attractions within day trips
+                    var found = null;
+                    (store.day_trips || []).forEach(function(d) {{
+                        if (!found) {{
+                            var sub = (d.sub_attractions || []).find(function(s) {{ return s.id === id; }});
+                            if (sub) found = sub;
+                        }}
+                    }});
+                    if (found) {{
+                        this.item = JSON.parse(JSON.stringify(found));
+                        this.isDayTrip = false;
+                    }} else return;
+                }}
+            }}
+            this._dayDate = ctx.dayDate || null;
+            this._activityId = ctx.activityId || null;
+            this.editing = false;
+            this.open = true;
+        }},
+
+        startEdit: function() {{
+            var a = this.item;
+            this.editForm = {{
+                name: a.name || '',
+                description: a.description || '',
+                category: a.category || 'landmark',
+                price_eur: this.isDayTrip ? a.total_price_eur : a.price_eur,
+                duration_minutes: this.isDayTrip ? a.total_duration_minutes : a.duration_minutes,
+                tips: a.tips || '',
+                url: a.url || '',
+                tags: [].concat(a.tags || []),
+                tagInput: '',
+                expected_score: a.expected_score
+            }};
+            this.editing = true;
+        }},
+
+        addTag: function() {{
+            var v = this.editForm.tagInput.replace(/,/g, '').trim();
+            if (v && !this.editForm.tags.includes(v)) this.editForm.tags.push(v);
+            this.editForm.tagInput = '';
+        }},
+
+        removeTag: function(i) {{ this.editForm.tags.splice(i, 1); }},
+
+        saveEdit: function() {{
+            var f = this.editForm;
+            var data = {{
+                name: f.name,
+                description: f.description || null,
+                tips: f.tips || null,
+                url: f.url || null,
+                tags: f.tags,
+                expected_score: f.expected_score != null && f.expected_score !== '' ? parseFloat(f.expected_score) : null
+            }};
+            var store = Alpine.store('trip');
+            if (this.isDayTrip) {{
+                data.total_price_eur = f.price_eur != null && f.price_eur !== '' ? parseFloat(f.price_eur) : null;
+                data.total_duration_minutes = f.duration_minutes != null && f.duration_minutes !== '' ? parseInt(f.duration_minutes) : null;
+                store.updateDayTrip(this.item.id, data);
+            }} else {{
+                data.category = f.category;
+                data.price_eur = f.price_eur != null && f.price_eur !== '' ? parseFloat(f.price_eur) : null;
+                data.duration_minutes = f.duration_minutes != null && f.duration_minutes !== '' ? parseInt(f.duration_minutes) : null;
+                store.updateAttraction(this.item.id, data);
+            }}
+            Object.assign(this.item, data);
+            if (!this.isDayTrip) {{
+                this.item.price_eur = data.price_eur;
+                this.item.duration_minutes = data.duration_minutes;
+                this.item.category = data.category;
+            }} else {{
+                this.item.total_price_eur = data.total_price_eur;
+                this.item.total_duration_minutes = data.total_duration_minutes;
+            }}
+            this.editing = false;
+        }},
+
+        setScore: function(score) {{
+            if (!this.item) return;
+            this.item.user_score = score;
+            var store = Alpine.store('trip');
+            if (this.isDayTrip) {{
+                store.setDayTripScore(this.item.id, score);
+            }} else {{
+                store.setScore(this.item.id, score);
+            }}
+        }},
+
+        mapsUrl: function() {{
+            if (!this.item) return '#';
+            return googleMapsUrl(this.item.location, this.item.name);
+        }},
+
+        fmtDuration: function(m) {{
+            if (!m) return '';
+            if (m < 60) return m + 'min';
+            var h = Math.floor(m / 60), r = m % 60;
+            return r ? h + 'h ' + r + 'min' : h + 'h';
+        }},
+
+        fmtPrice: function(p) {{
+            if (p == null || p === 0) return 'Free';
+            return p === Math.floor(p) ? '\u20ac' + p : '\u20ac' + p.toFixed(2);
+        }},
+
+        toggleVisited: function() {{
+            if (!this.item) return;
+            this.item.visited = !this.item.visited;
+            var store = Alpine.store('trip');
+            if (this.isDayTrip) {{
+                store.updateDayTrip(this.item.id, {{visited: this.item.visited}});
+            }} else {{
+                store.updateAttraction(this.item.id, {{visited: this.item.visited}});
+            }}
+        }},
+
+        toggleHidden: function() {{
+            if (!this.item) return;
+            this.item.hidden = !this.item.hidden;
+            var store = Alpine.store('trip');
+            if (this.isDayTrip) {{
+                store.updateDayTrip(this.item.id, {{hidden: this.item.hidden}});
+            }} else {{
+                store.updateAttraction(this.item.id, {{hidden: this.item.hidden}});
+            }}
+        }},
+
+        deleteItem: function() {{
+            if (!this.item || !confirm('Delete ' + this.item.name + '?')) return;
+            var store = Alpine.store('trip');
+            if (this.isDayTrip) {{
+                store.deleteDayTrip(this.item.id);
+            }} else {{
+                store.deleteAttraction(this.item.id);
+            }}
+            this.close();
+        }},
+
+        unscheduleItem: function() {{
+            if (!this._dayDate || !this._activityId) return;
+            Alpine.store('trip').deleteActivity(this._dayDate, this._activityId);
+            this.close();
+        }},
+
+        close: function() {{
+            this.open = false;
+            this.editing = false;
+            this.item = null;
+            this._dayDate = null;
+            this._activityId = null;
         }}
     }};
 }}
@@ -2115,6 +2345,201 @@ document.addEventListener('alpine:init', function() {{
     <template x-for="(t, i) in toasts" :key="i">
         <div class="toast" :class="t.type" x-text="t.message"></div>
     </template>
+</div>
+
+<!-- Attraction Detail Modal (global, opened from any view) -->
+<div x-data="attractionModal()" @open-attraction.window="openById($event.detail.id, $event.detail)" x-cloak>
+  <template x-if="open && item">
+    <div class="modal-backdrop" @mousedown.self="close()" @keydown.escape.window="close()">
+      <div class="modal" @click.stop>
+
+        <!-- ===== View Mode ===== -->
+        <div x-show="!editing">
+          <div class="modal-header" :style="'background:' + catColor(item.category || 'day_trip')" style="display:block;padding:12px 16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.85" x-text="catLabel(item.category || 'day_trip')"></div>
+              <div style="display:flex;gap:3px;align-items:center">
+                <button @click="deleteItem()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer;padding:2px 4px" title="Delete">&#x1f5d1;&#xfe0f;</button>
+                <button @click="toggleHidden()" :style="'background:none;border:none;font-size:18px;cursor:pointer;padding:2px 4px;color:' + (item.hidden ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,.4)')" :title="item.hidden ? 'Unhide' : 'Hide'">&#x1f47b;</button>
+                <a x-show="item.url" :href="item.url || '#'" target="_blank" rel="noopener" @click.stop style="background:none;border:none;color:rgba(255,255,255,.85);font-size:18px;cursor:pointer;padding:2px 4px;text-decoration:none" title="Website">&#x1f310;</a>
+                <a :href="mapsUrl()" target="_blank" rel="noopener" @click.stop style="background:none;border:none;color:rgba(255,255,255,.85);font-size:18px;cursor:pointer;padding:2px 4px;text-decoration:none" title="Google Maps">&#x1f4cd;</a>
+                <button @click="startEdit()" style="background:none;border:none;color:rgba(255,255,255,.85);font-size:18px;cursor:pointer;padding:2px 4px" title="Edit">&#x270f;&#xfe0f;</button>
+                <button @click="toggleVisited()" :style="'background:none;border:none;font-size:18px;cursor:pointer;padding:2px 4px;color:' + (item.visited ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,.4)')" :title="item.visited ? 'Mark as not visited' : 'Mark as visited'" x-html="item.visited ? '\u2705' : '\u2610'"></button>
+                <button x-show="_dayDate && _activityId" @click="unscheduleItem()" style="background:none;border:none;color:rgba(255,255,255,.85);font-size:18px;cursor:pointer;padding:2px 4px" title="Unschedule">&#x1f4e4;</button>
+                <button @click="close()" style="background:none;border:none;color:rgba(255,255,255,.85);font-size:22px;cursor:pointer;padding:0 3px;line-height:1">&times;</button>
+              </div>
+            </div>
+            <h3 style="margin:4px 0 0;font-size:18px;font-weight:700" x-text="item.name"></h3>
+          </div>
+
+          <div class="modal-body" style="max-height:calc(85vh - 140px);overflow-y:auto">
+            <p x-show="item.description" style="margin:0 0 12px;font-size:14px;color:#555;line-height:1.6" x-text="item.description"></p>
+
+            <div x-show="item.tips" style="margin:0 0 12px;padding:10px 14px;background:#FFF9E6;border-left:3px solid #F1C40F;border-radius:0 8px 8px 0;font-size:13px;color:#7D6608;line-height:1.5">
+              <strong>&#x1f4a1; Tip:</strong> <span x-text="item.tips"></span>
+            </div>
+
+            <div style="margin:0 0 12px">
+              <div style="font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Your rating</div>
+              <div style="display:flex;align-items:center;gap:2px">
+                <template x-for="s in [1,2,3,4,5,6,7,8,9,10]" :key="s">
+                  <span @click="setScore(s)" :style="'cursor:pointer;font-size:20px;transition:color .1s;color:' + (s <= (item.user_score || 0) ? '#f39c12' : '#ddd')">&#x2605;</span>
+                </template>
+                <span x-show="item.user_score" style="margin-left:8px;font-size:13px;font-weight:600;color:#f39c12" x-text="(item.user_score || 0) + '/10'"></span>
+              </div>
+            </div>
+
+            <div style="border-top:1px solid #f0f0f0">
+              <div x-show="item.expected_score" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+                <span style="font-weight:600;color:#555;min-width:80px">AI score</span>
+                <span style="color:#1a2332" x-text="item.expected_score ? item.expected_score.toFixed(1) + '/10' : ''"></span>
+              </div>
+              <div x-show="isDayTrip ? item.total_duration_minutes : item.duration_minutes" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+                <span style="font-weight:600;color:#555;min-width:80px">Duration</span>
+                <span style="color:#1a2332" x-text="fmtDuration(isDayTrip ? item.total_duration_minutes : item.duration_minutes)"></span>
+              </div>
+              <div x-show="(isDayTrip ? item.total_price_eur : item.price_eur) != null" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+                <span style="font-weight:600;color:#555;min-width:80px">Price</span>
+                <span style="color:#1a2332" x-text="fmtPrice(isDayTrip ? item.total_price_eur : item.price_eur)"></span>
+              </div>
+              <div x-show="item.location && item.location.address" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+                <span style="font-weight:600;color:#555;min-width:80px">Address</span>
+                <span style="flex:1;color:#1a2332" x-text="item.location ? item.location.address : ''"></span>
+              </div>
+              <div x-show="item.location && item.location.lat" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+                <span style="font-weight:600;color:#555;min-width:80px">Coords</span>
+                <span style="flex:1;color:#1a2332">
+                  <span x-text="item.location ? item.location.lat.toFixed(5) + ', ' + item.location.lng.toFixed(5) : ''"></span>
+                  <a :href="mapsUrl()" target="_blank" rel="noopener" style="margin-left:8px;color:#4285f4;text-decoration:none;font-size:12px;font-weight:600">&#x1f4cd; Maps</a>
+                </span>
+              </div>
+              <div x-show="item.url" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+                <span style="font-weight:600;color:#555;min-width:80px">Link</span>
+                <a :href="item.url" target="_blank" rel="noopener" style="flex:1;color:#2980b9;text-decoration:none;word-break:break-all" x-text="item.url"></a>
+              </div>
+            </div>
+
+            <div x-show="item.tags && item.tags.length" style="margin:12px 0">
+              <div style="font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Tags</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                <template x-for="tag in (item.tags || [])" :key="tag">
+                  <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:#e8ecf1;color:#4a5568;font-size:11px;font-weight:500" x-text="tag"></span>
+                </template>
+              </div>
+            </div>
+
+            <div x-show="($store.trip.groupings || []).length" style="margin:12px 0">
+              <div style="font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Groupings</div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px">
+                <template x-for="grp in ($store.trip.groupings || [])" :key="grp.id">
+                  <button type="button" @click="$store.trip.toggleGroupingMember(grp.id, item.id)"
+                    :style="'display:inline-flex;align-items:center;padding:4px 12px;border-radius:14px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid ' + (grp.color || '#888') + ';transition:all .15s;'
+                      + ((grp.member_ids || []).includes(item.id) ? 'background:' + (grp.color || '#888') + ';color:#fff;' : 'background:#fff;color:' + (grp.color || '#888') + ';')"
+                    x-text="grp.name"></button>
+                </template>
+              </div>
+            </div>
+
+            <template x-if="isDayTrip && item.sub_attractions && item.sub_attractions.length">
+              <div style="margin:12px 0">
+                <div style="font-weight:600;font-size:13px;color:#1a2332;margin-bottom:6px">Included Attractions</div>
+                <template x-for="sub in item.sub_attractions" :key="sub.id || sub.name">
+                  <div style="padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
+                    <span style="font-weight:600" x-text="sub.name"></span>
+                    <span x-show="sub.description" style="color:#888;margin-left:6px" x-text="sub.description"></span>
+                  </div>
+                </template>
+              </div>
+            </template>
+
+            <div x-show="_dayDate" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #f0f0f0;font-size:13px;margin-top:8px">
+              <span style="font-weight:600;color:#555;min-width:80px">Scheduled</span>
+              <span style="color:#1a2332" x-text="_dayDate"></span>
+            </div>
+          </div>
+
+          <!-- Action buttons moved to header icon toolbar -->
+        </div>
+
+        <!-- ===== Edit Mode ===== -->
+        <div x-show="editing">
+          <div class="modal-header" :style="'background:' + catColor(item.category || 'day_trip')" style="display:block;padding:12px 16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.85">Editing</div>
+              <div style="display:flex;gap:3px;align-items:center">
+                <button @click="saveEdit()" style="background:none;border:none;color:rgba(255,255,255,.95);font-size:18px;cursor:pointer;padding:2px 4px" title="Save">&#x1f4be;</button>
+                <button @click="editing = false" style="background:none;border:none;color:rgba(255,255,255,.85);font-size:22px;cursor:pointer;padding:0 3px;line-height:1" title="Cancel">&times;</button>
+              </div>
+            </div>
+            <h3 style="margin:4px 0 0;font-size:18px;font-weight:700" x-text="item.name"></h3>
+          </div>
+          <div class="modal-body" style="max-height:calc(85vh - 140px);overflow-y:auto">
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" x-model="editForm.name">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea x-model="editForm.description" rows="3"></textarea>
+            </div>
+            <div class="form-group" x-show="!isDayTrip">
+              <label>Category</label>
+              <select x-model="editForm.category">
+{category_options}
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Price (&euro;)</label>
+                <input type="number" x-model="editForm.price_eur" placeholder="0" min="0" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Duration (min)</label>
+                <input type="number" x-model="editForm.duration_minutes" placeholder="60" min="0" step="5">
+              </div>
+              <div class="form-group">
+                <label>Expected Score</label>
+                <input type="number" x-model="editForm.expected_score" placeholder="7.5" min="0" max="10" step="0.1">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Tags</label>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;min-height:38px;align-items:center;background:#fff;">
+                <template x-for="(tag, ti) in editForm.tags" :key="ti">
+                  <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;background:#e8ecf1;color:#4a5568;font-size:12px;font-weight:500">
+                    <span x-text="tag"></span>
+                    <button type="button" @click="removeTag(ti)" style="background:none;border:none;color:#999;cursor:pointer;font-size:14px;line-height:1;padding:0 2px">&times;</button>
+                  </span>
+                </template>
+                <input x-model="editForm.tagInput" @keydown.enter.prevent="addTag()" @keydown.comma.prevent="addTag()" placeholder="Add tag..." style="border:none;outline:none;font-size:13px;min-width:80px;flex:1;padding:2px 0;background:transparent">
+              </div>
+            </div>
+            <div class="form-group" x-show="($store.trip.groupings || []).length">
+              <label>Groupings</label>
+              <div style="display:flex;flex-wrap:wrap;gap:5px">
+                <template x-for="grp in ($store.trip.groupings || [])" :key="grp.id">
+                  <button type="button" @click="$store.trip.toggleGroupingMember(grp.id, item.id)"
+                    :style="'display:inline-flex;align-items:center;padding:4px 12px;border-radius:14px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid ' + (grp.color || '#888') + ';transition:all .15s;'
+                      + ((grp.member_ids || []).includes(item.id) ? 'background:' + (grp.color || '#888') + ';color:#fff;' : 'background:#fff;color:' + (grp.color || '#888') + ';')"
+                    x-text="grp.name"></button>
+                </template>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Tips</label>
+              <input type="text" x-model="editForm.tips" placeholder="Helpful tips...">
+            </div>
+            <div class="form-group">
+              <label>URL</label>
+              <input type="url" x-model="editForm.url" placeholder="https://...">
+            </div>
+            <!-- Save/Cancel moved to header icons -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </template>
 </div>
 
 <!-- Modals -->

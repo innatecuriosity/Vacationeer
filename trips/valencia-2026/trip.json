@@ -473,7 +473,7 @@
       "expected_score": 7.5,
       "user_score": null,
       "visited": false,
-      "hidden": false
+      "hidden": true
     },
     {
       "id": "centre-del-carme",
@@ -1817,6 +1817,26 @@
       "tips": "Nobody recommends this in tourist guides. Great sunset spot. Varadero bar inside for drinks.",
       "url": null,
       "expected_score": 7.0,
+      "user_score": null,
+      "visited": false,
+      "hidden": false
+    },
+    {
+      "id": "airbnb-flat",
+      "name": "Airbnb Flat",
+      "description": "Check-in: 2026-03-21 / Check-out: 2026-03-28\nienvenid@ al loft y a Valencia, then le indicico todo del apartamento.\n\nThe loft you have booked is at Plaza Monistrol 12 bajo letra D. 46017 Valencia.\nCheck-in on March 21, 2026, at 4:00 p.m., and check-out on March 28, 2026, at 11:00 a.m.\n",
+      "location": {
+        "lat": 39.444335,
+        "lng": -0.389422,
+        "address": "Plaza Monistrol 12 bajo letra D. 46017"
+      },
+      "category": "accommodation",
+      "price_eur": null,
+      "duration_minutes": null,
+      "tags": [],
+      "tips": "Check-in: To access the apartment you only have to: 1.- Enter the following digits (2413) and you can open the box to take the key 2.- Inside the house has an anti-theft security system (alarm), to turn off you only have to pass the key fob that is located along with the key above the anti-theft detector box, you can find just entering on the left hand side.  Video of how to get there and Check in correctly.: https://youtu.be/9OpPlU77ZaY  Check Out: To check out you have to leave the key inside the keybox and make sure the apartment alarm is activated.  Check-out video correctly.: https://youtu.be/D9Op6DMCUSA  WIFI.: DIGIFIBRA-yfNf Password.: PPEPGHHSNAf3  Public transportation.: Bus stop to city center n 15 minutes approximately.: Line 9, 10 that takes you to downtown Valencia. https://maps.app.goo.gl/sVy2rQQoQTC1e3Z78?g_st=iwb  stop line 99 that takes you to the city of Arts and Sciences and Malva-Rosa beach of Valencia.: https://maps.app.goo.gl/vF41XJCUmJjgqvfY7?g_st=iwb",
+      "url": null,
+      "expected_score": null,
       "user_score": null,
       "visited": false,
       "hidden": false
@@ -4924,5 +4944,5 @@
       ]
     }
   ],
-  "active_itinerary_id": "itin-a"
+  "active_itinerary_id": "itin-c"
 }

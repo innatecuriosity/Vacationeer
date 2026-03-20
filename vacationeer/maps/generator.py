@@ -65,12 +65,39 @@ def _popup_html(a: Attraction) -> str:
     if a.description:
         desc_html = f'<div style="color:#555;font-size:12px;line-height:1.5;margin-bottom:8px;">{a.description}</div>'
 
+    # Google Maps URL
+    if a.location and a.location.lat and not (abs(a.location.lat) < 0.01 and abs(a.location.lng) < 0.01):
+        maps_url = f"https://www.google.com/maps/search/?api=1&query={a.location.lat},{a.location.lng}"
+    else:
+        from urllib.parse import quote
+        maps_url = f"https://www.google.com/maps/search/?api=1&query={quote(a.name)}"
+
+    # Header icons
+    website_icon = (
+        f'<a href="{a.url}" target="_blank" style="color:rgba(255,255,255,.85);font-size:14px;'
+        f'text-decoration:none;padding:0 2px;" title="Website">&#x1f310;</a>'
+    ) if a.url else ""
+    maps_icon = (
+        f'<a href="{maps_url}" target="_blank" style="color:rgba(255,255,255,.85);font-size:14px;'
+        f'text-decoration:none;padding:0 2px;" title="Google Maps">&#x1f4cd;</a>'
+    )
+    visited_icon = (
+        '<span style="font-size:14px;padding:0 2px;" title="Visited">&#x2705;</span>'
+    ) if a.visited else ""
+
     html = f"""
 <div style="font-family:{FONT_STACK_MAP};width:300px;max-width:85vw;" id="popup_{uid}">
   <!-- Header -->
-  <div style="background:{hex_color};color:#fff;padding:12px 16px;border-radius:10px 10px 0 0;">
-    <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">{category_label(a.category)}</div>
-    <div style="font-size:16px;font-weight:700;margin-top:2px;">{a.name}</div>
+  <div style="background:{hex_color};color:#fff;padding:10px 14px;padding-right:28px;border-radius:10px 10px 0 0;position:relative;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">{'&#x1f47b; ' if a.hidden else ''}{category_label(a.category)}</div>
+      <div style="display:flex;gap:3px;align-items:center;">
+        {visited_icon}{website_icon}{maps_icon}
+        <button onclick="window.parent.postMessage({{type:'open-attraction',id:'{uid}'}},'*')"
+                style="background:none;border:none;color:rgba(255,255,255,.9);font-size:16px;cursor:pointer;padding:0 2px;line-height:1;" title="Open details">\u25BC</button>
+      </div>
+    </div>
+    <div style="font-size:15px;font-weight:700;margin-top:3px;">{a.name}</div>
   </div>
 
   <!-- Body -->
@@ -105,10 +132,7 @@ def _popup_html(a: Attraction) -> str:
     {tag_pills}
     {tips_html}
 
-    <!-- Action row -->
-    <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
-      {url_html}
-    </div>
+    {f'<div style="margin-top:8px;">{url_html}</div>' if url_html else ''}
   </div>
 </div>
 """
@@ -251,17 +275,30 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     # Add standalone attractions to category clusters
     for attraction in trip.attractions:
         info = get_category_info(attraction.category)
-        marker = folium.Marker(
-            location=[attraction.location.lat, attraction.location.lng],
-            icon=folium.DivIcon(
-                html=_marker_html(info.emoji, attraction.name),
-                icon_size=(80, 40),
-                icon_anchor=(40, 14),
-            ),
-            tooltip=folium.Tooltip(_tooltip_html(attraction), sticky=False),
-            popup=folium.Popup(_popup_html(attraction), max_width=320),
-        )
-        marker.add_to(groups[attraction.category])
+        if attraction.visited or attraction.hidden:
+            color = '#e74c3c' if attraction.visited else '#999'
+            folium.CircleMarker(
+                location=[attraction.location.lat, attraction.location.lng],
+                radius=6,
+                color=color,
+                fill=True,
+                fill_color=color,
+                fill_opacity=0.7,
+                tooltip=folium.Tooltip(_tooltip_html(attraction), sticky=False),
+                popup=folium.Popup(_popup_html(attraction), max_width=320),
+            ).add_to(groups[attraction.category])
+        else:
+            marker = folium.Marker(
+                location=[attraction.location.lat, attraction.location.lng],
+                icon=folium.DivIcon(
+                    html=_marker_html(info.emoji, attraction.name),
+                    icon_size=(80, 40),
+                    icon_anchor=(40, 14),
+                ),
+                tooltip=folium.Tooltip(_tooltip_html(attraction), sticky=False),
+                popup=folium.Popup(_popup_html(attraction), max_width=320),
+            )
+            marker.add_to(groups[attraction.category])
 
     # Day trips: each gets its own FeatureGroup for independent toggling
     dt_fgs: list[tuple] = []  # (day_trip, FeatureGroup) pairs
@@ -282,30 +319,58 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                 tips=dt.tips,
                 expected_score=dt.expected_score,
                 user_score=dt.user_score,
+                visited=dt.visited,
+                hidden=dt.hidden,
             )
-            folium.Marker(
-                location=[dt.location.lat, dt.location.lng],
-                icon=folium.DivIcon(
-                    html=_marker_html(dt_info.emoji, dt.name),
-                    icon_size=(80, 40),
-                    icon_anchor=(40, 14),
-                ),
-                tooltip=folium.Tooltip(_tooltip_html(dt_as_attr), sticky=False),
-                popup=folium.Popup(_popup_html(dt_as_attr), max_width=320),
-            ).add_to(fg)
+            if dt.visited or dt.hidden:
+                _dt_color = '#e74c3c' if dt.visited else '#999'
+                folium.CircleMarker(
+                    location=[dt.location.lat, dt.location.lng],
+                    radius=6,
+                    color=_dt_color,
+                    fill=True,
+                    fill_color=_dt_color,
+                    fill_opacity=0.7,
+                    tooltip=folium.Tooltip(_tooltip_html(dt_as_attr), sticky=False),
+                    popup=folium.Popup(_popup_html(dt_as_attr), max_width=320),
+                ).add_to(fg)
+            else:
+                folium.Marker(
+                    location=[dt.location.lat, dt.location.lng],
+                    icon=folium.DivIcon(
+                        html=_marker_html(dt_info.emoji, dt.name),
+                        icon_size=(80, 40),
+                        icon_anchor=(40, 14),
+                    ),
+                    tooltip=folium.Tooltip(_tooltip_html(dt_as_attr), sticky=False),
+                    popup=folium.Popup(_popup_html(dt_as_attr), max_width=320),
+                ).add_to(fg)
         # Sub-attraction markers
         for sub in dt.sub_attractions:
             sub_info = get_category_info(sub.category)
-            folium.Marker(
-                location=[sub.location.lat, sub.location.lng],
-                icon=folium.DivIcon(
-                    html=_marker_html(sub_info.emoji, sub.name),
-                    icon_size=(80, 40),
-                    icon_anchor=(40, 14),
-                ),
-                tooltip=folium.Tooltip(_tooltip_html(sub), sticky=False),
-                popup=folium.Popup(_popup_html(sub), max_width=320),
-            ).add_to(fg)
+            if sub.visited or sub.hidden:
+                _sub_color = '#e74c3c' if sub.visited else '#999'
+                folium.CircleMarker(
+                    location=[sub.location.lat, sub.location.lng],
+                    radius=6,
+                    color=_sub_color,
+                    fill=True,
+                    fill_color=_sub_color,
+                    fill_opacity=0.7,
+                    tooltip=folium.Tooltip(_tooltip_html(sub), sticky=False),
+                    popup=folium.Popup(_popup_html(sub), max_width=320),
+                ).add_to(fg)
+            else:
+                folium.Marker(
+                    location=[sub.location.lat, sub.location.lng],
+                    icon=folium.DivIcon(
+                        html=_marker_html(sub_info.emoji, sub.name),
+                        icon_size=(80, 40),
+                        icon_anchor=(40, 14),
+                    ),
+                    tooltip=folium.Tooltip(_tooltip_html(sub), sticky=False),
+                    popup=folium.Popup(_popup_html(sub), max_width=320),
+                ).add_to(fg)
         fg.add_to(m)
         dt_fgs.append((dt, fg))
 
