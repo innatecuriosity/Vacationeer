@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vacationeer-valencia-1774021767';
+const CACHE_NAME = 'vacationeer-valencia-1774040294';
 const PRECACHE = [
   './valencia-app.html',
   './valencia-map.html',
