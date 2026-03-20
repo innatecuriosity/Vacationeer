@@ -613,6 +613,13 @@ label .req {{ color: #e74c3c; font-weight: bold; }}
     to {{ opacity: 1; transform: translateX(0); }}
 }}
 
+/* ---- offline mode: hide chat, shrink sidebar ---- */
+body.offline .sidebar-chat {{ display: none !important; }}
+body.offline .sidebar {{ width: 200px; min-width: 200px; }}
+@media (max-width: 768px) {{
+    body.offline .sidebar {{ width: 240px; min-width: 240px; }}
+}}
+
 /* ---- sidebar chat ---- */
 .sidebar-chat {{
     flex: 1;
@@ -3025,6 +3032,12 @@ document.addEventListener('alpine:init', function() {{
 if ('serviceWorker' in navigator) {{
     navigator.serviceWorker.register('./sw.js').catch(function() {{}});
 }}
+// Detect offline/static mode — hide chat if no server
+fetch('/api/trip', {{ method: 'HEAD' }}).catch(function() {{
+    document.body.classList.add('offline');
+}}).then(function(r) {{
+    if (!r || !r.ok) document.body.classList.add('offline');
+}}).catch(function() {{}});
 </script>
 </body>
 </html>"""
