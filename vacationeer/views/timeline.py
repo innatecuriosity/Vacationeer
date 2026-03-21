@@ -816,13 +816,7 @@ def render_timeline(trip: Trip) -> str:
     </div>
 </div>
 
-<div class="kanban" x-data="kanbanTimeline()" x-init="
-    var self = this;
-    setTimeout(function() {{ self.initAllSortables(); }}, 200);
-    $watch('$store.trip.active_itinerary_id', function() {{
-        self.$nextTick(function() {{ setTimeout(function() {{ self.initAllSortables(); }}, 100); }});
-    }});
-">
+<div class="kanban" x-data="kanbanTimeline()">
 
   <!-- Left sidebar: unscheduled pool -->
   <aside class="kanban-pool">
@@ -991,6 +985,14 @@ function kanbanTimeline() {{
             'food': 'Food & Drink', 'entertainment': 'Entertainment',
             'transport': 'Transport', 'accommodation': 'Accommodation',
             'shopping': 'Shopping', 'day_trip': 'Day Trip', 'infrastructure': 'Infrastructure'
+        }},
+
+        init() {{
+            var self = this;
+            setTimeout(function() {{ self.initAllSortables(); }}, 200);
+            this.$watch('$store.trip.active_itinerary_id', function() {{
+                self.$nextTick(function() {{ setTimeout(function() {{ self.initAllSortables(); }}, 100); }});
+            }});
         }},
 
         catColor: function(c) {{ return this.catColors[c] || '#999'; }},

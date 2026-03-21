@@ -1045,6 +1045,24 @@ window.addEventListener('message', function(e) {{
     if (e.data && e.data.type === 'open-attraction') {{
         window.dispatchEvent(new CustomEvent('open-attraction', {{detail: {{id: e.data.id}}}}));
     }}
+    if (e.data && e.data.type === 'toggle-visited') {{
+        var store = Alpine.store('trip');
+        if (!store) return;
+        var id = e.data.id;
+        var attr = (store.attractions || []).find(function(a) {{ return a.id === id; }});
+        var isDt = false;
+        if (!attr) {{
+            attr = (store.day_trips || []).find(function(d) {{ return d.id === id; }});
+            isDt = true;
+        }}
+        if (!attr) return;
+        attr.visited = !attr.visited;
+        if (isDt) {{
+            store.updateDayTrip(id, {{visited: attr.visited}});
+        }} else {{
+            store.updateAttraction(id, {{visited: attr.visited}});
+        }}
+    }}
 }});
 
 /* Trip picker — plain JS, no Alpine for open/close */

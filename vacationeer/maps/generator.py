@@ -81,9 +81,12 @@ def _popup_html(a: Attraction) -> str:
         f'<a href="{maps_url}" target="_blank" style="color:rgba(255,255,255,.85);font-size:14px;'
         f'text-decoration:none;padding:0 2px;" title="Google Maps">&#x1f4cd;</a>'
     )
-    visited_icon = (
-        '<span style="font-size:14px;padding:0 2px;" title="Visited">&#x2705;</span>'
-    ) if a.visited else ""
+    visited_btn = (
+        f'<button onclick="window.parent.postMessage({{type:\'toggle-visited\',id:\'{uid}\'}},'
+        f'\'*\')" style="background:none;border:none;color:rgba(255,255,255,.9);font-size:14px;'
+        f'cursor:pointer;padding:0 2px;line-height:1;" title="Toggle visited">'
+        f'{"&#x2705;" if a.visited else "&#x2610;"}</button>'
+    )
 
     html = f"""
 <div style="font-family:{FONT_STACK_MAP};width:300px;max-width:85vw;" id="popup_{uid}">
@@ -92,7 +95,7 @@ def _popup_html(a: Attraction) -> str:
     <div style="display:flex;align-items:center;justify-content:space-between;">
       <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;opacity:.85;">{'&#x1f47b; ' if a.hidden else ''}{category_label(a.category)}</div>
       <div style="display:flex;gap:3px;align-items:center;">
-        {visited_icon}{website_icon}{maps_icon}
+        {visited_btn}{website_icon}{maps_icon}
         <button onclick="window.parent.postMessage({{type:'open-attraction',id:'{uid}'}},'*')"
                 style="background:none;border:none;color:rgba(255,255,255,.9);font-size:16px;cursor:pointer;padding:0 2px;line-height:1;" title="Open details">\u25BC</button>
       </div>
@@ -720,9 +723,12 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
     class _DynamicMarkers(MacroElement):
         _template = Template("""
             {% macro script(this, kwargs) %}
+            {% raw %}
             (function() {
+            {% endraw %}
                 var map = {{ this._parent.get_name() }};
                 var staticIds = {{ this.static_ids | tojson }};
+            {% raw %}
                 var known = {};
                 staticIds.forEach(function(id) { known[id] = true; });
                 var dynLayer = L.layerGroup().addTo(map);
@@ -737,20 +743,20 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                         fillOpacity: 0.8, weight: 2
                     });
                     marker.bindTooltip('<b>' + (attr.name || 'New') + '</b><br><span style="color:#888;font-size:10px;">Locally added</span>');
-                    marker.bindPopup(
+                    var popupHtml =
                         '<div style="font-family:system-ui,sans-serif;min-width:180px;">' +
                         '<div style="background:' + color + ';color:#fff;padding:8px 12px;border-radius:8px 8px 0 0;">' +
                         '<div style="font-size:9px;text-transform:uppercase;opacity:.8;">' + (attr.category || '') + '</div>' +
                         '<div style="font-size:14px;font-weight:700;margin-top:2px;">' + (attr.name || 'New') + '</div></div>' +
                         '<div style="padding:8px 12px;font-size:12px;">' + (attr.description || '').substring(0, 150) +
-                        '<br><button onclick="window.parent.postMessage({type:\'open-attraction\',id:\'' + attr.id + '\'},\'*\')" ' +
-                        'style="margin-top:6px;background:none;border:1px solid ' + color + ';color:' + color + ';padding:4px 12px;border-radius:6px;cursor:pointer;font-size:11px;">Details ▼</button>' +
-                        '</div></div>', {maxWidth: 280}
-                    );
+                        '</div></div>';
+                    marker.bindPopup(popupHtml, {maxWidth: 280});
+                    marker.on('click', function() {
+                        window.parent.postMessage({type:'open-attraction',id:attr.id},'*');
+                    });
                     marker.addTo(dynLayer);
                 }
 
-                // On load: check parent for locally-added attractions
                 function syncFromParent() {
                     try {
                         var store = window.parent && window.parent.Alpine && window.parent.Alpine.store('trip');
@@ -761,12 +767,10 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                         (store.day_trips || []).forEach(function(d) {
                             if (d.id && !known[d.id]) { addDynMarker(d); known[d.id] = true; }
                         });
-                    } catch(e) { /* cross-origin or not ready */ }
+                    } catch(e) {}
                 }
-                // Try after a delay (Alpine needs time to init)
                 setTimeout(syncFromParent, 2000);
 
-                // Listen for add-marker messages from parent
                 window.addEventListener('message', function(e) {
                     if (e.data && e.data.type === 'add-marker' && e.data.attraction) {
                         var a = e.data.attraction;
@@ -777,6 +781,7 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
                     }
                 });
             })();
+            {% endraw %}
             {% endmacro %}
         """)
 
