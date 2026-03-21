@@ -710,6 +710,82 @@ def generate_map(trip: Trip, output_path: Path) -> Path:
 
     _LayerControl(cat_layers_items, dt_layers_items, grp_layers_items).add_to(m)
 
+    # Dynamic marker layer: adds locally-created attractions not in the static map
+    static_ids = [a.id for a in trip.attractions]
+    for dt in trip.day_trips:
+        static_ids.append(dt.id)
+        for sub in dt.sub_attractions:
+            static_ids.append(sub.id)
+
+    class _DynamicMarkers(MacroElement):
+        _template = Template("""
+            {% macro script(this, kwargs) %}
+            (function() {
+                var map = {{ this._parent.get_name() }};
+                var staticIds = {{ this.static_ids | tojson }};
+                var known = {};
+                staticIds.forEach(function(id) { known[id] = true; });
+                var dynLayer = L.layerGroup().addTo(map);
+
+                function addDynMarker(attr) {
+                    if (!attr || !attr.location) return;
+                    var lat = attr.location.lat, lng = attr.location.lng;
+                    if (!lat || (Math.abs(lat) < 0.01 && Math.abs(lng) < 0.01)) return;
+                    var color = attr.visited ? '#e74c3c' : attr.hidden ? '#999' : '#4ea4f6';
+                    var marker = L.circleMarker([lat, lng], {
+                        radius: 8, color: color, fillColor: color,
+                        fillOpacity: 0.8, weight: 2
+                    });
+                    marker.bindTooltip('<b>' + (attr.name || 'New') + '</b><br><span style="color:#888;font-size:10px;">Locally added</span>');
+                    marker.bindPopup(
+                        '<div style="font-family:system-ui,sans-serif;min-width:180px;">' +
+                        '<div style="background:' + color + ';color:#fff;padding:8px 12px;border-radius:8px 8px 0 0;">' +
+                        '<div style="font-size:9px;text-transform:uppercase;opacity:.8;">' + (attr.category || '') + '</div>' +
+                        '<div style="font-size:14px;font-weight:700;margin-top:2px;">' + (attr.name || 'New') + '</div></div>' +
+                        '<div style="padding:8px 12px;font-size:12px;">' + (attr.description || '').substring(0, 150) +
+                        '<br><button onclick="window.parent.postMessage({type:\'open-attraction\',id:\'' + attr.id + '\'},\'*\')" ' +
+                        'style="margin-top:6px;background:none;border:1px solid ' + color + ';color:' + color + ';padding:4px 12px;border-radius:6px;cursor:pointer;font-size:11px;">Details ▼</button>' +
+                        '</div></div>', {maxWidth: 280}
+                    );
+                    marker.addTo(dynLayer);
+                }
+
+                // On load: check parent for locally-added attractions
+                function syncFromParent() {
+                    try {
+                        var store = window.parent && window.parent.Alpine && window.parent.Alpine.store('trip');
+                        if (!store) return;
+                        (store.attractions || []).forEach(function(a) {
+                            if (a.id && !known[a.id]) { addDynMarker(a); known[a.id] = true; }
+                        });
+                        (store.day_trips || []).forEach(function(d) {
+                            if (d.id && !known[d.id]) { addDynMarker(d); known[d.id] = true; }
+                        });
+                    } catch(e) { /* cross-origin or not ready */ }
+                }
+                // Try after a delay (Alpine needs time to init)
+                setTimeout(syncFromParent, 2000);
+
+                // Listen for add-marker messages from parent
+                window.addEventListener('message', function(e) {
+                    if (e.data && e.data.type === 'add-marker' && e.data.attraction) {
+                        var a = e.data.attraction;
+                        if (!known[a.id]) { addDynMarker(a); known[a.id] = true; }
+                    }
+                    if (e.data && e.data.type === 'sync-markers') {
+                        syncFromParent();
+                    }
+                });
+            })();
+            {% endmacro %}
+        """)
+
+        def __init__(self, static_ids):
+            super().__init__()
+            self.static_ids = static_ids
+
+    _DynamicMarkers(static_ids).add_to(m)
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(output_path))
     return output_path
