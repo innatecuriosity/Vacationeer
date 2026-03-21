@@ -22,6 +22,26 @@ def _location_picker_xdata() -> str:
                 "\n                locMode: 'gps',"
                 "\n                pickerMap: null,"
                 "\n                pickerMarker: null,"
+                "\n                geoLocating: false,"
+                "\n                useMyLocation() {"
+                "\n                    var self = this;"
+                "\n                    if (!navigator.geolocation) { alert('Geolocation not supported'); return; }"
+                "\n                    self.geoLocating = true;"
+                "\n                    navigator.geolocation.getCurrentPosition(function(pos) {"
+                "\n                        self.form.lat = pos.coords.latitude.toFixed(6);"
+                "\n                        self.form.lng = pos.coords.longitude.toFixed(6);"
+                "\n                        self.geoLocating = false;"
+                "\n                        if (self.pickerMap) {"
+                "\n                            var ll = L.latLng(pos.coords.latitude, pos.coords.longitude);"
+                "\n                            self.pickerMap.setView(ll, 16);"
+                "\n                            if (self.pickerMarker) self.pickerMap.removeLayer(self.pickerMarker);"
+                "\n                            self.pickerMarker = L.marker(ll).addTo(self.pickerMap);"
+                "\n                        }"
+                "\n                    }, function(err) {"
+                "\n                        self.geoLocating = false;"
+                "\n                        alert('Could not get location: ' + err.message);"
+                "\n                    }, { enableHighAccuracy: true, timeout: 10000 });"
+                "\n                },"
                 "\n                initPickerMap() {"
                 "\n                    var self = this;"
                 "\n                    setTimeout(function() {"
@@ -58,33 +78,42 @@ def _location_picker_html(required: bool = True) -> str:
                         <div class="loc-tabs">
                             <button type="button" class="loc-tab" :class="locMode === 'address' && 'active'" @click="locMode = 'address'">Address</button>
                             <button type="button" class="loc-tab" :class="locMode === 'gps' && 'active'" @click="locMode = 'gps'">GPS</button>
-                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Pick on Map</button>
+                            <button type="button" class="loc-tab" :class="locMode === 'map' && 'active'" @click="locMode = 'map'; initPickerMap()">Map</button>
                         </div>
                     </div>
-                    <div class="form-group" x-show="locMode === 'address'">
-                        <input type="text" x-model="form.address" placeholder="Enter full address">
-                    </div>
-                    <div class="form-row" x-show="locMode === 'gps' || locMode === 'address'">
-                        <div class="form-group">
-                            <label>Latitude</label>
-                            <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                    <div x-show="locMode === 'address' || locMode === 'gps'">
+                        <div class="form-group" x-show="locMode === 'address'">
+                            <input type="text" x-model="form.address" placeholder="Enter full address">
                         </div>
-                        <div class="form-group">
-                            <label>Longitude</label>
-                            <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Latitude</label>
+                                <input type="number" step="any" x-model="form.lat" placeholder="39.4699">
+                            </div>
+                            <div class="form-group">
+                                <label>Longitude</label>
+                                <input type="number" step="any" x-model="form.lng" placeholder="-0.3763">
+                            </div>
                         </div>
+                        <button type="button" @click="useMyLocation()" :disabled="geoLocating"
+                            style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:#f0f7ff;border:1px solid #4ea4f6;border-radius:8px;color:#2563eb;font-size:13px;font-weight:600;cursor:pointer;width:100%;justify-content:center;margin-bottom:12px;">
+                            <span x-text="geoLocating ? 'Locating...' : '\U0001f4cd Use my location'"></span>
+                        </button>
                     </div>
                     <div x-show="locMode === 'map'">
                         <div class="loc-map-container" x-ref="pickerMapEl"></div>
-                        <div class="form-row">
-                            <div class="form-group">
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                            <div class="form-group" style="flex:1;margin-bottom:0;">
                                 <label>Lat</label>
                                 <input type="number" step="any" x-model="form.lat" readonly style="background:#f5f6f8;">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="flex:1;margin-bottom:0;">
                                 <label>Lng</label>
                                 <input type="number" step="any" x-model="form.lng" readonly style="background:#f5f6f8;">
                             </div>
+                            <button type="button" @click="useMyLocation()" :disabled="geoLocating"
+                                style="padding:8px;background:#f0f7ff;border:1px solid #4ea4f6;border-radius:8px;color:#2563eb;font-size:18px;cursor:pointer;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;margin-top:16px;"
+                                title="Use my location">\U0001f4cd</button>
                         </div>
                     </div>"""
 
@@ -748,7 +777,7 @@ body.offline .sidebar {{ width: 200px; min-width: 200px; }}
 
 /* ---- location picker ---- */
 .loc-tabs {{ display: flex; gap: 0; margin-bottom: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #d1d5db; }}
-.loc-tab {{ flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: 600; cursor: pointer; background: #f5f6f8; border: none; color: #5f6b7a; }}
+.loc-tab {{ flex: 1; padding: 10px 8px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; background: #f5f6f8; border: none; color: #5f6b7a; min-height: 44px; }}
 .loc-tab.active {{ background: #1a2332; color: #fff; }}
 .loc-map-container {{ width: 100%; height: 250px; border-radius: 8px; border: 2px solid #d1d5db; margin-bottom: 8px; }}
 
@@ -849,6 +878,10 @@ body.offline .sidebar {{ width: 200px; min-width: 200px; }}
         flex-direction: column;
         gap: 0;
     }}
+    /* Location picker: shorter map on mobile */
+    .loc-map-container {{
+        height: 200px;
+    }}
 }}
 
 /* ---- responsive: small phone ---- */
@@ -896,6 +929,7 @@ window.__TRIP_DATA__ = {trip_json};
                 if (local.attractions && embedded.attractions) {{
                     var localById = {{}};
                     local.attractions.forEach(function(a) {{ if (a.id) localById[a.id] = a; }});
+                    // Merge mutable fields for existing attractions
                     embedded.attractions.forEach(function(a) {{
                         var la = localById[a.id];
                         if (la) {{
@@ -903,6 +937,12 @@ window.__TRIP_DATA__ = {trip_json};
                             if (la.visited) a.visited = la.visited;
                             if (la.hidden) a.hidden = la.hidden;
                         }}
+                    }});
+                    // Add locally-created attractions (IDs not in embedded data)
+                    var embeddedIds = {{}};
+                    embedded.attractions.forEach(function(a) {{ embeddedIds[a.id] = true; }});
+                    local.attractions.forEach(function(a) {{
+                        if (a.id && !embeddedIds[a.id]) embedded.attractions.push(a);
                     }});
                 }}
                 if (local.day_trips && embedded.day_trips) {{
@@ -915,6 +955,12 @@ window.__TRIP_DATA__ = {trip_json};
                             if (ld.visited) d.visited = ld.visited;
                             if (ld.hidden) d.hidden = ld.hidden;
                         }}
+                    }});
+                    // Add locally-created day trips
+                    var embeddedDtIds = {{}};
+                    embedded.day_trips.forEach(function(d) {{ embeddedDtIds[d.id] = true; }});
+                    local.day_trips.forEach(function(d) {{
+                        if (d.id && !embeddedDtIds[d.id]) embedded.day_trips.push(d);
                     }});
                 }}
                 // Merge non-structural fields (preferences, days/itineraries, groupings)
@@ -1464,6 +1510,40 @@ function sidebarChat() {{
     }};
 }}
 
+/* ---- History-based modal back-gesture handling ---- */
+/* Push a history entry when a modal opens, pop it on close.
+   The popstate listener closes whatever modal is on top,
+   so the mobile back gesture closes the modal instead of
+   navigating away from the page. */
+(function() {{
+    var _modalDepth = 0;
+
+    window.__pushModalState = function() {{
+        _modalDepth++;
+        history.pushState({{ modal: _modalDepth }}, '');
+    }};
+
+    window.__popModalState = function() {{
+        if (_modalDepth > 0) {{
+            _modalDepth--;
+            history.back();
+        }}
+    }};
+
+    window.addEventListener('popstate', function(e) {{
+        if (_modalDepth > 0) {{
+            _modalDepth--;
+            // Close whatever modal is open — use special events so they don't call __popModalState again
+            window.dispatchEvent(new CustomEvent('modal-back'));
+        }}
+    }});
+
+    // Also set a baseline state so back from the page itself doesn't leave the app
+    if (!history.state || !history.state.app) {{
+        history.replaceState({{ app: true }}, '');
+    }}
+}})();
+
 /* Attraction detail modal component */
 function attractionModal() {{
     return {{
@@ -1510,6 +1590,7 @@ function attractionModal() {{
             this._activityId = ctx.activityId || null;
             this.editing = false;
             this.open = true;
+            window.__pushModalState();
         }},
 
         startEdit: function() {{
@@ -1637,12 +1718,14 @@ function attractionModal() {{
             this.close();
         }},
 
-        close: function() {{
+        close: function(fromPopstate) {{
+            if (!this.open) return;
             this.open = false;
             this.editing = false;
             this.item = null;
             this._dayDate = null;
             this._activityId = null;
+            if (!fromPopstate) window.__popModalState();
         }}
     }};
 }}
@@ -1689,6 +1772,11 @@ document.addEventListener('alpine:init', function() {{
                 if (local.tags && typeof local.tags === 'string') local.tags = local.tags.split(',').map(function(t){{ return t.trim(); }});
                 self.attractions.push(local);
                 _persistLocal();
+                // Send to map iframe for dynamic marker
+                var iframe = document.querySelector('#tab-map iframe');
+                if (iframe && iframe.contentWindow) {{
+                    iframe.contentWindow.postMessage({{ type: 'add-marker', attraction: local }}, '*');
+                }}
                 toast('success', 'Saved locally');
                 added = true;
             }});
@@ -2348,7 +2436,7 @@ document.addEventListener('alpine:init', function() {{
 </div>
 
 <!-- Attraction Detail Modal (global, opened from any view) -->
-<div x-data="attractionModal()" @open-attraction.window="openById($event.detail.id, $event.detail)" x-cloak>
+<div x-data="attractionModal()" @open-attraction.window="openById($event.detail.id, $event.detail)" @modal-back.window="close(true)" x-cloak>
   <template x-if="open && item">
     <div class="modal-backdrop" @mousedown.self="close()" @keydown.escape.window="close()">
       <div class="modal" @click.stop>
@@ -2543,18 +2631,23 @@ document.addEventListener('alpine:init', function() {{
 </div>
 
 <!-- Modals -->
-<div x-data="{{ modal: null }}" @open-modal.window="modal = $event.detail" @close-modal.window="modal = null" @keydown.escape.window="modal = null">
+<div x-data="{{ modal: null }}"
+     @open-modal.window="modal = $event.detail; window.__pushModalState();"
+     @close-modal.window="if (modal) window.__popModalState(); modal = null;"
+     @keydown.escape.window="if (modal) {{ window.__popModalState(); modal = null; }}"
+     @modal-back.window="modal = null;"
+>
 
     <!-- Add Attraction Modal -->
     <template x-if="modal === 'add-attraction'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" x-data="{{
                 form: {{ name: '', description: '', category: 'landmark', lat: '', lng: '', address: '', price_eur: '', duration_minutes: '', tags: [], tagInput: '', tips: '', url: '' }},
                 grouping_ids: [],
                 showNewGrp: false,
                 newGrpName: '',
                 newGrpColor: '{grouping_palette[0]}',
-                grpPalette: {json.dumps(grouping_palette)},
+                grpPalette: {json.dumps(grouping_palette).replace('"', "'")},
                 addTag() {{
                     var v = this.form.tagInput.replace(/,/g, '').trim();
                     if (v && !this.form.tags.includes(v)) this.form.tags.push(v);
@@ -2705,7 +2798,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Edit Trip Modal -->
     <template x-if="modal === 'edit-trip'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" x-data="{{
                 form: {{
                     name: $store.trip.name,
@@ -2768,7 +2861,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Edit Preferences Modal -->
     <template x-if="modal === 'edit-preferences'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" x-data="{{
                 form: {{
                     interests: ($store.trip.preferences && $store.trip.preferences.interests) ? $store.trip.preferences.interests.join(', ') : '',
@@ -2818,7 +2911,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Add Day Trip Modal -->
     <template x-if="modal === 'add-day-trip'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" x-data="{{
                 form: {{ name: '', destination: '', description: '', lat: '', lng: '', address: '', total_price_eur: '', total_duration_minutes: '', tags: '', tips: '' }},
 {_location_picker_xdata()}
@@ -2888,7 +2981,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Add Day Modal -->
     <template x-if="modal === 'add-day'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" x-data="{{
                 form: {{ date: '', label: '', start_time: '', notes: '', useAI: false, aiPrompt: '' }},
                 loading: false,
@@ -2973,7 +3066,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Add Accommodation Modal -->
     <template x-if="modal === 'add-accommodation'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" x-data="{{
                 form: {{ name: '', address: '', checkin: '', checkout: '', lat: '', lng: '', total_price_eur: '', description: '', tags: '', tips: '', url: '' }},
 {_location_picker_xdata()}
@@ -3054,7 +3147,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Add Transport Modal -->
     <template x-if="modal === 'add-transport'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" x-data="{{
                 form: {{ name: '', mode: 'train', origin: '', destination: '', departure: '', arrival: '', lat: '', lng: '', address: '', price: '', booking_ref: '', notes: '' }},
 {_location_picker_xdata()}
@@ -3150,7 +3243,7 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- New Trip Guide Modal -->
     <template x-if="modal === 'new-trip-guide'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" style="max-width:560px" x-data="newTripForm()">
                 <div class="modal-header">
                     <h2 x-text="phase === 'form' ? 'Create a New Trip' : 'Creating Trip...'"></h2>
@@ -3279,12 +3372,12 @@ document.addEventListener('alpine:init', function() {{
 
     <!-- Manage Groupings Modal -->
     <template x-if="modal === 'manage-groupings'">
-        <div class="modal-backdrop" @mousedown.self="modal = null">
+        <div class="modal-backdrop" @mousedown.self="window.dispatchEvent(new CustomEvent('close-modal'))">
             <div class="modal" style="max-width:560px" x-data="{{
                 mode: 'list',
                 editId: null,
                 form: {{ name: '', description: '', color: '', parent_id: '' }},
-                palette: {json.dumps(grouping_palette)},
+                palette: {json.dumps(grouping_palette).replace('"', "'")},
                 init() {{ this.form.color = this.palette[0]; }},
                 resetForm() {{
                     this.form = {{ name: '', description: '', color: this.palette[0], parent_id: '' }};
